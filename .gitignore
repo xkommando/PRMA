@@ -1,4 +1,6 @@
-*.class
+*/test/*
+*.htm
+*.html
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
@@ -7,6 +9,31 @@
 *.jar
 *.war
 *.ear
+*.class
+/target/
+*/target
+*/target/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+/bin
+/build
+/target
+
+/javax
+
+.idea
+.idea/
+*.iml
+*.iws
+*.ipr
+.idea_modules/
+atlassian-ide-plugin.xml
+com_crashlytics_export_strings.xml
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
