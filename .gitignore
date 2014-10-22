@@ -24,7 +24,10 @@ hs_err_pid*
 
 .idea
 .idea/
+/.idea/
+
 *.iml
+.iml
 *.iws
 *.ipr
 .idea_modules/

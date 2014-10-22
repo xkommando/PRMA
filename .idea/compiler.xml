@@ -24,7 +24,6 @@
         <processorPath useClasspath="true" />
         <module name="analyser" />
         <module name="api" />
-        <module name="core" />
         <module name="logger" />
         <module name="monitor" />
       </profile>
@@ -33,10 +32,9 @@
       <module name="analyser" target="1.7" />
       <module name="api" target="1.7" />
       <module name="core" target="1.7" />
-      <module name="db" target="1.7" />
       <module name="logger" target="1.7" />
       <module name="monitor" target="1.7" />
-      <module name="PRMA" target="1.7" />
+      <module name="prma" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
