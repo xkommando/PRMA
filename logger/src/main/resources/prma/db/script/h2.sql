@@ -1,38 +1,37 @@
 
 --CREATE SCHEMA IF NOT EXISTS 'PRMA_Log_Event'
 
+-- fully cached
 CREATE TABLE IF NOT EXISTS `thread_name` (
   id				    INT4 	    NOT NULL,     -- hash of name
   `value`        VARCHAR(255)  NOT NULL,
   PRIMARY KEY (id)
 );
 
+-- fully cached
 CREATE TABLE IF NOT EXISTS `logger_name` (
   id				    INT4 	    NOT NULL,    -- hash of value
   `value`        VARCHAR(255)  NOT NULL,
   PRIMARY KEY (id)
 );
 
+-- fully cached
 CREATE TABLE IF NOT EXISTS `exception_name` (
   id				    INT4 	    NOT NULL,    -- hash of value
   `value`        VARCHAR(255)  NOT NULL,
   PRIMARY KEY (id)
 );
 
+
+-- partial cached
 CREATE TABLE IF NOT EXISTS `exception_msg` (
   id				    INT4 	    NOT NULL,    -- hash of value
   `value`        VARCHAR(255)  NOT NULL,
   PRIMARY KEY (id)
 );
 
-CREATE TABLE IF NOT EXISTS `exception` (
-  id				    INT8      NOT NULL,    -- hash of name
-  except_name   INT4      NOT NULL,
-  except_msg    INT4      NOT NULL,
-  stack_trace   INT4      NOT NULL,
-  PRIMARY KEY (id)
-);
 
+-- partial cached
 CREATE TABLE IF NOT EXISTS `stack_trace` (
   id				    INT4 	        NOT NULL,   -- hash of all caller data
   `file`        VARCHAR(255)  NOT NULL,
@@ -42,6 +41,16 @@ CREATE TABLE IF NOT EXISTS `stack_trace` (
 
   PRIMARY KEY (id)
 );
+
+-- partial cached
+CREATE TABLE IF NOT EXISTS `exception` (
+  id				    INT8          NOT NULL,    -- hash of name
+  except_name   INT4          NOT NULL,
+  except_msg    INT4          NOT NULL,
+  stack_traces  BINARY(255)   NOT NULL,
+  PRIMARY KEY (id)
+);
+
 
 CREATE TABLE IF NOT EXISTS `event` (
 	id				    IDENTITY 	    NOT NULL,
@@ -60,14 +69,8 @@ CREATE TABLE IF NOT EXISTS `event` (
   FOREIGN KEY (caller_id) REFERENCES caller(id)
 );
 
-CREATE TABLE IF NOT EXISTS `r_event_except` (
-  event_id    INT8        NOT NULL,
-  except_id   INT4        NOT NULL,
-  followings  BINARY(1000) NOT NULL,  -- ids of throwable under this exception
-  PRIMARY KEY (event_id, prop_id)
-);
 
-
+-- partial cached
 CREATE TABLE IF NOT EXISTS `property` (
   id				    INT4 	        NOT NULL,      -- hash of key
   `key`         VARCHAR(255)  NOT NULL,
@@ -75,12 +78,21 @@ CREATE TABLE IF NOT EXISTS `property` (
   PRIMARY KEY (id)
 );
 
+-- partial cached
 CREATE TABLE IF NOT EXISTS `r_event_prop` (
   event_id    INT8        NOT NULL,
   prop_id     INT4        NOT NULL,
   PRIMARY KEY (event_id, prop_id)
 );
 
+
+CREATE TABLE IF NOT EXISTS `r_event_exception`(
+  seq         SMALLINT    NOT NULL,
+  event_id    INT8        NOT NULL,
+  except_id   INT8        NOT NULL,
+
+  PRIMARY KEY (seq, event_id)
+);
 
 
 

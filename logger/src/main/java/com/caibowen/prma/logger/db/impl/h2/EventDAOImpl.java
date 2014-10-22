@@ -1,4 +1,4 @@
-package com.caibowen.prma.logger.db.impl;
+package com.caibowen.prma.logger.db.impl.h2;
 
 import ch.qos.logback.classic.Level;
 
@@ -9,7 +9,7 @@ import java.util.HashMap;
  * @author BowenCai
  * @since 22-10-2014.
  */
-public class H2EventDAO {
+public class EventDAOImpl {
 
     /*
 

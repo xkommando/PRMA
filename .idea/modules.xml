@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/PRMA.iml" filepath="$PROJECT_DIR$/PRMA.iml" />
       <module fileurl="file://$PROJECT_DIR$/analyser/analyser.iml" filepath="$PROJECT_DIR$/analyser/analyser.iml" />
       <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
       <module fileurl="file://$PROJECT_DIR$/logger/logger.iml" filepath="$PROJECT_DIR$/logger/logger.iml" />
       <module fileurl="file://$PROJECT_DIR$/monitor/monitor.iml" filepath="$PROJECT_DIR$/monitor/monitor.iml" />
-      <module fileurl="file://$PROJECT_DIR$/prma.iml" filepath="$PROJECT_DIR$/prma.iml" />
     </modules>
   </component>
 </project>

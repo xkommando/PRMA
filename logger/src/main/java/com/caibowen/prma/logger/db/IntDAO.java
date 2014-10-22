@@ -2,6 +2,7 @@ package com.caibowen.prma.logger.db;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -17,7 +18,7 @@ public interface IntDAO<V> {
     hasKey(int key);
 
     boolean
-    hasVal(@Nonnull V val);
+    hasVal(@Nonnull final V val);
 
     @Nullable
     V
@@ -31,10 +32,17 @@ public interface IntDAO<V> {
     values();
 
     @Nonnull boolean
-    putIfAbsent(int key, @Nonnull V value);
+    putIfAbsent(int key, @Nonnull final V value);
+
+
+    @Nonnull boolean
+    putAllIfAbsent(final Map<Object, V> map);
 
     @Nonnull boolean
     update(int key, @Nonnull V value);
+
+
+
 
     @Nullable boolean
     remove(int key, boolean returnVal);

@@ -35,6 +35,7 @@
       <module name="logger" target="1.7" />
       <module name="monitor" target="1.7" />
       <module name="prma" target="1.7" />
+      <module name="PRMA" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
