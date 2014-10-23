@@ -2,18 +2,10 @@ package com.caibowen.prma.common;
 
 /**
  * @author BowenCai
- * @since 22-10-2014.
+ * @since 22-8-2013.
  */
 public class Hashing {
 
-
-    public static long intArray2long(int...arr) {
-        long ret = 0;
-        for (int i : arr) {
-            ret = hash_128_to_64(ret, twang_mix64((long)i));
-        }
-        return ret;
-    }
 
     public static long hash128To64(long upper, long lower) {
         // Murmur-inspired hashing.

@@ -1,7 +1,8 @@
-package com.caibowen.prma.logger.db;
+package com.caibowen.prma.logger.dao;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.sql.SQLException;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import java.util.Set;
  * @author BowenCai
  * @since 22-10-2014.
  */
-public interface IntDAO<V> {
+public interface Int4DAO<V> {
 
     boolean
     hasKey(int key);
@@ -36,14 +37,12 @@ public interface IntDAO<V> {
 
 
     @Nonnull boolean
-    putAllIfAbsent(final Map<Object, V> map);
+    putAll(final Map<Integer, V> map);
 
     @Nonnull boolean
     update(int key, @Nonnull V value);
 
 
-
-
-    @Nullable boolean
-    remove(int key, boolean returnVal);
+    @Nullable V
+    remove(int key, boolean returnVal) throws SQLException;
 }

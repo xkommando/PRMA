@@ -33,11 +33,11 @@ CREATE TABLE IF NOT EXISTS `exception_msg` (
 
 -- partial cached
 CREATE TABLE IF NOT EXISTS `stack_trace` (
-  id				    INT4 	        NOT NULL,   -- hash of all caller data
+  id				    INT8 	        NOT NULL,   -- hash of all caller data
   `file`        VARCHAR(255)  NOT NULL,
   `class`       VARCHAR(255)  NOT NULL,
   `function`    VARCHAR(255)  NOT NULL,
-  `line`        VARCHAR(255)  NOT NULL,
+  `line`        INT4          NOT NULL,
 
   PRIMARY KEY (id)
 );
@@ -45,12 +45,14 @@ CREATE TABLE IF NOT EXISTS `stack_trace` (
 -- partial cached
 CREATE TABLE IF NOT EXISTS `exception` (
   id				    INT8          NOT NULL,    -- hash of name
+  time_created  INT8          NOT NULL,
   except_name   INT4          NOT NULL,
   except_msg    INT4          NOT NULL,
-  stack_traces  BINARY(255)   NOT NULL,
+  stack_traces  BINARY(1023)  NOT NULL,
   PRIMARY KEY (id)
 );
 
+CREATE UNIQUE SPATIAL INDEX IF NOT EXISTS idx_exception_time ON `exception`(`time_created`);
 
 CREATE TABLE IF NOT EXISTS `event` (
 	id				    IDENTITY 	    NOT NULL,
@@ -58,10 +60,10 @@ CREATE TABLE IF NOT EXISTS `event` (
 	level 			  TINYINT		    NOT NULL,
 	logger_id		  INT4		      NOT NULL,
 	thread_id		  INT4		      NOT NULL,
-  caller_sk_id  INT4		      NOT NULL, -- caller stack trace
+  caller_sk_id  INT8		      NOT NULL, -- caller stack trace
 	flag			    TINYINT		    NOT NULL,
 
-	message			  VARCHAR(511),
+	message			  VARCHAR(1023),
 
   PRIMARY KEY (id),
   FOREIGN KEY (logger_id) REFERENCES logger_name(id),
@@ -69,6 +71,8 @@ CREATE TABLE IF NOT EXISTS `event` (
   FOREIGN KEY (caller_id) REFERENCES caller(id)
 );
 
+CREATE UNIQUE SPATIAL INDEX IF NOT EXISTS idx_event_time ON `event`(`time_created`);
+-- CREATE UNIQUE SPATIAL INDEX IF NOT EXISTS idx_event_msg ON `event`(`message`);
 
 -- partial cached
 CREATE TABLE IF NOT EXISTS `property` (
@@ -79,19 +83,19 @@ CREATE TABLE IF NOT EXISTS `property` (
 );
 
 -- partial cached
-CREATE TABLE IF NOT EXISTS `r_event_prop` (
-  event_id    INT8        NOT NULL,
+CREATE TABLE IF NOT EXISTS `j_event_prop` (
   prop_id     INT4        NOT NULL,
+  event_id    INT8        NOT NULL,
   PRIMARY KEY (event_id, prop_id)
 );
 
 
-CREATE TABLE IF NOT EXISTS `r_event_exception`(
+CREATE TABLE IF NOT EXISTS `j_event_exception`(
   seq         SMALLINT    NOT NULL,
   event_id    INT8        NOT NULL,
   except_id   INT8        NOT NULL,
 
-  PRIMARY KEY (seq, event_id)
+  PRIMARY KEY (seq, event_id, except_id)
 );
 
 
