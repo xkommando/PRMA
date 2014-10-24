@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans>
+
+    <!--DataSource shall be added to this context before century-->
+
+    <bean id="exceptNameDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+        <construct value="exception_name"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="exceptMsgDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+        <construct value="exception_msg"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="loggerDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+        <construct value="logger_name"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="threadDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+        <construct value="thread_name"/>
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="eventDAO" class="com.caibowen.prma.store.dao.impl.EventDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="stackTraceDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="exceptionDAO" class="com.caibowen.prma.store.dao.impl.ExceptionDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="exceptNameDAO" ref="exceptNameDAO"/>
+        <property name="exceptMsgDAO" ref="exceptMsgDAO"/>
+        <property name="stackTraceDAO" ref="stackTraceDAO"/>
+    </bean>
+
+    <bean id="propertyDAO" class="com.caibowen.prma.store.dao.impl.PropertyDAOImpl">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="eventPersist" class="com.caibowen.prma.store.EventPersist">
+        <property name="threadDAO" ref="threadDAO"/>
+        <property name="loggerDAO" ref="loggerDAO"/>
+        <property name="stackTraceDAO" ref="stackTraceDAO"/>
+        <property name="propertyDAO" ref="propertyDAO"/>
+        <property name="eventDAO" ref="eventDAO"/>
+        <property name="ExceptionDAO" ref="ExceptionDAO"/>
+    </bean>
+
+</beans>

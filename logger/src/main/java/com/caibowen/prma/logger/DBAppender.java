@@ -2,8 +2,6 @@ package com.caibowen.prma.logger;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 
-import javax.sql.DataSource;
-
 /**
  * @author BowenCai
  * @since 21-10-2014.
@@ -11,32 +9,26 @@ import javax.sql.DataSource;
 public class DBAppender extends AsyncAppenderWrapper<ILoggingEvent> {
 
 
-    DataSource dataSource;
-//    trace 8
-//    DEBUG level is converted to 7,
-// INFO is converted to 6,
-// WARN is converted to 4
-// and ERROR is converted to 3.
-/*
-caller stack_trace -> id
+    EventPersist persister;
 
 
- */
-    void temp() {
+    @Override
+    public void start() {
+        super.start();
 
+        // boot the my system.
     }
 
     @Override
-    protected void passOnEvent(ILoggingEvent iLoggingEvent) {
-
+    protected void passOnEvent(ILoggingEvent event) {
+        persister.xxxxxxxx(event);
     }
 
+    @Override
+    public void stop() {
+        super.stop();
 
-    public DataSource getDataSource() {
-        return dataSource;
+        // shut down my system
     }
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 }

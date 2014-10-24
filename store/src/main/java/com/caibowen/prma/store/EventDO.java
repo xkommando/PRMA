@@ -1,35 +1,57 @@
-package com.caibowen.prma.logger;
+package com.caibowen.prma.store;
 
 import java.io.Serializable;
 
 /**
+ * data object representing event in the DB
+ *
  * @author BowenCai
  * @since 23-10-2014.
  */
-public class EventPO implements Serializable {
+public class EventDO implements Serializable {
 
-    // auto generate
+    private static final long serialVersionUID = -8809863102710979910L;
+
+//    private static final serializationID = ??
+
+    /**
+     *  auto generated
+     */
     public long id;
 
-    // ms
+    /**
+     * ms
+     */
     public long timeCreated;
 
-//  byte level = (byte)(event.getLevel().levelInt / Level.TRACE_INT);
+    /**
+     * byte level = (byte)(event.getLevel().levelInt / Level.TRACE_INT);
+     */
     public byte level;
 
-    // logger name id, usually the hashCode() of the name string
+    /**
+     * logger name id, usually the hashCode() of the name string
+     */
     public int loggerId;
 
-    // thread name id, usually the hashCode() of the name string
+    /**
+     * thread name id, usually the hashCode() of the name string
+     */
     public int threadId;
 
-    // caller stacktrace id
+    /**
+     * caller stacktrace id
+     */
     public int callerSkId;
 
-    // indicate properties, exception
+    /**
+     * indicate properties, exception
+     */
     public byte flag;
 
-    // formatted
+    /**
+     * formatted
+     */
     public String message;
 
 
@@ -100,9 +122,9 @@ public class EventPO implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EventPO)) return false;
+        if (!(o instanceof EventDO)) return false;
 
-        EventPO po = (EventPO) o;
+        EventDO po = (EventDO) o;
 
         if (callerSkId != po.callerSkId) return false;
         if (flag != po.flag) return false;

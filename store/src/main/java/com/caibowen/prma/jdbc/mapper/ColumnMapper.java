@@ -11,7 +11,6 @@
 package com.caibowen.prma.jdbc.mapper;
 import com.caibowen.prma.common.NoCaseMap;
 import com.caibowen.prma.jdbc.JdbcUtil;
-import com.caibowen.prma.jdbc.mapper.RowMapping;
 
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

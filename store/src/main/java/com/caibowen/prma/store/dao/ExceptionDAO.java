@@ -1,10 +1,6 @@
-package com.caibowen.prma.logger.dao;
+package com.caibowen.prma.store.dao;
 
 import ch.qos.logback.classic.spi.IThrowableProxy;
-import ch.qos.logback.classic.spi.StackTraceElementProxy;
-import com.caibowen.prma.common.Hashing;
-
-import java.util.Map;
 
 /**
  * @author BowenCai

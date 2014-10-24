@@ -1,4 +1,4 @@
-package com.caibowen.prma.logger.dao;
+package com.caibowen.prma.store.dao;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

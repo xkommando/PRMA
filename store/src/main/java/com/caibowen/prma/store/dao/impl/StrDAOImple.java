@@ -1,9 +1,9 @@
-package com.caibowen.prma.logger.dao.impl;
+package com.caibowen.prma.store.dao.impl;
 
 import com.caibowen.prma.jdbc.JdbcAux;
+import com.caibowen.prma.jdbc.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
-import com.caibowen.prma.jdbc.stmt.StatementCreator;
-import com.caibowen.prma.logger.dao.Int4DAO;
+import com.caibowen.prma.store.dao.Int4DAO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -20,7 +20,11 @@ import java.util.Set;
  */
 public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
 
-    public String tableName;
+    private final String tableName;
+
+    public StrDAOImple(String tableName) {
+        this.tableName = tableName;
+    }
 
     @Override
     public boolean hasKey(final int key) {
@@ -55,7 +59,7 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "SELECT `value` FROM " + tableName + " WHERE key=" + key);
+                        "SELECT `value` FROM " + tableName + " WHERE id=" + key);
                 return ps;
             }
         }, RowMapping.STR_ROW_MAPPING);
@@ -109,7 +113,8 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
     @Nonnull
     @Override
     public boolean putAll(final Map<Integer, String> map) {
-        return execute(new StatementCreator() {
+
+        batchInsert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -121,7 +126,9 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
                 }
                 return ps;
             }
-        });
+        }, null, null);
+
+        return true;
     }
 
     @Nonnull
@@ -157,9 +164,5 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
 
     public String getTableName() {
         return tableName;
-    }
-
-    public void setTableName(String tableName) {
-        this.tableName = tableName;
     }
 }

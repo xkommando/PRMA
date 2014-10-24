@@ -1,10 +1,10 @@
-package com.caibowen.prma.logger.dao.impl;
+package com.caibowen.prma.store.dao.impl;
 
 import com.caibowen.prma.jdbc.JdbcAux;
+import com.caibowen.prma.jdbc.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
-import com.caibowen.prma.jdbc.stmt.UpdateStatementCreator;
-import com.caibowen.prma.logger.EventPO;
-import com.caibowen.prma.logger.dao.EventDAO;
+import com.caibowen.prma.store.EventDO;
+import com.caibowen.prma.store.dao.EventDAO;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -16,15 +16,14 @@ import java.sql.SQLException;
  */
 public class EventDAOImpl extends JdbcAux implements EventDAO {
 
-
     public static final String[] AUTO_GEN_ID = {"id"};
 
     @Override
-    public long insert(final EventPO po) {
+    public long insert(final EventDO po) {
 
-        return insert(new UpdateStatementCreator() {
+        return insert(new StatementCreator() {
             @Override
-            public PreparedStatement createUpdate(Connection con, String[] cols) throws SQLException {
+            public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO `event`(" +
                 "`time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`" +
@@ -37,11 +36,6 @@ public class EventDAOImpl extends JdbcAux implements EventDAO {
                 ps.setByte(6, po.flag);
                 ps.setString(7, po.message);
                 return ps;
-            }
-
-            @Override
-            public PreparedStatement createStatement(Connection con) throws SQLException {
-                throw new UnsupportedOperationException();
             }
         }, AUTO_GEN_ID, RowMapping.LONG_ROW_MAPPING);
     }
@@ -72,7 +66,7 @@ public class EventDAOImpl extends JdbcAux implements EventDAO {
     if exception
             except_name  -> id
             except_msg   -> id
-            stack_trace  -> id
+            stack_trace  -> ids
                                -> except id
             loop get all       -> id array
 

@@ -10,9 +10,10 @@
  ******************************************************************************/
 package com.caibowen.prma.jdbc;
 
-import com.caibowen.prma.jdbc.mapper.*;
-import com.caibowen.prma.jdbc.stmt.StatementCreator;
-import com.caibowen.prma.jdbc.stmt.UpdateStatementCreator;
+import com.caibowen.prma.jdbc.mapper.ColumnMapper;
+import com.caibowen.prma.jdbc.mapper.MapExtractor;
+import com.caibowen.prma.jdbc.mapper.RowMapping;
+import com.caibowen.prma.jdbc.mapper.SingleColumMapper;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -38,6 +39,19 @@ public class JdbcAux implements JdbcOperations {
 //-----------------------------------------------------------------------------
 
     private DataSource dataSource;
+    private int queryTimeOut;
+    private int maxRow = 0;
+    private int fetchSize = 0;
+
+    private void configStatement(Statement st) throws SQLException{
+        if (maxRow > 0)
+            st.setMaxRows(maxRow);
+        if (fetchSize > 0)
+            st.setFetchSize(fetchSize);
+
+        // ???
+
+    }
 
     public DataSource getDataSource() {
         return dataSource;
@@ -67,29 +81,19 @@ public class JdbcAux implements JdbcOperations {
         try {
             Connection connection = getConnection();
             PreparedStatement st = psc.createStatement(connection);
+            configStatement(st);
             boolean out = st.execute();
             JdbcUtil.closeStatement(st);
             JdbcUtil.closeConnection(connection);
             return out;
         } catch (SQLException e) {
-            throw new RuntimeException(e.getSQLState() + "\nCaused by\n"
-                    + e.getCause(), e);
+            throw new RuntimeException(e.getSQLState(), e);
         }
     }
 
     @Override
     public boolean execute(final String sql) {
-        try {
-            Connection connection = getConnection();
-            Statement st = connection.createStatement();
-            boolean out = st.execute(sql);
-            JdbcUtil.closeStatement(st);
-            JdbcUtil.closeConnection(connection);
-            return out;
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getSQLState() + "\nCaused by\n"
-                    + e.getCause(), e);
-        }
+        return execute(getStatementCreator(sql));
     }
 
     @Override
@@ -97,7 +101,22 @@ public class JdbcAux implements JdbcOperations {
         return execute(getStatementCreator(sql, params));
     }
 
-//-----------------------------------------------------------------------------
+    @Override
+    public int[] batchExecute(StatementCreator creator) {
+        try {
+            Connection connection = getConnection();
+            Statement st = creator.createStatement(connection);
+//            configStatement(st);
+            int[] out = st.executeBatch();
+            JdbcUtil.closeStatement(st);
+            JdbcUtil.closeConnection(connection);
+            return out;
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getSQLState(), e);
+        }
+    }
+
+    //-----------------------------------------------------------------------------
 //						update delete
 //-----------------------------------------------------------------------------
 
@@ -109,6 +128,7 @@ public class JdbcAux implements JdbcOperations {
         try {
             Connection connection = getConnection();
             PreparedStatement st = psc.createStatement(connection);
+            configStatement(st);
             int out = st.executeUpdate();
             JdbcUtil.closeStatement(st);
             JdbcUtil.closeConnection(connection);
@@ -118,28 +138,19 @@ public class JdbcAux implements JdbcOperations {
         }
     }
 
-
-    /**
-     * and 4 Wrappers
-     */
     @Override
-    public int update(final String sql) {
+    public int[] batchUpdate(StatementCreator creator) {
         try {
             Connection connection = getConnection();
-            Statement st = connection.createStatement();
-            int out = st.executeUpdate(sql);
+            PreparedStatement st = creator.createStatement(connection);
+//            configStatement(st);
+            int[] out = st.executeBatch();
             JdbcUtil.closeStatement(st);
             JdbcUtil.closeConnection(connection);
             return out;
         } catch (SQLException e) {
             throw new RuntimeException(e.getSQLState(), e);
         }
-    }
-
-    @Override
-    public int update(final String sql, final Object... params) {
-
-        return update(getStatementCreator(sql, params));
     }
 
 
@@ -151,6 +162,7 @@ public class JdbcAux implements JdbcOperations {
             for (String string : sql) {
                 stmt.addBatch(string);
             }
+//            configStatement(stmt);
             int[] out = stmt.executeBatch();
             JdbcUtil.closeStatement(stmt);
             JdbcUtil.closeConnection(connection);
@@ -160,23 +172,27 @@ public class JdbcAux implements JdbcOperations {
         }
     }
 
+    @Override
+    public int update(final String sql, final Object... params) {
+        return update(getStatementCreator(sql, params));
+    }
+    @Override
+    public int update(final String sql) {
+        return update(getStatementCreator(sql));
+    }
+
 //-----------------------------------------------------------------------------
 //						insert
 //-----------------------------------------------------------------------------
 
-    @Override
-    public <T> Map<String, Object> insert(final T obj, ObjectMapping<T> mapper, final String[] cols) {
-        return insert(mapper.insert(obj), cols, new MapExtractor(cols));
-    }
-
-
 
     @Override
-    public <T> T insert(UpdateStatementCreator psc, final String[] cols, RowMapping<T> resultExtract) {
+    public <T> T insert(StatementCreator psc, final String[] cols, RowMapping<T> resultExtract) {
         try {
             Connection connection = getConnection();
 
-            PreparedStatement ps = psc.createUpdate(connection, cols);
+            PreparedStatement ps = psc.createStatement(connection);
+            configStatement(ps);
             ps.execute();
 
             T ret = null;
@@ -197,6 +213,64 @@ public class JdbcAux implements JdbcOperations {
         }
     }
 
+    @Override
+    public  <T> List<T> batchInsert(StatementCreator creator, final String cols[], RowMapping<T> extractor) {
+        try {
+            Connection connection = getConnection();
+
+            PreparedStatement ps = creator.createStatement(connection);
+            ps.executeBatch();
+
+            List<T> ret = null;
+            ResultSet rs = null;
+
+            if (cols != null) {
+                rs = ps.getGeneratedKeys();
+                ret = new ArrayList<>(8);
+                while (rs.next())
+                    ret.add(extractor.extract(rs));
+
+                JdbcUtil.closeResultSet(rs);
+            }
+            JdbcUtil.closeStatement(ps);
+            JdbcUtil.closeConnection(connection);
+
+            return ret;
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getSQLState(),e);
+        }
+    }
+
+    @Override
+    public List<Map<String, Object>> batchInsert(String[] sqls, String[] cols) {
+        try {
+            Connection con = getConnection();
+            Statement st = con.createStatement();
+            for (String s : sqls)
+                st.addBatch(s);
+
+            st.executeBatch();
+
+            List<Map<String, Object>> ret = null;
+            ResultSet rs = null;
+
+            if (cols != null) {
+                rs = st.getGeneratedKeys();
+                ret = new ArrayList<>(8);
+                while (rs.next())
+                    ret.add(COL_MAPPER.extract(rs));
+
+                JdbcUtil.closeResultSet(rs);
+            }
+            JdbcUtil.closeStatement(st);
+            JdbcUtil.closeConnection(con);
+
+            return ret;
+        } catch (SQLException e) {
+            throw new RuntimeException(e.getSQLState(),e);
+        }
+    }
+
     /**
      * @return Map<String, T> is the getGenerated keys
      *
@@ -208,41 +282,30 @@ public class JdbcAux implements JdbcOperations {
      *
      */
     @Override
-    public Map<String, Object> insert(final String sql, String[] cols) {
+    public Map<String, Object> insert(final String sql, final String[] cols) {
 
-        return insert(new UpdateStatementCreator() {
+        return insert(new StatementCreator() {
 
             @Override
             public PreparedStatement createStatement(Connection con)
-                    throws SQLException { throw new UnsupportedOperationException(); }
-
-            @Override
-            public PreparedStatement createUpdate(Connection con, String[] cols)
                     throws SQLException {
-                PreparedStatement ps =con.prepareStatement(sql, cols);
-                return ps;
+                return cols == null ? con.prepareStatement(sql)
+                        : con.prepareStatement(sql, cols);
             }
         }, cols, new MapExtractor(cols));
     }
 
     @Override
     public Map<String, Object> insert(final String sql,
-                                      String[] cols,
+                                      final String[] cols,
                                       final Object... params) {
-
-        return insert(new UpdateStatementCreator() {
-
+        return insert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con)
-                    throws SQLException {return null;}
-
-            @Override
-            public PreparedStatement createUpdate(Connection con, String[] cols)
                     throws SQLException {
                 PreparedStatement ps =con.prepareStatement(sql, cols);
                 setParams(ps, params);
-                return ps;
-            }
+                return ps;}
         }, cols, new MapExtractor(cols));
     }
 //-----------------------------------------------------------------------------
@@ -299,6 +362,7 @@ public class JdbcAux implements JdbcOperations {
         try {
             Connection connection = getConnection();
             PreparedStatement ps = psc.createStatement(connection);
+            configStatement(ps);
             ResultSet rs = ps.executeQuery();
             T o = null;
             if (rs.next()) {
@@ -334,12 +398,12 @@ public class JdbcAux implements JdbcOperations {
     }
 
 
-    @SuppressWarnings("resource")
     @Override
     public <T> List<T> queryForList(StatementCreator psc, RowMapping<T> mapper) {
         try {
             Connection connection = getConnection();
             PreparedStatement ps = psc.createStatement(connection);
+            configStatement(ps);
             ResultSet rs = ps.executeQuery();
             List<T> ls = new ArrayList<>(8);
             while (rs.next()) {
@@ -359,20 +423,17 @@ public class JdbcAux implements JdbcOperations {
 
     @Override
     public <T> List<T> queryForList(final String sql, Class<T> type) {
-
         return queryForList(getStatementCreator(sql), type);
     }
 
     @Override
     public <T> List<T> queryForList(String sql, Class<T> type, Object... params) {
-
         return queryForList(getStatementCreator(sql, params), type);
     }
 
 
     @Override
     public <T> List<T> queryForList(StatementCreator psc, Class<T> type) {
-
         return queryForList(psc, new SingleColumMapper<>(type));
     }
 
@@ -381,64 +442,35 @@ public class JdbcAux implements JdbcOperations {
 //						Map
 //-----------------------------------------------------------------------------
 
+    public static final RowMapping<Map<String, Object>> COL_MAPPER = new ColumnMapper();
+
+    @Override
+    public List<Map<String, Object>> queryForList(final String sql) {
+        return queryForList(sql, COL_MAPPER);
+    }
+    @Override
+    public List<Map<String, Object>> queryForList(final String sql, Object... params) {
+        return queryForList(sql, COL_MAPPER, params);
+    }
+    @Override
+    public List<Map<String, Object>> queryForList(final StatementCreator psc) {
+        return queryForList(psc, COL_MAPPER);
+    }
+
     @Override
     public Map<String, Object> queryForMap(String sql) {
-        ColumnMapper mapper = new ColumnMapper();
-        return queryForObject(sql, mapper);
+        return queryForObject(sql, COL_MAPPER);
     }
 
     @Override
     public Map<String, Object> queryForMap(String sql, Object... params) {
-        ColumnMapper mapper = new ColumnMapper();
-        return queryForObject(sql, mapper, params);
+        return queryForObject(sql, COL_MAPPER, params);
     }
 
 
     @Override
     public Map<String, Object> queryForMap(StatementCreator psc) {
-        ColumnMapper mapper = new ColumnMapper();
-        return queryForObject(psc, mapper);
-    }
-
-    @Override
-    public ResultSet queryForResultSet(String sql) {
-
-        Connection connection = getConnection();
-        ResultSet rs;
-        try {
-            rs = connection.createStatement().executeQuery(sql);
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getSQLState(), e);
-        }
-        return rs;
-    }
-
-    @Override
-    public ResultSet queryForResultSet(final String sql, final Object... params) {
-
-        return queryForResultSet(new StatementCreator() {
-
-            @Override
-            public PreparedStatement createStatement(Connection con)
-                    throws SQLException {
-                PreparedStatement ps = con.prepareStatement(sql);
-                setParams(ps, params);
-                return ps;
-            }
-        });
-    }
-
-    @Override
-    public ResultSet queryForResultSet(StatementCreator psc) {
-
-        Connection connection = getConnection();
-        ResultSet rs;
-        try {
-            rs = psc.createStatement(connection).executeQuery();
-        } catch (SQLException e) {
-            throw new RuntimeException(e.getSQLState(), e);
-        }
-        return rs;
+        return queryForObject(psc, COL_MAPPER);
     }
 
     //-----------------------------------------------------------------------------
@@ -446,7 +478,13 @@ public class JdbcAux implements JdbcOperations {
 
         if (ps != null && params != null) {
             for (int i = 0; i != params.length; ++i) {
-                ps.setObject(i + 1, params[i]);
+                Object val = params[i];
+                if (val != null)
+                    ps.setObject(i + 1, params[i]);
+                else {
+                    int type = ps.getParameterMetaData().getParameterType(i + i);
+                    ps.setNull(i + 1, type);
+                }
             }
         }
     }
@@ -463,11 +501,9 @@ public class JdbcAux implements JdbcOperations {
      */
     protected static StatementCreator getStatementCreator(final String sql) {
         return new StatementCreator() {
-
             @Override
             public PreparedStatement createStatement(Connection con)
                     throws SQLException {
-
                 return con.prepareStatement(sql);
             }
         };
