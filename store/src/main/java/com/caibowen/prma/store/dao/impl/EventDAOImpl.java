@@ -60,7 +60,7 @@ public class EventDAOImpl extends JdbcAux implements EventDAO {
 
     if property
             property id
-            event id        -> insert no key back
+            event id        -> insertAll no key back
 
 
     if exception

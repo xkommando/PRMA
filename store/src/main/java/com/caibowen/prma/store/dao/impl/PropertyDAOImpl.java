@@ -16,7 +16,7 @@ import java.util.Map;
 public class PropertyDAOImpl extends JdbcAux implements PropertyDAO {
 
     @Override
-    public boolean insert(final long eventId, final Map<String, String> prop) {
+    public boolean insertAll(final long eventId, final Map<String, String> prop) {
         batchInsert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {

@@ -2,7 +2,7 @@ package com.caibowen.prma.store.dao.impl;
 
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
-import com.caibowen.prma.common.Hashing;
+import com.caibowen.gplume.misc.Hashing;
 import com.caibowen.prma.jdbc.JdbcAux;
 import com.caibowen.prma.jdbc.StatementCreator;
 import com.caibowen.prma.store.ExceptionDO;
@@ -42,7 +42,7 @@ public class ExceptionDAOImpl extends JdbcAux implements ExceptionDAO {
         final ArrayList<ExceptionDO> vols = new ArrayList<>(16);
         IThrowableProxy px = tpox;
         while (px != null) {
-            ExceptionDO vo = getVO(px);
+            ExceptionDO vo = getDO(px);
             vols.add(vo);
             px = px.getCause();
         }
@@ -92,7 +92,7 @@ public class ExceptionDAOImpl extends JdbcAux implements ExceptionDAO {
     }
 
     //    if (event.getThrowableProxy() != null)
-    ExceptionDO getVO(@Nonnull IThrowableProxy tpox) {
+    ExceptionDO getDO(@Nonnull IThrowableProxy tpox) {
 
         ExceptionDO vo = new ExceptionDO();
         vo.timeCreated = System.currentTimeMillis();

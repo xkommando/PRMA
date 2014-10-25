@@ -11,10 +11,17 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="PRMA" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.7" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.3" level="project" />
+    <orderEntry type="module" module-name="store" />
+    <orderEntry type="library" name="Maven: com.caibowen:gplume:2.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.0" level="project" />
+    <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.2" level="project" />
+    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:5.1.33" level="project" />
   </component>
 </module>
 

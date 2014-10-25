@@ -9,5 +9,10 @@ import com.caibowen.prma.store.EventDO;
  */
 public interface EventDAO {
 
+    /**
+     * insertAll to DB, return valid id
+     * @param po
+     * @return
+     */
     long insert(EventDO po);
 }

@@ -182,7 +182,7 @@ public class JdbcAux implements JdbcOperations {
     }
 
 //-----------------------------------------------------------------------------
-//						insert
+//						insertAll
 //-----------------------------------------------------------------------------
 
 
@@ -276,7 +276,7 @@ public class JdbcAux implements JdbcOperations {
      *
      *  example:
      *
-     *  keys =insert(entity, new String[]{"id", "time_created"})
+     *  keys =insertAll(entity, new String[]{"id", "time_created"})
      *
      *  entityId = keys.get("id");
      *

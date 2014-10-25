@@ -5,10 +5,10 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import com.caibowen.prma.store.dao.*;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.Map;
 
 /**
+ * main class for LogEvent storage
  * @author BowenCai
  * @since 23-10-2014.
  */
@@ -29,13 +29,13 @@ public class EventPersist {
 
     public void xxxxxxxx(ILoggingEvent event) {
 
-        EventDO po = getVO(event);
+        EventDO po = getDO(event);
         final long evId = eventDAO.insert(po);
 
 
         Map<String, String> prop = LogEventAux.extractProperties(event);
         if (prop != null)
-            if (! propertyDAO.insert(evId, prop))
+            if (! propertyDAO.insertAll(evId, prop))
                 ; // error
 
         IThrowableProxy tpox = event.getThrowableProxy();
@@ -46,7 +46,7 @@ public class EventPersist {
     }
 
 
-    private EventDO getVO(ILoggingEvent event) {
+    private EventDO getDO(ILoggingEvent event) {
 
         EventDO vo = new EventDO();
         vo.timeCreated = System.currentTimeMillis();

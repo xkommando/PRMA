@@ -12,8 +12,6 @@ public class EventDO implements Serializable {
 
     private static final long serialVersionUID = -8809863102710979910L;
 
-//    private static final serializationID = ??
-
     /**
      *  auto generated
      */
