@@ -1,5 +1,6 @@
 package com.caibowen.prma.store.dao.impl;
 
+import com.caibowen.gplume.common.Pair;
 import com.caibowen.prma.jdbc.JdbcAux;
 import com.caibowen.prma.jdbc.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
@@ -9,8 +10,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,6 +22,13 @@ import java.util.Set;
  * @since 23-10-2014.
  */
 public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
+
+    public static final RowMapping<Pair<Integer, String> > PAIR_MAPPING = new RowMapping<Pair<Integer, String>>() {
+        @Override
+        public Pair<Integer, String> extract(ResultSet rs) throws SQLException {
+            return new Pair<>(rs.getInt(1), rs.getString(2));
+        }
+    };
 
     private final String tableName;
 
@@ -67,32 +77,41 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
 
     @Nonnull
     @Override
-    public Set<Integer> keys() {
-        return new HashSet<Integer>(
-        queryForList(new StatementCreator() {
+    public List<Integer> keys() {
+        return queryForList(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
                         "SELECT `id` FROM " + tableName);
                 return ps;
             }
-        }, RowMapping.INT_ROW_MAPPING)
-        );
+        }, RowMapping.INT_ROW_MAPPING);
     }
 
     @Nonnull
     @Override
-    public Set<String> values() {
-        return new HashSet<String>(
-                queryForList(new StatementCreator() {
+    public List<String> values() {
+        return queryForList(new StatementCreator() {
                     @Override
                     public PreparedStatement createStatement(Connection con) throws SQLException {
                         PreparedStatement ps = con.prepareStatement(
                                 "SELECT `value` FROM " + tableName);
                         return ps;
                     }
-                }, RowMapping.STR_ROW_MAPPING)
-        );
+                }, RowMapping.STR_ROW_MAPPING);
+    }
+
+    @Nonnull
+    @Override
+    public List<Pair<Integer, String>> entries() {
+        return queryForList(new StatementCreator() {
+            @Override
+            public PreparedStatement createStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT `value` FROM " + tableName);
+                return ps;
+            }
+        }, PAIR_MAPPING);
     }
 
     @Nonnull

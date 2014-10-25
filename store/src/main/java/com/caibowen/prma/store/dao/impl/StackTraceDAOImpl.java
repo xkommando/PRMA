@@ -1,5 +1,6 @@
 package com.caibowen.prma.store.dao.impl;
 
+import com.caibowen.gplume.common.Pair;
 import com.caibowen.prma.jdbc.JdbcAux;
 import com.caibowen.prma.jdbc.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
@@ -11,9 +12,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author BowenCai
@@ -21,7 +21,7 @@ import java.util.Set;
  */
 public class StackTraceDAOImpl extends JdbcAux implements StackTraceDAO {
 
-    public static final RowMapping<StackTraceElement> MAPPING = new RowMapping<StackTraceElement>() {
+    public static final RowMapping<StackTraceElement> ST_MAPPING = new RowMapping<StackTraceElement>() {
         @Override
         public StackTraceElement extract(ResultSet rs) throws SQLException {
             String file = rs.getString(1);
@@ -30,6 +30,14 @@ public class StackTraceDAOImpl extends JdbcAux implements StackTraceDAO {
             int line = rs.getInt(4);
 
             return new StackTraceElement(klass, func, file, line);
+        }
+    };
+
+    public static final RowMapping<Pair<Integer, StackTraceElement>> PAIR_MAPPING = new RowMapping<Pair<Integer, StackTraceElement>>() {
+        @Override
+        public Pair<Integer, StackTraceElement> extract(ResultSet rs) throws SQLException {
+            int id = rs.getInt(5);
+            return new Pair<>(id, ST_MAPPING.extract(rs));
         }
     };
 
@@ -61,37 +69,46 @@ public class StackTraceDAOImpl extends JdbcAux implements StackTraceDAO {
                         "SELECT `file`,`class`,`function`,`line` FROM `stack_trace` WHERE id=" + key);
                 return ps;
             }
-        }, MAPPING);
+        }, ST_MAPPING);
     }
 
     @Nonnull
     @Override
-    public Set<Integer> keys() {
-        return new HashSet<Integer>(
-                queryForList(new StatementCreator() {
-                    @Override
-                    public PreparedStatement createStatement(Connection con) throws SQLException {
-                        PreparedStatement ps = con.prepareStatement(
-                                "SELECT `id` FROM `stack_trace`");
-                        return ps;
-                    }
-                }, RowMapping.INT_ROW_MAPPING)
-        );
+    public List<Integer> keys() {
+        return queryForList(new StatementCreator() {
+            @Override
+            public PreparedStatement createStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT `id` FROM `stack_trace`");
+                return ps;
+            }
+        }, RowMapping.INT_ROW_MAPPING);
     }
 
     @Nonnull
     @Override
-    public Set<StackTraceElement> values() {
-        return new HashSet<StackTraceElement>(
-                queryForList(new StatementCreator() {
-                    @Override
-                    public PreparedStatement createStatement(Connection con) throws SQLException {
-                        PreparedStatement ps = con.prepareStatement(
-                                "SELECT `file`,`class`,`function`,`line` FROM `stack_trace`");
-                        return ps;
-                    }
-                }, MAPPING)
-        );
+    public List<StackTraceElement> values() {
+        return queryForList(new StatementCreator() {
+            @Override
+            public PreparedStatement createStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT `file`,`class`,`function`,`line` FROM `stack_trace`");
+                return ps;
+            }
+        }, ST_MAPPING);
+    }
+
+    @Nonnull
+    @Override
+    public List<Pair<Integer, StackTraceElement>> entries() {
+        return queryForList(new StatementCreator() {
+            @Override
+            public PreparedStatement createStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT `file`,`class`,`function`,`line`,`id` FROM `stack_trace`");
+                return ps;
+            }
+        }, PAIR_MAPPING);
     }
 
     @Nonnull

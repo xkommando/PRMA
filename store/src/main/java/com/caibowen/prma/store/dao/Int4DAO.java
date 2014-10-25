@@ -1,8 +1,12 @@
 package com.caibowen.prma.store.dao;
 
+import com.caibowen.gplume.common.Pair;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,11 +30,16 @@ public interface Int4DAO<V> {
     get(int key);
 
     @Nonnull
-    Set<Integer>
+    List<Integer>
     keys();
 
-    @Nonnull Set<V>
+    @Nonnull
+    List<V>
     values();
+
+    @Nonnull
+    List<Pair<Integer, V>>
+    entries();
 
     @Nonnull boolean
     putIfAbsent(int key, @Nonnull final V value);
