@@ -27,7 +27,7 @@ public class EventDAOImpl extends JdbcAux implements EventDAO {
                 PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO `event`(" +
                 "`time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`" +
-               ", `flag`, `message`)VALUES(?,?,?,?,?,?,?)");
+               ", `flag`, `message`)VALUES(?,?,?,?,?,?,?)", AUTO_GEN_ID);
                 ps.setLong(1, po.timeCreated);
                 ps.setByte(2, po.level);
                 ps.setInt(3, po.loggerId);

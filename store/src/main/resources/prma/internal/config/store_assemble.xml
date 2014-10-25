@@ -20,11 +20,11 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="eventDAO" class="com.caibowen.prma.store.dao.impl.EventDAOImpl">
+    <bean id="stackTraceDAO" class="com.caibowen.prma.store.dao.impl.StackTraceDAOImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="stackTraceDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+    <bean id="eventDAO" class="com.caibowen.prma.store.dao.impl.EventDAOImpl">
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
@@ -45,7 +45,7 @@
         <property name="stackTraceDAO" ref="stackTraceDAO"/>
         <property name="propertyDAO" ref="propertyDAO"/>
         <property name="eventDAO" ref="eventDAO"/>
-        <property name="ExceptionDAO" ref="ExceptionDAO"/>
+        <property name="exceptionDAO" ref="exceptionDAO"/>
     </bean>
 
 </beans>

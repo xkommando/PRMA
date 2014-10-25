@@ -39,7 +39,7 @@ public class StackTraceDAOImpl extends JdbcAux implements StackTraceDAO {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "SELECT COUNT (1) FROM `stack_trace` WHERE id = " + key);
+                        "SELECT count(1) FROM `stack_trace` WHERE id = " + key);
 
                 return ps;
             }
@@ -101,7 +101,7 @@ public class StackTraceDAOImpl extends JdbcAux implements StackTraceDAO {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "INSERT INTO `stack_trace`(`id`,`file`,`class`,`function`,`line`)VALUES(?,?,?,?)");
+                        "INSERT INTO `stack_trace`(`id`,`file`,`class`,`function`,`line`)VALUES(?,?,?,?,?)");
                 ps.setLong(1, value.hashCode());
                 ps.setString(2, value.getFileName());
                 ps.setString(3, value.getClassName());

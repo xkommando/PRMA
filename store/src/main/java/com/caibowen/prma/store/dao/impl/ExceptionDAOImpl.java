@@ -2,6 +2,7 @@ package com.caibowen.prma.store.dao.impl;
 
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
+import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.gplume.misc.Hashing;
 import com.caibowen.prma.jdbc.JdbcAux;
 import com.caibowen.prma.jdbc.StatementCreator;
@@ -12,6 +13,7 @@ import com.caibowen.prma.store.dao.StackTraceDAO;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.nio.IntBuffer;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -62,8 +64,7 @@ public class ExceptionDAOImpl extends JdbcAux implements ExceptionDAO {
                     ps.setInt(3, vo.exceptName);
                     ps.setInt(4, vo.exceptMsg);
 
-                    byte[] buf = new byte[vo.stackTraces.length * 4];
-                    System.arraycopy(vo.stackTraces, 0, buf, 0, vo.stackTraces.length * 4);
+                    byte[] buf = Bytes.int2byte(vo.stackTraces);
                     ps.setBytes(5, buf);
 
                     ps.addBatch();

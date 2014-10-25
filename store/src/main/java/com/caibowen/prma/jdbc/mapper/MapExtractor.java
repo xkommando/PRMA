@@ -1,6 +1,7 @@
 package com.caibowen.prma.jdbc.mapper;
 
-import com.caibowen.prma.common.NoCaseMap;
+
+import com.caibowen.gplume.common.NoCaseMap;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

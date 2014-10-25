@@ -9,7 +9,7 @@
  *     Bowen Cai - initial API and implementation
  ******************************************************************************/
 package com.caibowen.prma.jdbc.mapper;
-import com.caibowen.prma.common.NoCaseMap;
+import com.caibowen.gplume.common.NoCaseMap;
 import com.caibowen.prma.jdbc.JdbcUtil;
 
 import java.sql.ResultSet;

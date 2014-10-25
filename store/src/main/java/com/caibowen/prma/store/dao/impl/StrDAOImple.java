@@ -32,7 +32,7 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "SELECT COUNT (1) FROM " + tableName + " WHERE id = " + key);
+                        "SELECT count(1) FROM " + tableName + " WHERE id = " + key);
 
                 return ps;
             }
