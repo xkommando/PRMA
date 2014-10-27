@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <beans>
 
-    <!--DataSource shall be added to this context before century-->
+    <!--DataSource shall be added to this context BEFORE CENTURY-->
 
     <bean id="exceptNameDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
         <construct value="exception_name"/>
@@ -39,7 +39,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="eventPersist" class="com.caibowen.prma.store.EventPersist">
+    <bean id="eventPersist" class="com.caibowen.prma.store.EventPersistImpl">
         <property name="threadDAO" ref="threadDAO"/>
         <property name="loggerDAO" ref="loggerDAO"/>
         <property name="stackTraceDAO" ref="stackTraceDAO"/>

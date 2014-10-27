@@ -1,6 +1,9 @@
 package com.caibowen.prma.logger;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.caibowen.prma.store.EventPersistImpl;
+
+import javax.inject.Inject;
 
 /**
  * @author BowenCai
@@ -9,7 +12,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 public class DBAppender extends AsyncAppenderWrapper<ILoggingEvent> {
 
 
-    EventPersist persister;
+    @Inject
+    EventPersistImpl persister;
 
 
     @Override

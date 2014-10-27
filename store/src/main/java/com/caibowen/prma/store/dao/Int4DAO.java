@@ -1,18 +1,20 @@
 package com.caibowen.prma.store.dao;
 
-import com.caibowen.gplume.common.Pair;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  *
- * WARN: a 32-bit int is used to identify a string key, possible hash collision !
+ * in the database, the actual key is not stored,
+ * the hashCode() of the actual key is inserted as the id of the value.
+ *
+ * WARN:
+ * 1. a 32-bit int is used to identify a string key, possible hash collision !
+ * 2. the hashCode() of some java class, e.g., java.lang.String, is not standardized,
+ *      and is implementation dependent.
  *
  * @author BowenCai
  * @since 22-10-2014.
@@ -38,15 +40,15 @@ public interface Int4DAO<V> {
     values();
 
     @Nonnull
-    List<Pair<Integer, V>>
+    Map<Integer, V>
     entries();
 
     @Nonnull boolean
     putIfAbsent(int key, @Nonnull final V value);
 
 
-    @Nonnull boolean
-    putAll(final Map<Integer, V> map);
+    boolean
+    putAll(@Nonnull final Map<Integer, V> map);
 
     @Nonnull boolean
     update(int key, @Nonnull V value);

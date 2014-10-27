@@ -1,7 +1,7 @@
 package com.caibowen.prma.store.dao.impl;
 
 import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.StatementCreator;
+import com.caibowen.prma.jdbc.callback.StatementCreator;
 import com.caibowen.prma.store.dao.PropertyDAO;
 
 import java.sql.Connection;

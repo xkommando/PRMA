@@ -1,21 +1,29 @@
 package com.caibowen.prma.store.dao.impl.cao;
 
-import com.caibowen.gplume.common.Pair;
 import com.caibowen.prma.store.dao.Int4DAO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
+ *
+ * all data is stored in the memory, read operations only reach the memory
+ * when write data, the value is write through to the DB.
+ *
+ * for logger name, thread name, exception name
+ *
  * @author BowenCai
  * @since 26-10-2014.
  */
-public class BaseInt4FullCAO<V> implements Int4DAO<V> {
+public class Int4FullCAO<V> implements Int4DAO<V> {
 
     @Inject Int4DAO<V> db;
 
@@ -23,11 +31,7 @@ public class BaseInt4FullCAO<V> implements Int4DAO<V> {
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
     synchronized public void init() {
-        List<Pair<Integer, V>> ls = db.entries();
-        if (ls != null)
-            mem = new HashMap<>(ls.size() * 4 / 3 + 2);
-        for (Pair<Integer, V> p : ls)
-            mem.put(p.first, p.second);
+        mem.putAll(db.entries());
     }
 
     @Override
@@ -60,16 +64,10 @@ public class BaseInt4FullCAO<V> implements Int4DAO<V> {
 
     @Nonnull
     @Override
-    public List<Pair<Integer, V>> entries() {
-        Set<Map.Entry<Integer, V>> s = mem.entrySet();
-        List<Pair<Integer, V>> ls = new ArrayList<>(s.size());
-        for (Map.Entry<Integer, V> e : s)
-            ls.add(new Pair<Integer, V>(e.getKey(), e.getValue()));
-
-        return ls;
+    public Map<Integer, V> entries() {
+        return Collections.unmodifiableMap(mem);
     }
 
-    @Nonnull
     @Override
     public boolean putIfAbsent(int key, @Nonnull V value) {
         boolean ret = true;
@@ -81,9 +79,8 @@ public class BaseInt4FullCAO<V> implements Int4DAO<V> {
         return ret;
     }
 
-    @Nonnull
     @Override
-    public boolean putAll(Map<Integer, V> map) {
+    public boolean putAll(@Nonnull Map<Integer, V> map) {
         return false;
     }
 

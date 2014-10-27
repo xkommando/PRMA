@@ -10,6 +10,7 @@
  ******************************************************************************/
 package com.caibowen.prma.jdbc;
 
+import com.caibowen.prma.jdbc.callback.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
 
 import java.util.List;
@@ -23,52 +24,48 @@ import java.util.Map;
  */
 public interface JdbcOperations {
 
-	boolean execute(final String sql);
-    boolean execute(final String sql, final Object... params);
-	boolean execute(StatementCreator creator);
-    int[] batchExecute(StatementCreator creator);
+    boolean execute(StatementCreator creator);// 1
+    int[] batchExecute(StatementCreator creator);// 2
+//    int[] batchExecute(String[] sqls);//
 
-	int update(final String sql);
-    int[] batchUpdate(final String... sql);
-	int update(final String sql, Object... params);
-	int update(StatementCreator creator);
-    int[] batchUpdate(StatementCreator creator);
+	boolean execute(String sql);
+    boolean execute(String sql, Object... params);
 
-	Map<String, Object> insert(final String sql, final String[] cols);
-	Map<String, Object> insert(final String sql, final String[] cols, Object... params);
-    <T> T insert(StatementCreator creator, final String[] cols, RowMapping<T> resultExtract);
-    List<Map<String, Object>> batchInsert(String[] sqls, String[] cols);
-    <T> List<T> batchInsert(StatementCreator creator, final String cols[], RowMapping<T> extractor);
+    <T> T insert(StatementCreator creator, String[] cols, RowMapping<T> resultExtract);// 3
+
+	Map<String, Object> insert(String sql, String[] cols);
+	Map<String, Object> insert(String sql, String[] cols, Object... params);
+
+//    List<Map<String, Object>> batchInsert(String[] sqls, String[] cols);//
+    <T> List<T> batchInsert(StatementCreator creator, String cols[], RowMapping<T> extractor);// 4
+
+    List<Map<String, Object>> batchInsert(StatementCreator creator, String[] cols);
 
 
-	<T> T queryForObject(final String sql, Class<T> type);
-	<T> T queryForObject(final String sql, Class<T> type, final Object... params);
-	<T> T queryForObject(final StatementCreator psc, Class<T> type);
+    <T> T queryForObject(StatementCreator psc, RowMapping<T> mapper); // 5
+	<T> T queryForObject(String sql, Class<T> type);
+	<T> T queryForObject(String sql, Class<T> type, Object... params);
+	<T> T queryForObject(StatementCreator psc, Class<T> type);
 	
-	<T> T queryForObject(final String sql, RowMapping<T> mapper);
-	<T> T queryForObject(final String sql, RowMapping<T> mapper, Object... params);
-	<T> T queryForObject(final StatementCreator psc, RowMapping<T> mapper);
+	<T> T queryForObject(String sql, RowMapping<T> mapper);
+	<T> T queryForObject(String sql, RowMapping<T> mapper, Object... params);
+
+    <T> List<T> queryForList(StatementCreator psc, RowMapping<T> mapper);// 6
+
+	<T> List<T> queryForList(String sql, Class<T> type);
+	<T> List<T> queryForList(String sql, Class<T> type, Object... params);
+	<T> List<T> queryForList(StatementCreator psc, Class<T> type);
 	
-	<T> List<T> queryForList(final String sql, Class<T> type);
-	<T> List<T> queryForList(final String sql, Class<T> type, final Object... params);
-	<T> List<T> queryForList(final StatementCreator psc, Class<T> type);
-	
-	<T> List<T> queryForList(final String sql, RowMapping<T> mapper);
-	<T> List<T> queryForList(final String sql, RowMapping<T> mapper, Object... params);
-	<T> List<T> queryForList(final StatementCreator psc, RowMapping<T> mapper);
+	<T> List<T> queryForList(String sql, RowMapping<T> mapper);
+	<T> List<T> queryForList(String sql, RowMapping<T> mapper, Object... params);
 
-    List<Map<String, Object>> queryForList(final String sql);
-    List<Map<String, Object>> queryForList(final String sql, Object... params);
-    List<Map<String, Object>> queryForList(final StatementCreator psc);
+    List<Map<String, Object>> queryForList(String sql);
+    List<Map<String, Object>> queryForList(String sql, Object... params);
+    List<Map<String, Object>> queryForList(StatementCreator psc);
 
 
-	Map<String, Object> queryForMap(final String sql);
-	Map<String, Object> queryForMap(final String sql, Object... params);
-	Map<String, Object> queryForMap(final StatementCreator psc);
-
-	
-//	ResultSet queryForResultSet(final String sql);
-//	ResultSet queryForResultSet(final String sql, Object... params);
-//	ResultSet queryForResultSet(final StatementCreator psc);
+	Map<String, Object> queryForMap(String sql);
+	Map<String, Object> queryForMap(String sql, Object... params);
+	Map<String, Object> queryForMap(StatementCreator psc);
 	
 }

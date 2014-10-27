@@ -2,7 +2,7 @@ package com.caibowen.prma.store.dao.impl;
 
 import com.caibowen.gplume.common.Pair;
 import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.StatementCreator;
+import com.caibowen.prma.jdbc.callback.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
 import com.caibowen.prma.store.dao.StackTraceDAO;
 
@@ -12,6 +12,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -100,8 +102,8 @@ public class StackTraceDAOImpl extends JdbcAux implements StackTraceDAO {
 
     @Nonnull
     @Override
-    public List<Pair<Integer, StackTraceElement>> entries() {
-        return queryForList(new StatementCreator() {
+    public Map<Integer, StackTraceElement> entries() {
+        List<Pair<Integer, StackTraceElement>> ls = queryForList(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -109,6 +111,13 @@ public class StackTraceDAOImpl extends JdbcAux implements StackTraceDAO {
                 return ps;
             }
         }, PAIR_MAPPING);
+        if (ls.size() == 0)
+            return Collections.emptyMap();
+
+        HashMap<Integer, StackTraceElement> map = new HashMap<>(ls.size() * 4 / 3 + 1);
+        for (Pair<Integer, StackTraceElement> p : ls)
+            map.put(p.first, p.second);
+        return map;
     }
 
     @Nonnull

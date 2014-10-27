@@ -39,7 +39,7 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="eventPersist" class="com.caibowen.prma.store.EventPersist">
+    <bean id="eventPersist" class="com.caibowen.prma.store.EventPersistImpl">
         <property name="threadDAO" ref="threadDAO"/>
         <property name="loggerDAO" ref="loggerDAO"/>
         <property name="stackTraceDAO" ref="stackTraceDAO"/>

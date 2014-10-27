@@ -2,7 +2,7 @@ package com.caibowen.prma.store.dao.impl;
 
 import com.caibowen.gplume.common.Pair;
 import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.StatementCreator;
+import com.caibowen.prma.jdbc.callback.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
 import com.caibowen.prma.store.dao.Int4DAO;
 
@@ -12,10 +12,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author BowenCai
@@ -69,7 +69,7 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "SELECT `value` FROM " + tableName + " WHERE id=" + key);
+                        "SELECT `value` FROM " + tableName + " WHERE id=" + key + " LIMIT 1");
                 return ps;
             }
         }, RowMapping.STR_ROW_MAPPING);
@@ -103,8 +103,8 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
 
     @Nonnull
     @Override
-    public List<Pair<Integer, String>> entries() {
-        return queryForList(new StatementCreator() {
+    public Map<Integer, String> entries() {
+        List<Pair<Integer, String>> ls = queryForList(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -112,9 +112,15 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
                 return ps;
             }
         }, PAIR_MAPPING);
+        if (ls.size() == 0)
+            return Collections.emptyMap();
+
+        HashMap<Integer, String> map = new HashMap<>(ls.size() * 4 / 3 + 1);
+        for (Pair<Integer, String> p : ls)
+            map.put(p.first, p.second);
+        return map;
     }
 
-    @Nonnull
     @Override
     public boolean putIfAbsent(final int key, @Nonnull final String value) {
         return hasKey(key) || execute(new StatementCreator() {
@@ -129,9 +135,9 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
         });
     }
 
-    @Nonnull
+
     @Override
-    public boolean putAll(final Map<Integer, String> map) {
+    public boolean putAll(@Nonnull final Map<Integer, String> map) {
 
         batchInsert(new StatementCreator() {
             @Override

@@ -1,4 +1,4 @@
-package com.caibowen.prma.jdbc;
+package com.caibowen.prma.jdbc.callback;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

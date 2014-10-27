@@ -11,13 +11,13 @@
 
     <modules>
         <module>api</module>
+        <module>store</module>
         <module>logger</module>
         <module>monitor</module>
         <module>analyser</module>
     </modules>
 
     <dependencies>
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

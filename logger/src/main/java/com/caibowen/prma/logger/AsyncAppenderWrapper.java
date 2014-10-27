@@ -69,7 +69,12 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
                 addInfo("executor will flush remaining events before exiting. ");
 
                 for (E e : eventQ) {
-                    passOnEvent(e);
+                    try {
+                        passOnEvent(e);
+                    } catch (Throwable t) {
+                        err.print("error fetching event from queue");
+                        continue;
+                    }
                 }
                 appList.clear();
             }
@@ -100,13 +105,13 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
     public void stop() {
         if (started == false)
             return;
-
+        started = false;
         super.stop();
 
         try {
             executor.awaitTermination(flushTime, TimeUnit.MILLISECONDS);
             executor.shutdown();
-            if (executor.isTerminated())
+            if (! executor.isTerminated())
                 addWarn("Max queue flush timeout (" + flushTime + " ms) exceeded. Approximately "
                         + eventQ.size() +
                         " queued events were possibly discarded.");
@@ -122,6 +127,29 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
 //-----------------------------------------------------------------------------
 //      properties to be set;
 
+    public int getFlushTime() {
+        return flushTime;
+    }
+
+    public void setFlushTime(int flushTime) {
+        this.flushTime = flushTime;
+    }
+
+    public int getQueueSize() {
+        return queueSize;
+    }
+
+    public void setQueueSize(int queueSize) {
+        this.queueSize = queueSize;
+    }
+
+    public int getThreadNumber() {
+        return threadNumber;
+    }
+
+    public void setThreadNumber(int threadNumber) {
+        this.threadNumber = threadNumber;
+    }
 
 
 //-----------------------------------------------------------------------------
