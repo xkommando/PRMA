@@ -2,7 +2,7 @@ package com.caibowen.prma.store.dao.impl;
 
 import com.caibowen.gplume.common.Pair;
 import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.callback.StatementCreator;
+import com.caibowen.prma.jdbc.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
 import com.caibowen.prma.store.dao.Int4DAO;
 

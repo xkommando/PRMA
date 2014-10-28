@@ -10,6 +10,9 @@
  ******************************************************************************/
 package com.caibowen.prma.jdbc;
 
+import com.caibowen.prma.jdbc.transaction.SyncCenter;
+
+import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.*;
 /**
@@ -20,29 +23,56 @@ import java.sql.*;
  */
 public class JdbcUtil {
 
+    public static Connection acquireConnection(DataSource dataSource) throws SQLException{
+        ConnectionHolder holder = (ConnectionHolder) SyncCenter.get(dataSource);
+        if (holder != null) {
+            holder.addRef();
+            if (holder.currentCon == null)
+                holder.currentCon = dataSource.getConnection();
+            return holder.currentCon;
+        }
+        holder = new ConnectionHolder(dataSource.getConnection());
+        holder.isSync = true;
+        holder.addRef();
+        SyncCenter.add(dataSource, holder);
+        SyncCenter.setSync(true);
+        return holder.currentCon;
+    }
 
-	public static void closeConnection(Connection con) {
-		
-		if (con != null) {
-			try {
-				con.close();
-			}
-			catch (SQLException e) {
-				throw new RuntimeException(e.getSQLState() 
-										+ "\nCaused by\n"
-										+ e.getCause(), e);
-			}
-			finally {
-				try {
-					con.close();
-				} catch (SQLException e) {
-					throw new RuntimeException(e.getSQLState() 
-						+ "\nCaused by\n"
-						+ e.getCause(), e);
-				}
-			}
-		}
-	}
+    public static void releaseConnection(Connection con, DataSource dataSource) throws SQLException {
+        if (con == null)
+            return;
+        ConnectionHolder holder = (ConnectionHolder) SyncCenter.get(dataSource);
+        if (holder != null && (con == holder.currentCon || con.equals(holder.currentCon))) {
+            holder.deRef();
+            return;
+        }
+        con.close();
+    }
+
+//
+//	public static void closeConnection(Connection con) {
+//
+//		if (con != null) {
+//			try {
+//				con.close();
+//			}
+//			catch (SQLException e) {
+//				throw new RuntimeException(e.getSQLState()
+//										+ "\nCaused by\n"
+//										+ e.getCause(), e);
+//			}
+//			finally {
+//				try {
+//					con.close();
+//				} catch (SQLException e) {
+//					throw new RuntimeException(e.getSQLState()
+//						+ "\nCaused by\n"
+//						+ e.getCause(), e);
+//				}
+//			}
+//		}
+//	}
 
 
 	public static void closeStatement(Statement stmt) {

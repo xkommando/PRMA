@@ -10,7 +10,6 @@
  ******************************************************************************/
 package com.caibowen.prma.jdbc;
 
-import com.caibowen.prma.jdbc.callback.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
 
 import java.util.List;

@@ -5,7 +5,7 @@ import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.gplume.misc.Hashing;
 import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.callback.StatementCreator;
+import com.caibowen.prma.jdbc.StatementCreator;
 import com.caibowen.prma.store.ExceptionDO;
 import com.caibowen.prma.store.dao.ExceptionDAO;
 import com.caibowen.prma.store.dao.Int4DAO;

@@ -10,11 +10,12 @@
  ******************************************************************************/
 package com.caibowen.prma.jdbc;
 
-import com.caibowen.prma.jdbc.callback.StatementCreator;
 import com.caibowen.prma.jdbc.mapper.ColumnMapper;
 import com.caibowen.prma.jdbc.mapper.MapExtractor;
 import com.caibowen.prma.jdbc.mapper.RowMapping;
 import com.caibowen.prma.jdbc.mapper.SingleColumMapper;
+import com.caibowen.prma.jdbc.transaction.SyncCenter;
+import com.caibowen.prma.jdbc.transaction.TransactionConfig;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -40,7 +41,7 @@ public class JdbcAux implements JdbcOperations {
 //-----------------------------------------------------------------------------
 
     private DataSource dataSource;
-    private int queryTimeOut;
+    private int queryTimeout;
     private int maxRow = 0;
     private int fetchSize = 0;
 
@@ -56,11 +57,11 @@ public class JdbcAux implements JdbcOperations {
     public void setMaxRow(int maxRow) {
         this.maxRow = maxRow;
     }
-    public int getQueryTimeOut() {
-        return queryTimeOut;
+    public int getQueryTimeout() {
+        return queryTimeout;
     }
-    public void setQueryTimeOut(int queryTimeOut) {
-        this.queryTimeOut = queryTimeOut;
+    public void setQueryTimeout(int queryTimeout) {
+        this.queryTimeout = queryTimeout;
     }
     public DataSource getDataSource() {
         return dataSource;
@@ -75,23 +76,45 @@ public class JdbcAux implements JdbcOperations {
             st.setMaxRows(maxRow);
         if (fetchSize > 0)
             st.setFetchSize(fetchSize);
+        ConnectionHolder holder = SyncCenter.get(dataSource);
 
-        // ???
-
+        int timeout = TransactionConfig.DEFAULT_TIMEOUT;
+        if (holder != null && holder.queryTimeout != timeout)
+            timeout = holder.queryTimeout;
+        else if (queryTimeout != timeout)
+            timeout = queryTimeout;
+        st.setQueryTimeout(timeout);
     }
 
 
-    public Connection getConnection() {
+    public Connection acquireConnection() {
         try {
-            ConnectionHolder holder = (ConnectionHolder)SyncCenter.get(dataSource);
-            if (holder == null) {
-                holder = new ConnectionHoler();
-            }
-            return this.dataSource.getConnection();
+            return JdbcUtil.acquireConnection(dataSource);
         } catch (SQLException e) {
-            throw new RuntimeException(e.getSQLState(), e);
+            throw new JdbcException("Could not get JDBC Connection", e);
         }
     }
+
+    public void releaseConnection(Connection con) {
+        try {
+            JdbcUtil.releaseConnection(con, dataSource);
+        } catch (SQLException ex) {
+//            logger.debug("Could not close JDBC Connection", ex);
+        } catch (Throwable ex) {
+//            logger.debug("Unexpected exception on closing JDBC Connection", ex);
+        }
+    }
+
+    public void closeStmt(Statement stmt) {
+        if (stmt == null)
+            return;
+        try {
+            stmt.close();
+        } catch (SQLException e) {
+            // LOGGGGGGGGGGGGGGGGGGG
+        }
+    }
+
 
 //-----------------------------------------------------------------------------
 //						execute
@@ -102,28 +125,33 @@ public class JdbcAux implements JdbcOperations {
      */
     @Override
     public boolean execute(StatementCreator psc) {
+        Connection connection = null;
+        PreparedStatement st = null;
         try {
-            Connection connection = getConnection();
-            PreparedStatement st = psc.createStatement(connection);
+            connection = acquireConnection();
+            st = psc.createStatement(connection);
             configStatement(st);
             boolean out = st.execute();
-            JdbcUtil.closeStatement(st);
-            JdbcUtil.closeConnection(connection);
             return out;
         } catch (SQLException e) {
-            throw new RuntimeException(e.getSQLState(), e);
+            closeStmt(st);
+            releaseConnection(connection);
+            throw new RuntimeException(e);
+        } finally {
+            closeStmt(st);
+            releaseConnection(connection);
         }
     }
 
     @Override
     public int[] batchExecute(StatementCreator creator) {
         try {
-            Connection connection = getConnection();
+            Connection connection = acquireConnection();
             Statement st = creator.createStatement(connection);
 //            configStatement(st);
             int[] out = st.executeBatch();
             JdbcUtil.closeStatement(st);
-            JdbcUtil.closeConnection(connection);
+            JdbcUtil.releaseConnection(connection, dataSource);
             return out;
         } catch (SQLException e) {
             throw new RuntimeException(e.getSQLState(), e);
@@ -136,7 +164,7 @@ public class JdbcAux implements JdbcOperations {
     @Override
     public <T> T insert(StatementCreator psc, final String[] cols, RowMapping<T> resultExtract) {
         try {
-            Connection connection = getConnection();
+            Connection connection = acquireConnection();
 
             PreparedStatement ps = psc.createStatement(connection);
             configStatement(ps);
@@ -152,7 +180,7 @@ public class JdbcAux implements JdbcOperations {
                 JdbcUtil.closeResultSet(rs);
             }
             JdbcUtil.closeStatement(ps);
-            JdbcUtil.closeConnection(connection);
+            JdbcUtil.releaseConnection(connection, dataSource);
 
             return ret;
         } catch (SQLException e) {
@@ -163,7 +191,7 @@ public class JdbcAux implements JdbcOperations {
     @Override
     public  <T> List<T> batchInsert(StatementCreator creator, final String cols[], RowMapping<T> extractor) {
         try {
-            Connection connection = getConnection();
+            Connection connection = acquireConnection();
 
             PreparedStatement ps = creator.createStatement(connection);
             ps.executeBatch();
@@ -180,7 +208,7 @@ public class JdbcAux implements JdbcOperations {
                 JdbcUtil.closeResultSet(rs);
             }
             JdbcUtil.closeStatement(ps);
-            JdbcUtil.closeConnection(connection);
+            JdbcUtil.releaseConnection(connection, dataSource);
 
             return ret;
         } catch (SQLException e) {
@@ -191,7 +219,7 @@ public class JdbcAux implements JdbcOperations {
     @Override
     public <T> T queryForObject(StatementCreator psc, RowMapping<T> mapper) {
         try {
-            Connection connection = getConnection();
+            Connection connection = acquireConnection();
             PreparedStatement ps = psc.createStatement(connection);
             configStatement(ps);
             ResultSet rs = ps.executeQuery();
@@ -202,7 +230,7 @@ public class JdbcAux implements JdbcOperations {
             }
             JdbcUtil.closeResultSet(rs);
             JdbcUtil.closeStatement(ps);
-            JdbcUtil.closeConnection(connection);
+            JdbcUtil.releaseConnection(connection, dataSource);
             return o;
         } catch (SQLException e) {
             throw new RuntimeException(e.getSQLState()
@@ -214,7 +242,7 @@ public class JdbcAux implements JdbcOperations {
     @Override
     public <T> List<T> queryForList(StatementCreator psc, RowMapping<T> mapper) {
         try {
-            Connection connection = getConnection();
+            Connection connection = acquireConnection();
             PreparedStatement ps = psc.createStatement(connection);
             configStatement(ps);
             ResultSet rs = ps.executeQuery();
@@ -224,7 +252,7 @@ public class JdbcAux implements JdbcOperations {
             }
             JdbcUtil.closeResultSet(rs);
             JdbcUtil.closeStatement(ps);
-            JdbcUtil.closeConnection(connection);
+            JdbcUtil.releaseConnection(connection, dataSource);
             return ls;
         } catch (SQLException e) {
             throw new RuntimeException(e.getSQLState(), e);
@@ -234,7 +262,7 @@ public class JdbcAux implements JdbcOperations {
 //    @Override
 //    public int [] batchExecute(String[] sqls) {
 //        try {
-//            Connection connection = getConnection();
+//            Connection connection = acquireConnection();
 //            Statement stmt = connection.createStatement();
 //            for (String string : sqls) {
 //                stmt.addBatch(string);
@@ -252,7 +280,7 @@ public class JdbcAux implements JdbcOperations {
     //    @Override
 //    public List<Map<String, Object>> batchInsert(String[] sqls, String[] cols) {
 //        try {
-//            Connection con = getConnection();
+//            Connection con = acquireConnection();
 //            Statement st = con.createStatement();
 //            for (String s : sqls)
 //                st.addBatch(s);

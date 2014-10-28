@@ -1,9 +1,10 @@
-package com.caibowen.prma.jdbc;
+package com.caibowen.prma.jdbc.transaction;
 
 import com.caibowen.gplume.misc.Assert;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,23 +17,29 @@ public final class SyncCenter {
     private static final ThreadLocal<Boolean> activeRecord = new ThreadLocal<>();
     private static final ThreadLocal<Map> resources = new ThreadLocal<>();
 
-    public static final void setActive(boolean boo) {
+    public static final void setSync(boolean boo) {
         activeRecord.set(boo ? Boolean.TRUE : Boolean.FALSE);
     }
 
-    public static final boolean isActive() {
+    public static final boolean isSyncActive() {
         return activeRecord.get() == Boolean.TRUE;
     }
 
-    public static final @Nullable Object
-    get(@Nonnull Object key) {
+    @Nullable
+    public static <T>  T get(@Nonnull Object key) {
         Map m = resources.get();
         if (m == null)
             return null;
-        return m.get(key);
+        return (T)m.get(key);
     }
 
-    public static Object add(@Nonnull Object key, @Nonnull Object resource) {
+    public static Map<Object, Object> getResourceMap() {
+        Map<Object, Object> map = resources.get();
+        return (map != null ? Collections.unmodifiableMap(map) : Collections.emptyMap());
+    }
+
+    @Nullable
+    public static <T> T add(@Nonnull Object key, @Nonnull Object resource) {
         Map map = resources.get();
         if (map == null) {
             map = new HashMap(8);
@@ -40,15 +47,15 @@ public final class SyncCenter {
             resources.set(map);
             return null;
         }
-        return map.put(key, resource);
+        return (T)map.put(key, resource);
     }
-
-    public static @Nullable Object
+    @Nullable
+    public static  <T> T
     remove(@Nonnull Object key) {
         Map m = resources.get();
         if (m == null)
             return null;
-        return m.remove(key);
+        return (T)m.remove(key);
     }
 
 
