@@ -43,7 +43,6 @@ public class StrDAOImple extends JdbcSupport implements Int4DAO<String> {
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
                         "SELECT count(1) FROM " + tableName + " WHERE id = " + key);
-
                 return ps;
             }
         }, RowMapping.BOOLEAN_ROW_MAPPING);
@@ -124,11 +123,11 @@ public class StrDAOImple extends JdbcSupport implements Int4DAO<String> {
     @Nonnull
     @Override
     public boolean put(final int key, @Nonnull final String value) {
-        return hasKey(key) ? false : doPut(key, value);
+        return hasKey(key) ? update(key, value) : doPut(key, value);
     }
 
     private boolean doPut(final int key, @Nonnull final String value) {
-        return execute(new StatementCreator() {
+        insert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -137,12 +136,13 @@ public class StrDAOImple extends JdbcSupport implements Int4DAO<String> {
                 ps.setString(2, value);
                 return ps;
             }
-        });
+        }, null, null);
+        return true;
     }
 
     @Override
     public boolean putIfAbsent(final int key, @Nonnull final String value) {
-        return hasKey(key) || put(key, value);
+        return hasKey(key) || doPut(key, value);
     }
 
 

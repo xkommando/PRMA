@@ -1,5 +1,8 @@
 package com.caibowen.prma.store.dao;
 
+import com.caibowen.gplume.jdbc.TransactionSupport;
+import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
+import com.caibowen.gplume.jdbc.transaction.TransactionConfig;
 import com.caibowen.prma.store.EventDO;
 
 
@@ -7,7 +10,7 @@ import com.caibowen.prma.store.EventDO;
  * @author BowenCai
  * @since 22-10-2014.
  */
-public interface EventDAO {
+public interface EventDAO extends TransactionSupport {
 
     /**
      * insertAll to DB, return valid id
@@ -15,4 +18,5 @@ public interface EventDAO {
      * @return
      */
     long insert(EventDO po);
+
 }

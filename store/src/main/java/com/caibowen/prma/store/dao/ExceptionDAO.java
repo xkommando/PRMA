@@ -9,5 +9,5 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 public interface ExceptionDAO {
 
 
-    boolean insert(long eventId, IThrowableProxy prop);
+    boolean insert(long eventId, IThrowableProxy prop) throws Exception;
 }

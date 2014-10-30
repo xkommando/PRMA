@@ -1,10 +1,12 @@
 package com.caibowen.prma.store.test;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.LoggingEvent;
 import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
-import com.caibowen.prma.jdbc.transaction.Transaction;
-import com.caibowen.prma.jdbc.transaction.TransactionManager;
+import com.caibowen.gplume.jdbc.transaction.Transaction;
+import com.caibowen.gplume.jdbc.transaction.TransactionManager;
 import com.caibowen.prma.store.EventPersist;
 import com.caibowen.prma.store.dao.Int4DAO;
 import com.zaxxer.hikari.HikariDataSource;
@@ -14,6 +16,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * @author BowenCai
@@ -43,6 +47,20 @@ public class TestDAO {
     Int4DAO<String> exceptMsgDAO;
 
     TransactionManager manager = new TransactionManager();
+
+    @Test
+    public void s() throws Throwable {
+        Throwable _t = new RuntimeException("msg level 3",
+                new IOException("msg level 2",
+                        new FileNotFoundException("msg level 1")));
+        Throwable r = _t.getCause();
+        while (r != null) {
+            for (StackTraceElement st : r.getStackTrace())
+                System.out.println(st.getClassName());
+            r = r.getCause();
+        }
+        throw _t;
+    }
 
     @Before
     public void setup() {
@@ -111,16 +129,23 @@ public class TestDAO {
         LOGGER.trace("" + tx2.isCompleted());
     }
 
-//        System.out.println(eventP);
-//
-//        Throwable _t = new RuntimeException("msg level 3",
-//                new IOException("msg level 2",
-//                        new FileNotFoundException("msg level 1")));
-//
-//        LoggingEvent le = new LoggingEvent(
-//                "logger name ???", (ch.qos.logback.classic.Logger)LOGGER, Level.ERROR, "hahaha messsssage", _t, null);
-//
-////        eventP.xxxxxxxx(le);
+    @Test
+    public void dao_tnx() {
+        Throwable _t = new RuntimeException("msg level 3",
+                new IOException("msg level 2",
+                        new FileNotFoundException("msg level 1")));
+
+        LoggingEvent le = new LoggingEvent(
+                "logger name ??? haha", (ch.qos.logback.classic.Logger)LOGGER, Level.ERROR, "hahaha messsssage", _t, null);
+
+        // once with no inner exception, once with exception from a random procedure.
+        eventP.persist(le);
+    }
+
+
+    //        System.out.println(eventP);
+
+////        eventP.persist(le);
 //        System.out.println(exceptMsgDAO.get("msg level 1".hashCode()));
 ////        from DB 356721094
 //        System.out.println(loggerDAO.get(356721094));

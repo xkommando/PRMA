@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * lefvel 1 exception message, stack trace, exception, property
+ * level 1 exception message, stack trace, exception, property
  * level 2 exception, event
  *
  * @author BowenCai

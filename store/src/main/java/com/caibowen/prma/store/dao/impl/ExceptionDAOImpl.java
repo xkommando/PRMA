@@ -13,10 +13,12 @@ import com.caibowen.prma.store.dao.StackTraceDAO;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 
 /**
  * @author BowenCai
@@ -32,7 +34,9 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     private static <V> void
     persist(Int4DAO<V> dao, int hash, V obj) {
         if ( !dao.putIfAbsent(hash, obj))
-            ; // report ERROR!!!
+            throw new RuntimeException(dao.toString()
+                    + "  could not save value["
+                    + (null == obj ? "null" : obj.toString()) + " with id " + hash);
     }
 
     public static final int[] EMPTY_INTS = {};
@@ -49,7 +53,6 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         }
 
         batchInsert(new StatementCreator() {
-
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -84,6 +87,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                     ps.setLong(3, vols.get(i).id);
                     ps.addBatch();
                 }
+//                throw new NoSuchElementException("weird exception from inside jdbc operation");
                 return ps;
             }
         }, null, null);
@@ -116,7 +120,8 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                 StackTraceElement st = stps[i].getStackTraceElement();
                 int id = st.hashCode();
                 if (!stackTraceDAO.putIfAbsent(id, st))
-                    ; // error !
+                    throw new RuntimeException("could not save stack trace "
+                            + st.toString());
 
                 buf[i] = id;
                 expID = Hashing.hash128To64(expID, Hashing.twang_mix64((long) id));

@@ -25,7 +25,7 @@ public class DBAppender extends AsyncAppenderWrapper<ILoggingEvent> {
 
     @Override
     protected void passOnEvent(ILoggingEvent event) {
-        persister.xxxxxxxx(event);
+        persister.persist(event);
     }
 
     @Override

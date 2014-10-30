@@ -6,18 +6,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- *
  * all data is stored in the memory, read operations only reach the memory
  * when write data, the value is write through to the DB.
- *
+ * <p/>
  * for logger name, thread name, exception name
  *
  * @author BowenCai
@@ -25,10 +21,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  */
 public class Int4FullCAO<V> implements Int4DAO<V> {
 
-    @Inject Int4DAO<V> db;
+    @Inject
+    Int4DAO<V> db;
 
-    private Map<Integer, V> mem;
-    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Map<Integer, V> mem = new HashMap<>(256);
+    private ReadWriteLock prepare = new ReentrantReadWriteLock();
 
     synchronized public void init() {
         mem.putAll(db.entries());
@@ -36,61 +33,111 @@ public class Int4FullCAO<V> implements Int4DAO<V> {
 
     @Override
     public boolean hasKey(int key) {
-        return mem.containsKey(key);
+        prepare.readLock().lock();
+        try {
+            return mem.containsKey(key);
+        } finally {
+            prepare.readLock().unlock();
+        }
     }
 
     @Override
     public boolean hasVal(@Nonnull V val) {
-        return mem.containsValue(val);
+        prepare.readLock().lock();
+        try {
+            return mem.containsValue(val);
+        } finally {
+            prepare.readLock().unlock();
+        }
     }
 
     @Nullable
     @Override
     public V get(int key) {
-        return mem.get(key);
+        prepare.readLock().lock();
+        try {
+            return mem.get(key);
+        } finally {
+            prepare.readLock().unlock();
+        }
     }
 
     @Nonnull
     @Override
     public List<Integer> keys() {
-        return new ArrayList<>(mem.keySet());
+        prepare.readLock().lock();
+        try {
+            return new ArrayList<>(mem.keySet());
+        } finally {
+            prepare.readLock().unlock();
+        }
     }
 
     @Nonnull
     @Override
     public List<V> values() {
-        return new ArrayList<>(mem.values());
+        prepare.readLock().lock();
+        try {
+            return new ArrayList<>(mem.values());
+        } finally {
+            prepare.readLock().unlock();
+        }
     }
 
     @Nonnull
     @Override
     public Map<Integer, V> entries() {
-        return Collections.unmodifiableMap(mem);
+        prepare.readLock().lock();
+        try {
+            return Collections.unmodifiableMap(mem);
+        } finally {
+            prepare.readLock().unlock();
+        }
     }
 
     @Nonnull
     @Override
     public boolean put(int key, @Nonnull V value) {
-        boolean ok = db.put(key, value);
-        if (ok)
-            mem.put(key, value);
-        return ok;
+        prepare.writeLock().lock();
+        try {
+            boolean ok = db.put(key, value);
+            if (ok)
+                mem.put(key, value);
+            return ok;
+        } finally {
+            prepare.writeLock().unlock();
+        }
+
     }
 
     @Override
     public boolean putIfAbsent(int key, @Nonnull V value) {
         boolean ret = true;
         if (!mem.containsKey(key)) {
-            ret = db.putIfAbsent(key, value);
-            if (ret)
-                mem.put(key, value);
+            prepare.writeLock().lock();
+            try {
+                ret = db.putIfAbsent(key, value);
+                if (ret)
+                    mem.put(key, value);
+            } finally {
+                prepare.writeLock().unlock();
+            }
         }
         return ret;
     }
 
     @Override
     public boolean putAll(@Nonnull Map<Integer, V> map) {
-        return false;
+        boolean ok = false;
+        prepare.writeLock().lock();
+        try {
+            ok =db.putAll(map);
+            if (ok)
+                mem.putAll(map);
+        } finally {
+            prepare.writeLock().unlock();
+        }
+        return ok;
     }
 
     @Nonnull
@@ -98,10 +145,15 @@ public class Int4FullCAO<V> implements Int4DAO<V> {
     public boolean update(int key, @Nonnull V value) {
         boolean ok = true;
         V ov = mem.get(key);
-        if (! value.equals(ov)) {
-            ok = db.update(key, value);
-            if (ok)
-                mem.put(key, value);
+        if (!value.equals(ov)) {
+            prepare.writeLock().lock();
+            try {
+                ok = db.update(key, value);
+                if (ok)
+                    mem.put(key, value);
+            } finally {
+                prepare.writeLock().unlock();
+            }
         }
         return ok;
     }
@@ -111,8 +163,13 @@ public class Int4FullCAO<V> implements Int4DAO<V> {
     public V remove(int key, boolean returnVal) throws SQLException {
         V ov = mem.get(key);
         if (ov != null) {
-            db.remove(key, false);
-            mem.remove(key);
+            prepare.writeLock().lock();
+            try {
+                db.remove(key, false);
+                mem.remove(key);
+            } finally {
+                prepare.writeLock().unlock();
+            }
         }
         return returnVal ? ov : null;
     }

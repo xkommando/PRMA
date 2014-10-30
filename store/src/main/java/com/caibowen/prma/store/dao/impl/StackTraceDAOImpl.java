@@ -123,11 +123,11 @@ public class StackTraceDAOImpl extends JdbcSupport implements StackTraceDAO {
     @Nonnull
     @Override
     public boolean put(final int key, @Nonnull final StackTraceElement value) {
-        return hasKey(key) ? false : doPut(key, value);
+        return hasKey(key) ? update(key, value) : doPut(key, value);
     }
 
     private boolean doPut(final int key, @Nonnull final StackTraceElement value) {
-        return execute(new StatementCreator() {
+        insert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -139,13 +139,14 @@ public class StackTraceDAOImpl extends JdbcSupport implements StackTraceDAO {
                 ps.setInt(5, value.getLineNumber());
                 return ps;
             }
-        });
+        }, null, null);
+        return true;
     }
 
     @Nonnull
     @Override
     public boolean putIfAbsent(final int key, @Nonnull final StackTraceElement value) {
-        return hasKey(key) || put(key, value);
+        return hasKey(key) || doPut(key, value);
     }
 
     @Nonnull
@@ -177,16 +178,20 @@ public class StackTraceDAOImpl extends JdbcSupport implements StackTraceDAO {
     @Nonnull
     @Override
     public boolean update(final int key, @Nonnull final StackTraceElement value) {
-        throw new NoSuchMethodError("not implemented yet");
-//        return execute(new StatementCreator() {
-//            @Override
-//            public PreparedStatement createStatement(Connection con) throws SQLException {
-//                PreparedStatement ps = con.prepareStatement(
-//                        "UPDATE `stack_trace` SET `value` = ? where id=" + key);
-//                ps.setString(1, value);
-//                return ps;
-//            }
-//        });
+        return execute(new StatementCreator() {
+//            `id`,`file`,`class`,`function`,`line`
+            @Override
+            public PreparedStatement createStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        "UPDATE `stack_trace` SET `file` = ?,`class`=?,`function`=?,`line`=? where id=?");
+                ps.setString(1, value.getFileName());
+                ps.setString(2, value.getClassName());
+                ps.setString(3, value.getMethodName());
+                ps.setInt(4, value.getLineNumber());
+                ps.setLong(5, key);
+                return ps;
+            }
+        });
     }
 
     @Nullable
@@ -202,7 +207,8 @@ public class StackTraceDAOImpl extends JdbcSupport implements StackTraceDAO {
             }
         });
         if (!ok)
-            throw new SQLException("failed to delete value, id=" + key);
+            throw new SQLException("failed to delete stack trace, id= " + key
+                    + ", stacktrace[" + (ret == null ? "not retrieved" : ret.toString()));
         return ret;
     }
 }

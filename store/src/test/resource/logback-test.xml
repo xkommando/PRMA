@@ -32,7 +32,7 @@
         <!--<property name="password" value="123456"></property>-->
     <!--</bean>-->
 
-    <root level="info">
+    <root level="TRACE">
         <appender-ref ref="STDOUT" />
     </root>
 

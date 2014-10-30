@@ -2,8 +2,11 @@ package com.caibowen.prma.store;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
+import com.caibowen.gplume.jdbc.transaction.Transaction;
+import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
 import com.caibowen.prma.store.dao.*;
 
+import javax.annotation.Nonnull;
 import javax.inject.Inject;
 import java.util.Map;
 
@@ -27,22 +30,27 @@ public class EventPersistImpl implements EventPersist {
     @Inject ExceptionDAO exceptionDAO;
 
 
-    public void xxxxxxxx(ILoggingEvent event) {
+    public void persist(final ILoggingEvent event) {
 
-        EventDO po = getDO(event);
-        final long evId = eventDAO.insert(po);
+        eventDAO.execute(new TransactionCallback<Object>() {
+            @Override
+            public Object withTransaction(@Nonnull Transaction tnx) throws Exception {
+                EventDO po = getDO(event);
+                final long evId = eventDAO.insert(po);
 
 
-        Map<String, String> prop = LogEventAux.extractProperties(event);
-        if (prop != null)
-            if (! propertyDAO.insertAll(evId, prop))
-                ; // error
+                Map<String, String> prop = LogEventAux.extractProperties(event);
+                if (prop != null)
+                    if (! propertyDAO.insertAll(evId, prop))
+                        ; // error
 
-        IThrowableProxy tpox = event.getThrowableProxy();
-        if (tpox != null) {
-            exceptionDAO.insert(evId, tpox);
-        }
-
+                IThrowableProxy tpox = event.getThrowableProxy();
+                if (tpox != null) {
+                    exceptionDAO.insert(evId, tpox);
+                }
+                return null;
+            }
+        });
     }
 
 
@@ -54,7 +62,9 @@ public class EventPersistImpl implements EventPersist {
         StackTraceElement callerST = LogEventAux.callerST(event);
         final int _callerID = callerST.hashCode();
         if (! stackTraceDAO.putIfAbsent(_callerID, callerST))
-            ; // -- ERROR
+            throw new RuntimeException("could not save stack trace "
+                    + callerST.toString());
+
         vo.callerSkId = _callerID;
 
         String _ln = event.getLoggerName();
@@ -75,11 +85,12 @@ public class EventPersistImpl implements EventPersist {
     }
 
 
-
     private static <V> void
     persist(Int4DAO<V> dao, int hash, V obj) {
         if ( !dao.putIfAbsent(hash, obj))
-            ; // report ERROR!!!
+            throw new RuntimeException(dao.toString()
+                    + "  could not save value["
+                    + (null == obj ? "null" : obj.toString()) + "] with id " + hash);
     }
 
 
