@@ -1,8 +1,8 @@
 package com.caibowen.prma.store.dao.impl;
 
-import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.StatementCreator;
-import com.caibowen.prma.jdbc.mapper.RowMapping;
+import com.caibowen.gplume.jdbc.JdbcSupport;
+import com.caibowen.gplume.jdbc.StatementCreator;
+import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.prma.store.EventDO;
 import com.caibowen.prma.store.dao.EventDAO;
 
@@ -14,7 +14,7 @@ import java.sql.SQLException;
  * @author BowenCai
  * @since 22-10-2014.
  */
-public class EventDAOImpl extends JdbcAux implements EventDAO {
+public class EventDAOImpl extends JdbcSupport implements EventDAO {
 
     public static final String[] AUTO_GEN_ID = {"id"};
 

@@ -68,6 +68,15 @@ public class Int4FullCAO<V> implements Int4DAO<V> {
         return Collections.unmodifiableMap(mem);
     }
 
+    @Nonnull
+    @Override
+    public boolean put(int key, @Nonnull V value) {
+        boolean ok = db.put(key, value);
+        if (ok)
+            mem.put(key, value);
+        return ok;
+    }
+
     @Override
     public boolean putIfAbsent(int key, @Nonnull V value) {
         boolean ret = true;

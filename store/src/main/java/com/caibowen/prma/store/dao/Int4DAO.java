@@ -44,6 +44,9 @@ public interface Int4DAO<V> {
     entries();
 
     @Nonnull boolean
+    put(int key, @Nonnull final V value);
+
+    @Nonnull boolean
     putIfAbsent(int key, @Nonnull final V value);
 
 

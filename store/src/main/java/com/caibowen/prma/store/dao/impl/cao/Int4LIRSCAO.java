@@ -62,6 +62,15 @@ public class Int4LIRSCAO<V> implements Int4DAO<V> {
         return null;
     }
 
+    @Nonnull
+    @Override
+    public boolean put(int key, @Nonnull V value) {
+        boolean ok = db.put(key, value);
+        if (ok)
+            cache.put(key, value);
+        return ok;
+    }
+
     @Override
     public boolean putIfAbsent(int key, @Nonnull V value) {
         return false;

@@ -1,7 +1,7 @@
 package com.caibowen.prma.store.dao.impl;
 
-import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.StatementCreator;
+import com.caibowen.gplume.jdbc.JdbcSupport;
+import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.prma.store.dao.PropertyDAO;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import java.util.Map;
  * @author BowenCai
  * @since 24-10-2014.
  */
-public class PropertyDAOImpl extends JdbcAux implements PropertyDAO {
+public class PropertyDAOImpl extends JdbcSupport implements PropertyDAO {
 
     @Override
     public boolean insertAll(final long eventId, final Map<String, String> prop) {

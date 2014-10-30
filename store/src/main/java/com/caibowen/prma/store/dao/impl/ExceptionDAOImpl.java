@@ -2,10 +2,10 @@ package com.caibowen.prma.store.dao.impl;
 
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
+import com.caibowen.gplume.jdbc.JdbcSupport;
+import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.gplume.misc.Hashing;
-import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.StatementCreator;
 import com.caibowen.prma.store.ExceptionDO;
 import com.caibowen.prma.store.dao.ExceptionDAO;
 import com.caibowen.prma.store.dao.Int4DAO;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * @author BowenCai
  * @since 23-10-2014.
  */
-public class ExceptionDAOImpl extends JdbcAux implements ExceptionDAO {
+public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
 
     @Inject Int4DAO<String> exceptNameDAO;
     @Inject Int4DAO<String> exceptMsgDAO;

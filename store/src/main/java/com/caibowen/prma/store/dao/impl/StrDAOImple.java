@@ -1,9 +1,9 @@
 package com.caibowen.prma.store.dao.impl;
 
 import com.caibowen.gplume.common.Pair;
-import com.caibowen.prma.jdbc.JdbcAux;
-import com.caibowen.prma.jdbc.StatementCreator;
-import com.caibowen.prma.jdbc.mapper.RowMapping;
+import com.caibowen.gplume.jdbc.JdbcSupport;
+import com.caibowen.gplume.jdbc.StatementCreator;
+import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.prma.store.dao.Int4DAO;
 
 import javax.annotation.Nonnull;
@@ -21,7 +21,7 @@ import java.util.Map;
  * @author BowenCai
  * @since 23-10-2014.
  */
-public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
+public class StrDAOImple extends JdbcSupport implements Int4DAO<String> {
 
     public static final RowMapping<Pair<Integer, String> > PAIR_MAPPING = new RowMapping<Pair<Integer, String>>() {
         @Override
@@ -121,9 +121,14 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
         return map;
     }
 
+    @Nonnull
     @Override
-    public boolean putIfAbsent(final int key, @Nonnull final String value) {
-        return hasKey(key) || execute(new StatementCreator() {
+    public boolean put(final int key, @Nonnull final String value) {
+        return hasKey(key) ? false : doPut(key, value);
+    }
+
+    private boolean doPut(final int key, @Nonnull final String value) {
+        return execute(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -134,6 +139,12 @@ public class StrDAOImple extends JdbcAux implements Int4DAO<String> {
             }
         });
     }
+
+    @Override
+    public boolean putIfAbsent(final int key, @Nonnull final String value) {
+        return hasKey(key) || put(key, value);
+    }
+
 
 
     @Override
