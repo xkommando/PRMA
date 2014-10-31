@@ -6,8 +6,10 @@ import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
 import com.caibowen.gplume.jdbc.transaction.Transaction;
+import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
 import com.caibowen.gplume.jdbc.transaction.TransactionManager;
 import com.caibowen.prma.store.EventPersist;
+import com.caibowen.prma.store.dao.EventDAO;
 import com.caibowen.prma.store.dao.Int4DAO;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Before;
@@ -15,6 +17,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -45,6 +48,7 @@ public class TestDAO {
     EventPersist eventP;
     Int4DAO<String> loggerDAO;
     Int4DAO<String> exceptMsgDAO;
+    EventDAO eventDAO;
 
     TransactionManager manager = new TransactionManager();
 
@@ -79,6 +83,7 @@ public class TestDAO {
         eventP = AppContext.beanAssembler.getBean("eventPersist");
         loggerDAO = AppContext.beanAssembler.getBean("loggerDAO");
         exceptMsgDAO = AppContext.beanAssembler.getBean("exceptMsgDAO");
+        eventDAO = AppContext.beanAssembler.getBean("eventDAO");
 
         manager.setDataSource(ds);
     }
@@ -92,7 +97,6 @@ public class TestDAO {
         exceptMsgDAO.put(s.hashCode(), s);
         loggerDAO.put(s.hashCode(), s);
         manager.commit(tnx);
-        LOGGER.trace(tnx.toString());
         LOGGER.trace("" + tnx.isCompleted());
     }
 
@@ -124,14 +128,13 @@ public class TestDAO {
                 exceptMsgDAO.put(s2.hashCode(), s2);
                 manager.commit(tx2);
 
-        LOGGER.trace(tx1.toString());
         LOGGER.trace("" + tx1.isCompleted());
         LOGGER.trace("" + tx2.isCompleted());
     }
 
     @Test
     public void dao_tnx() {
-        Throwable _t = new RuntimeException("msg level 3",
+        final Throwable _t = new RuntimeException("msg level 3",
                 new IOException("msg level 2",
                         new FileNotFoundException("msg level 1")));
 
@@ -139,7 +142,41 @@ public class TestDAO {
                 "logger name ??? haha", (ch.qos.logback.classic.Logger)LOGGER, Level.ERROR, "hahaha messsssage", _t, null);
 
         // once with no inner exception, once with exception from a random procedure.
-        eventP.persist(le);
+//        eventP.persist(le);
+
+        final String s1 = "111111111111111safshferighueirhge";
+        final String s2 = "2222222222222222222safshferighueirhge";
+
+        Transaction tx1 = manager.begin();
+        Transaction tx2 = manager.begin();
+        manager.rollback(tx1);
+        exceptMsgDAO.put(s2.hashCode(), s2);
+        tx2.setRollbackOnly(true);
+        manager.commit(tx2);
+        try {
+            eventDAO.execute(new TransactionCallback<Object>() {
+                @Override
+                public Object withTransaction(@Nonnull Transaction tnx) throws Exception {
+                    loggerDAO.put(s1.hashCode(), s1);
+                    exceptMsgDAO.put(s1.hashCode(), s1);
+                    tnx.setRollbackOnly(true);
+                    // operation 2
+                    eventDAO.execute(new TransactionCallback<Object>() {
+                        @Override
+                        public Object withTransaction(@Nonnull Transaction tnx) throws Exception {
+                            loggerDAO.put(s2.hashCode(), s2);
+                            exceptMsgDAO.put(s2.hashCode(), s2);/// did
+                            throw new RuntimeException("exp from nested tnx");
+//                        return null;
+                        }
+                    });
+                    // fail on any of the operations will trigger rollback automatically
+                    return null;
+                }
+            });
+        } catch (Throwable e) {
+            System.out.printf(e.getClass().getSimpleName());
+        }
     }
 
 
