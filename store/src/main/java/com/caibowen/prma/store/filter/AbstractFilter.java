@@ -9,26 +9,26 @@ import com.caibowen.gplume.annotation.NoExcept;
 public abstract class AbstractFilter<E> implements Filter<E> {
 
 
-    public abstract void init();
+    protected Filter next;
+    protected boolean started;
 
     @NoExcept
-    protected abstract boolean doAccept(E e);
+    protected abstract int doAccept(E e);
 
     @NoExcept
     @Override
-    public boolean accept(E e) {
-        boolean ok = doAccept(e);
+    public int accept(E e) {
+        int ok = doAccept(e);
         /**
          * if accepted by this filter, ask the next.
          * this is how filter chain is implemented
          */
-        if (ok)
-            return getNext() != null ? getNext().accept(e) : true;
+        if (ok == 1)
+            return getNext() != null ? getNext().accept(e) : 1;
 
-        return false;
+        return ok;
     }
 
-    private Filter next;
     @Override
     public void setNext(Filter ef) {
         next = ef;

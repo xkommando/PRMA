@@ -1,6 +1,6 @@
 package com.caibowen.prma.store.filter;
 
-import com.caibowen.gplume.common.URITrie;
+import com.caibowen.gplume.common.URIPrefixTrie;
 import com.caibowen.gplume.misc.Str;
 
 import java.io.BufferedReader;
@@ -17,16 +17,16 @@ import java.util.HashMap;
 public class StrPrefixFilter extends AbstractFilter<String> {
 
     @Override
-    protected boolean doAccept(String e) {
+    protected int doAccept(String e) {
         return null == ignoreByFullMatch.get(e)
-                && null == ignorePrefix.matchPrefix(e);
+                && null == ignorePrefix.matchPrefix(e) ? 1 : -1;
     }
 
     static HashMap<String, Object> ignoreByFullMatch = new HashMap<>(128);
     /**
      * match prefix
      */
-    static URITrie<Object> ignorePrefix = new URITrie<>();
+    static URIPrefixTrie<Object> ignorePrefix = new URIPrefixTrie<>();
 
     Object NA = new Object();
 
@@ -46,7 +46,7 @@ public class StrPrefixFilter extends AbstractFilter<String> {
             ignoreByFullMatch.put(buf, NA);
     }
 
-    public void init() {
+    public void start() {
 
         InputStream ins = Filter.class.getClassLoader().getResourceAsStream("ignored_exceptions.txt");
         BufferedReader reader = null;
@@ -73,7 +73,20 @@ public class StrPrefixFilter extends AbstractFilter<String> {
             }
         }
 
-
+        started = true;
     }
+
+    @Override
+    public boolean isStarted() {
+        return started;
+    }
+
+    @Override
+    public void stop() {
+        NA = null;
+        ignoreByFullMatch.clear();
+        ignorePrefix.clear();
+    }
+
 
 }

@@ -9,6 +9,4 @@ import java.util.HashSet;
  */
 public class PrefixSuffixFilter extends StrPrefixFilter {
 
-    private HashMap<String, Object> ignoreBySuffix;
-
 }

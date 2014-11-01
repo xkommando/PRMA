@@ -13,7 +13,7 @@ public class FilterTest {
     @Test
     public void t1() {
         StrPrefixFilter filter = new StrPrefixFilter();
-        filter.init();
+        filter.start();
         System.out.println(filter.accept("comment"));
     }
 }

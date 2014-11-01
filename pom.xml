@@ -4,10 +4,21 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <prma-version>0.1</prma-version>
+        <jdk-version>1.7</jdk-version>
+        <jvm-target>1.7</jvm-target>
+        <gplume-version>2.0</gplume-version>
+        <junit-version>4.9</junit-version>
+        <slf4j-version>1.7.7</slf4j-version>
+        <logback-version>1.1.2</logback-version>
+    </properties>
+
     <groupId>com.caibowen.prma</groupId>
-    <artifactId>parent</artifactId>
+    <artifactId>core</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>${prma-version}</version>
+
 
     <modules>
         <module>api</module>
@@ -21,7 +32,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.7</version>
+            <version>${slf4j-version}</version>
         </dependency>
 
         <!--<dependency>-->
@@ -39,7 +50,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.9</version>
+            <version>${junit-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -69,8 +80,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>${jdk-version}</source>
+                    <target>${jvm-target}</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
