@@ -13,12 +13,10 @@ import com.caibowen.prma.store.dao.StackTraceDAO;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.io.FileNotFoundException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.NoSuchElementException;
 
 /**
  * @author BowenCai

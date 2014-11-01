@@ -1,8 +1,6 @@
 package com.caibowen.prma.store.dao;
 
 import com.caibowen.gplume.jdbc.TransactionSupport;
-import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
-import com.caibowen.gplume.jdbc.transaction.TransactionConfig;
 import com.caibowen.prma.store.EventDO;
 
 
