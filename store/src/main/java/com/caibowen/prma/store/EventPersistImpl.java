@@ -57,7 +57,7 @@ public class EventPersistImpl implements EventPersist {
     private EventDO getDO(ILoggingEvent event) {
 
         EventDO vo = new EventDO();
-        vo.timeCreated = System.currentTimeMillis();
+        vo.timeCreated = event.getTimeStamp();
 
         StackTraceElement callerST = LogEventAux.callerST(event);
         final int _callerID = callerST.hashCode();

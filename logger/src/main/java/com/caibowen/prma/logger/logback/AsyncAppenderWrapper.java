@@ -6,6 +6,7 @@ import ch.qos.logback.core.spi.AppenderAttachable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.util.Iterator;
 import java.util.concurrent.*;
 
@@ -24,18 +25,13 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
     private int flushTime = DEFUALT_FLUSH_TIME;
 
 
-    // event queue size
-    public static final int DEFUALT_QUEUE_SIZE = 256;
-    private int queueSize = DEFUALT_QUEUE_SIZE;
-
     // number of thread to append events.
-    public static final int DEFAULT_THREAD_NUM = 1;
-    private int threadNumber = DEFAULT_THREAD_NUM;
+    public static final int DEFAULT_MAX_THREAD = 128;
+    @Inject private int maxThreadNum = DEFAULT_MAX_THREAD;
 
-    private ThreadPoolExecutor executor;
+    @Inject private ThreadPoolExecutor executor;
 
-    private ArrayBlockingQueue<E> eventQ;
-
+    @Inject private Appender<E> backupAppender;
 
     @Override
     public void start() {
@@ -43,61 +39,51 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
             addError("No attached appender");
             return;
         }
-        if (queueSize < 1) {
-            addError("Invalid queue size [" + queueSize + "]");
-            return;
+
+        if (executor == null || executor.isShutdown()) {
+
+
+            executor = new ThreadPoolExecutor(0, 256, 60L, TimeUnit.SECONDS,
+                    new SynchronousQueue<Runnable>(), new RejectedExecutionHandler() {
+
+                @Override
+                public void rejectedExecution(final Runnable r, ThreadPoolExecutor executor) {
+                    class _R implements Runnable {
+                        @Override
+                        public void run() {
+                            r.run();
+                        }
+                    }
+                    if (r instanceof _R)
+                        r.run();
+                    else
+                        executor.execute(new _R());
+                }
+            });
         }
-        eventQ = new ArrayBlockingQueue<E>(queueSize);
-
-        executor  = new ThreadPoolExecutor(threadNumber, threadNumber,
-                10, TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>());
-
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-
-                while (started == true) {
-                    try {
-                        E e = eventQ.take();
-                        passOnEvent(e);
-                    } catch (Throwable t) {
-                        err.print("error fetching event from queue");
-                        continue;
-                    }
-                }
-                addInfo("executor will flush remaining events before exiting. ");
-
-                for (E e : eventQ) {
-                    try {
-                        passOnEvent(e);
-                    } catch (Throwable t) {
-                        err.print("error fetching event from queue");
-                        continue;
-                    }
-                }
-                appList.clear();
-            }
-        });
-
         super.start();
     }
 
+
     @Override
-    protected void append(E eventObject) {
-
-        // to avoid queue being blocked.
-        if (eventQ.size() >= queueSize) {
-            err.print("queue exceeded, overflow event " + eventObject);
-            return;
-        }
-
+    protected void append(final E eventObject) {
         try {
-            eventQ.put(eventObject);
-        } catch (InterruptedException e) {
-            err.println("error adding event to queue");
-            e.printStackTrace(err);
+            executor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    passOnEvent(eventObject);
+                }
+
+            });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            try {
+                backupAppender.doAppend(eventObject);
+            } catch (Exception e) {
+                ex.printStackTrace();
+            }
         }
+
     }
 
 
@@ -107,23 +93,36 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
             return;
         started = false;
         super.stop();
-
+        BlockingQueue<Runnable> q = executor.getQueue();
+        executor.shutdown();
         try {
             executor.awaitTermination(flushTime, TimeUnit.MILLISECONDS);
-            executor.shutdown();
-            if (! executor.isTerminated())
+            if (! executor.isTerminated()) {
                 addWarn("Max queue flush timeout (" + flushTime + " ms) exceeded. Approximately "
-                        + eventQ.size() +
-                        " queued events were possibly discarded.");
-            else
+                        + executor.getActiveCount() +
+                        " queued task were possibly discarded.");
+                flush();
+            } else
                 addInfo("Queue flush finished successfully within timeout.");
 
         } catch (InterruptedException e) {
-            addError("Failed to join worker thread. " + eventQ.size() + " queued events may be discarded.", e);
+            addError("Failed to join worker thread. " + executor.getActiveCount() + " queued task may be discarded.", e);
+            flush();
         }
 
     }
 
+    protected void flush() {
+        BlockingQueue<Runnable> q = executor.getQueue();
+        while (!q.isEmpty()) {
+            try {
+                Runnable r = q.poll();
+                r.run();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 //-----------------------------------------------------------------------------
 //      properties to be set;
 
@@ -135,22 +134,28 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
         this.flushTime = flushTime;
     }
 
-    public int getQueueSize() {
-        return queueSize;
+    public ThreadPoolExecutor getExecutor() {
+        return executor;
+    }
+    public void setExecutor(ThreadPoolExecutor executor) {
+        this.executor = executor;
     }
 
-    public void setQueueSize(int queueSize) {
-        this.queueSize = queueSize;
+    public int getMaxThreadNum() {
+        return maxThreadNum;
     }
 
-    public int getThreadNumber() {
-        return threadNumber;
+    public void setMaxThreadNum(int maxThreadNum) {
+        this.maxThreadNum = maxThreadNum;
     }
 
-    public void setThreadNumber(int threadNumber) {
-        this.threadNumber = threadNumber;
+    public Appender<E> getBackupAppender() {
+        return backupAppender;
     }
 
+    public void setBackupAppender(Appender<E> backupAppender) {
+        this.backupAppender = backupAppender;
+    }
 
 //-----------------------------------------------------------------------------
 //      implementation for AppenderAttachable

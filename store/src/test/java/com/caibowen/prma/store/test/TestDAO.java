@@ -5,6 +5,7 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
+import com.caibowen.gplume.jdbc.transaction.JdbcTransactionManager;
 import com.caibowen.gplume.jdbc.transaction.Transaction;
 import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
 import com.caibowen.gplume.jdbc.transaction.TransactionManager;
@@ -50,7 +51,7 @@ public class TestDAO {
     Int4DAO<String> exceptMsgDAO;
     EventDAO eventDAO;
 
-    TransactionManager manager = new TransactionManager();
+    TransactionManager manager = new JdbcTransactionManager();
 
     @Test
     public void s() throws Throwable {

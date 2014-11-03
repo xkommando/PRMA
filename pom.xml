@@ -4,6 +4,42 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.caibowen.prma</groupId>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
+    <version>0.1</version>
+
+
+    <name>Program Run-time Monitoring and Analysing</name>
+    <url>https://github.com/xkommando/PRMA</url>
+
+    <developers>
+        <developer>
+            <name>Cai Bowen</name>
+            <email>feedback2bowen@outlook.com</email>
+            <url>http://www.caibowen.com</url>
+        </developer>
+    </developers>
+
+    <licenses>
+        <license>
+            <name>GNU LESSER GENERAL PUBLIC LICENSE</name>
+            <url>https://www.gnu.org/licenses/lgpl.html</url>
+        </license>
+    </licenses>
+
+    <modules>
+        <module>api</module>
+        <module>core</module>
+        <module>store</module>
+        <module>logger</module>
+        <module>monitor</module>
+        <module>analyser</module>
+        <module>webface</module>
+        <module>examples</module>
+    </modules>
+
+
     <properties>
         <prma-version>0.1</prma-version>
         <jdk-version>1.7</jdk-version>
@@ -14,20 +50,6 @@
         <logback-version>1.1.2</logback-version>
     </properties>
 
-    <groupId>com.caibowen.prma</groupId>
-    <artifactId>parent</artifactId>
-    <packaging>pom</packaging>
-    <version>0.1</version>
-
-
-    <modules>
-        <module>api</module>
-        <module>core</module>
-        <module>store</module>
-        <module>logger</module>
-        <module>monitor</module>
-        <module>analyser</module>
-    </modules>
 
     <dependencies>
         <dependency>
@@ -36,42 +58,12 @@
             <version>${slf4j-version}</version>
         </dependency>
 
-        <!--<dependency>-->
-            <!--<groupId>org.apache.commons</groupId>-->
-            <!--<artifactId>commons-lang3</artifactId>-->
-            <!--<version>3.3</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>com.google.code.findbugs</groupId>-->
-            <!--<artifactId>jsr305</artifactId>-->
-            <!--<version>3.0.0</version>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>${junit-version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>net.sf.trove4j</groupId>-->
-            <!--<artifactId>trove4j</artifactId>-->
-            <!--<version>3.0.1</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>com.google.guava</groupId>-->
-            <!--<artifactId>guava</artifactId>-->
-            <!--<version>18.0</version>-->
-        <!--</dependency>-->
-
-        <!--<dependency>-->
-            <!--<groupId>com.alibaba</groupId>-->
-            <!--<artifactId>fastjson</artifactId>-->
-            <!--<version>1.1.41</version>-->
-        <!--</dependency>-->
 
     </dependencies>
 

@@ -23,7 +23,7 @@
             <version>${prma-version}</version>
         </dependency>
         <dependency>
-            <groupId>com.caibowen</groupId>
+            <groupId>com.caibowen.gplumeframework</groupId>
             <artifactId>gplume</artifactId>
             <version>${gplume-version}</version>
         </dependency>

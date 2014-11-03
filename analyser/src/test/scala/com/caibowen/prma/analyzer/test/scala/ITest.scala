@@ -1,4 +1,4 @@
-package com.caibowen.prma.ana.test
+package com.caibowen.prma.analyzer.test.scala
 
 /**
  * @author BowenCai
