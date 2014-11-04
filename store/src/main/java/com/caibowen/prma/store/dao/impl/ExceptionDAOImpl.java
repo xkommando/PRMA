@@ -4,6 +4,7 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
+import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.gplume.misc.Hashing;
 import com.caibowen.prma.store.ExceptionDO;
@@ -17,6 +18,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author BowenCai
@@ -40,8 +42,24 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     public static final int[] EMPTY_INTS = {};
 
     @Override
-    public boolean insert(final long eventID, IThrowableProxy tpox) {
+    public boolean insertIfAbsent(long eventId, IThrowableProxy tpox) throws Exception {
+        final ArrayList<ExceptionDO> vols = new ArrayList<>(16);
+        IThrowableProxy px = tpox;
+        while (px != null) {
+            ExceptionDO vo = getDO(px);
+            if (! hasKey(vo.id))
+                vols.add(vo);
+            px = px.getCause();
+        }
 
+        if (vols.isEmpty())
+            return true;
+        else
+            return insert(eventId, vols);
+    }
+
+    @Override
+    public boolean insert(long eventId, IThrowableProxy tpox) throws Exception {
         final ArrayList<ExceptionDO> vols = new ArrayList<>(16);
         IThrowableProxy px = tpox;
         while (px != null) {
@@ -49,23 +67,30 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
             vols.add(vo);
             px = px.getCause();
         }
+        if (vols.isEmpty())
+            return true;
+        else
+            return insert(eventId, vols);
+    }
+
+    @Override
+    public boolean insert(final long eventID, final List<ExceptionDO> vols) {
 
         batchInsert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO `exception`(`id`,`time_created`" +
-                        ",`except_name`,`except_msg`,`stack_traces`)" +
-                        "VALUES (?,?,?,?,?)");
+                        "INSERT INTO `exception`(`id`" +
+                                ",`except_name`,`except_msg`,`stack_traces`)" +
+                                "VALUES (?,?,?,?)");
 
                 for (ExceptionDO vo : vols) {
                     ps.setLong(1, vo.id);
-                    ps.setLong(2, vo.timeCreated);
-                    ps.setInt(3, vo.exceptName);
-                    ps.setInt(4, vo.exceptMsg);
+                    ps.setInt(2, vo.exceptName);
+                    ps.setInt(3, vo.exceptMsg);
 
                     byte[] buf = Bytes.int2byte(vo.stackTraces);
-                    ps.setBytes(5, buf);
+                    ps.setBytes(4, buf);
 
                     ps.addBatch();
                 }
@@ -77,7 +102,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO `j_event_exception`(`seq`,`event_id`,`except_id`)VALUES(?,?,?)");
+                        "INSERT INTO `j_event_exception`(`seq`,`event_id`,`except_id`)VALUES(?,?,?)");
 
                 for (int i = 0; i < vols.size(); i++) {
                     ps.setInt(1, i);
@@ -97,7 +122,6 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     ExceptionDO getDO(@Nonnull IThrowableProxy tpox) {
 
         ExceptionDO vo = new ExceptionDO();
-        vo.timeCreated = System.currentTimeMillis();
 
         String _thwName = tpox.getClassName();
         final int thwID = _thwName.hashCode();
@@ -134,4 +158,15 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
 
     }
 
+    @Override
+    public boolean hasKey(final long hash) {
+        return queryForObject(new StatementCreator() {
+            @Override
+            public PreparedStatement createStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT count(1) FROM `exception` WHERE id = " + hash);
+                return ps;
+            }
+        }, RowMapping.BOOLEAN_ROW_MAPPING);
+    }
 }

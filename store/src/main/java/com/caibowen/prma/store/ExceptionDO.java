@@ -18,10 +18,6 @@ public class ExceptionDO implements Serializable {
      * hash combine of exceptName, exceptMsg and stackTraces.
      */
     public long id;
-    /**
-     * ms
-     */
-    public long timeCreated;
 
     /**
      * hashCode of exception/throwalbe name
@@ -44,14 +40,6 @@ public class ExceptionDO implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public long getTimeCreated() {
-        return timeCreated;
-    }
-
-    public void setTimeCreated(long timeCreated) {
-        this.timeCreated = timeCreated;
     }
 
     public int getExceptName() {
@@ -86,10 +74,9 @@ public class ExceptionDO implements Serializable {
 
         ExceptionDO that = (ExceptionDO) o;
 
+        if (id != that.id) return false;
         if (exceptMsg != that.exceptMsg) return false;
         if (exceptName != that.exceptName) return false;
-        if (id != that.id) return false;
-        if (timeCreated != that.timeCreated) return false;
 
         return true;
     }
@@ -97,7 +84,6 @@ public class ExceptionDO implements Serializable {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (timeCreated ^ (timeCreated >>> 32));
         result = 31 * result + exceptName;
         result = 31 * result + exceptMsg;
         result = 31 * result + (stackTraces != null ? Arrays.hashCode(stackTraces) : 0);
@@ -108,7 +94,6 @@ public class ExceptionDO implements Serializable {
     public String toString() {
         return "ExceptionVO{" +
                 "id=" + id +
-                ", timeCreated=" + timeCreated +
                 ", exceptName=" + exceptName +
                 ", exceptMsg=" + exceptMsg +
                 ", stackTraces=" + Arrays.toString(stackTraces) +

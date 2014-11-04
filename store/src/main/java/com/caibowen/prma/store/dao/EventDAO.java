@@ -3,6 +3,8 @@ package com.caibowen.prma.store.dao;
 import com.caibowen.gplume.jdbc.TransactionSupport;
 import com.caibowen.prma.store.EventDO;
 
+import java.util.List;
+
 
 /**
  * @author BowenCai
@@ -11,10 +13,12 @@ import com.caibowen.prma.store.EventDO;
 public interface EventDAO extends TransactionSupport {
 
     /**
-     * insertAll to DB, return valid id
+     * insertIfAbsent to DB, return valid id
      * @param po
      * @return
      */
     long insert(EventDO po);
+
+    List<Long> batchInsert(List<EventDO> ls);
 
 }

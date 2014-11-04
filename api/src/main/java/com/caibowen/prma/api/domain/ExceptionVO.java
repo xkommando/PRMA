@@ -9,12 +9,11 @@ import java.util.List;
  * @author BowenCai
  * @since 26-10-2014.
  */
-public class Exception implements Serializable {
+public class ExceptionVO implements Serializable {
 
     private static final long serialVersionUID = 8087093751948611040L;
 
     public long id;
-    public long timeCreated;
 
     public String exceptionName;
 
@@ -33,14 +32,6 @@ public class Exception implements Serializable {
 
     public void setId(long id) {
         this.id = id;
-    }
-
-    public long getTimeCreated() {
-        return timeCreated;
-    }
-
-    public void setTimeCreated(long timeCreated) {
-        this.timeCreated = timeCreated;
     }
 
     public String getExceptionName() {
@@ -70,12 +61,11 @@ public class Exception implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Exception)) return false;
+        if (!(o instanceof ExceptionVO)) return false;
 
-        Exception exception = (Exception) o;
+        ExceptionVO exception = (ExceptionVO) o;
 
         if (id != exception.id) return false;
-        if (timeCreated != exception.timeCreated) return false;
         if (exceptionMessage != null ? !exceptionMessage.equals(exception.exceptionMessage) : exception.exceptionMessage != null)
             return false;
         if (!exceptionName.equals(exception.exceptionName)) return false;
@@ -87,7 +77,6 @@ public class Exception implements Serializable {
     @Override
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
-        result = 31 * result + (int) (timeCreated ^ (timeCreated >>> 32));
         result = 31 * result + exceptionName.hashCode();
         result = 31 * result + (exceptionMessage != null ? exceptionMessage.hashCode() : 0);
         result = 31 * result + stackTraces.hashCode();
@@ -98,7 +87,6 @@ public class Exception implements Serializable {
     public String toString() {
         return "Exception{" +
                 "id=" + id +
-                ", timeCreated=" + timeCreated +
                 ", exceptionName='" + exceptionName + '\'' +
                 ", exceptionMessage='" + exceptionMessage + '\'' +
                 ", stackTraces=" + stackTraces +

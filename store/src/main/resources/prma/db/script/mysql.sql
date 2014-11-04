@@ -66,14 +66,12 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `prma_log`.`exception` (
   `id` BIGINT(20) NOT NULL,
-  `time_created` BIGINT(20) NOT NULL,
   `except_name` INT NOT NULL,
   `except_msg` INT NOT NULL,
   `stack_traces` TINYBLOB NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_except_exp_name_idx` (`except_name` ASC),
-  INDEX `fk_except_exp_msg_idx` (`except_msg` ASC),
-  INDEX `idx_except_time_bt` USING BTREE (`time_created` ASC))
+  INDEX `fk_except_exp_msg_idx` (`except_msg` ASC))
 ENGINE = InnoDB;
 
 

@@ -1,6 +1,6 @@
 package com.caibowen.prma.store.test;
 
-import com.caibowen.prma.store.filter.StrPrefixFilter;
+import com.caibowen.prma.core.filter.StrPrefixFilter;
 import org.junit.Test;
 
 /**

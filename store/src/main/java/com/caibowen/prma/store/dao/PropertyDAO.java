@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public interface PropertyDAO {//extends Int4DAO<Pair<String, Object>> {
 
+    boolean insertIfAbsent(long eventId, Map<String, String> prop);
     boolean insertAll(long eventId, Map<String, String> prop);
-
+    boolean hasKey(int hash);
 }

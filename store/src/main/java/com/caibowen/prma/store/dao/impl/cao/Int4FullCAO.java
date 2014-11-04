@@ -24,8 +24,11 @@ public class Int4FullCAO<V> implements Int4DAO<V> {
     @Inject
     Int4DAO<V> db;
 
+    @Inject int writeCacheSize;
+
     private Map<Integer, V> mem = new HashMap<>(256);
     private ReadWriteLock prepare = new ReentrantReadWriteLock();
+
 
     synchronized public void init() {
         mem.putAll(db.entries());
@@ -95,15 +98,24 @@ public class Int4FullCAO<V> implements Int4DAO<V> {
         }
     }
 
+    protected HashMap<Integer, V> cache;
     @Nonnull
     @Override
     public boolean put(int key, @Nonnull V value) {
         prepare.writeLock().lock();
         try {
-            boolean ok = db.put(key, value);
-            if (ok)
-                mem.put(key, value);
-            return ok;
+            cache.put(key, value);
+            mem.put(key, value);
+            if (cache.size() > writeCacheSize) {
+                boolean ok = db.putAll(cache);
+                if (!ok) {
+                    for (Map.Entry<Integer, V> e : cache.entrySet())
+                        mem.remove(e.getKey());
+                }
+                cache.clear();
+                return ok;
+            }
+            return true;
         } finally {
             prepare.writeLock().unlock();
         }
@@ -172,5 +184,13 @@ public class Int4FullCAO<V> implements Int4DAO<V> {
             }
         }
         return returnVal ? ov : null;
+    }
+
+    public int getWriteCacheSize() {
+        return writeCacheSize;
+    }
+
+    public void setWriteCacheSize(int writeCacheSize) {
+        this.writeCacheSize = writeCacheSize;
     }
 }

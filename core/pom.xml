@@ -15,5 +15,12 @@
     <artifactId>core</artifactId>
     <version>${prma-version}</version>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.caibowen.gplumeframework</groupId>
+            <artifactId>gplume</artifactId>
+            <version>${gplume-version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

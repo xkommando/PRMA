@@ -29,7 +29,7 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
     public static final int DEFAULT_MAX_THREAD = 128;
     @Inject private int maxThreadNum = DEFAULT_MAX_THREAD;
 
-    @Inject private ThreadPoolExecutor executor;
+    @Inject protected ThreadPoolExecutor executor;
 
     @Inject private Appender<E> backupAppender;
 
@@ -41,7 +41,6 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
         }
 
         if (executor == null || executor.isShutdown()) {
-
 
             executor = new ThreadPoolExecutor(0, 256, 60L, TimeUnit.SECONDS,
                     new SynchronousQueue<Runnable>(), new RejectedExecutionHandler() {

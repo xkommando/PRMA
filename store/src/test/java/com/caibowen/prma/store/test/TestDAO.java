@@ -1,6 +1,7 @@
 package com.caibowen.prma.store.test;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
@@ -19,9 +20,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.RejectedExecutionHandler;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author BowenCai
@@ -52,6 +60,23 @@ public class TestDAO {
     EventDAO eventDAO;
 
     TransactionManager manager = new JdbcTransactionManager();
+
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 256, 60L, TimeUnit.SECONDS,
+                                                                                        new SynchronousQueue<Runnable>(), new RejectedExecutionHandler() {
+        @Override
+        public void rejectedExecution(final Runnable r, ThreadPoolExecutor executor) {
+            class _R implements Runnable {
+                @Override
+                public void run() {
+                    r.run();
+                }
+            }
+            if (r instanceof _R)
+                r.run();
+            else
+                executor.execute(new _R());
+        }
+    });
 
     @Test
     public void s() throws Throwable {
@@ -189,4 +214,65 @@ public class TestDAO {
 //        System.out.println(loggerDAO.get(356721094));
 
 
+    @Test
+    public void batchInsert() {
+        System.out.println("enter batch");
+
+        List<ILoggingEvent> eventls = new ArrayList<>(16);
+
+        final Throwable _t = new RuntimeException("msg level 3",
+                new IOException("msg level 2",
+                        new FileNotFoundException("msg level 1")));
+
+        long t = System.currentTimeMillis();
+        for (int i = 0; i < 20; i++) {
+            eventls.add(new LoggingEvent(
+                    "logger name ??? haha " + i, (ch.qos.logback.classic.Logger)LOGGER,
+                    Level.ERROR, "hahaha messsssage " + i, _t, null)
+            );
+        }
+        eventP.batchPersist(eventls);
+        long tt = System.currentTimeMillis();
+        System.out.println("Time: " + (tt - t));
+    }
+
+    @Test
+    public void singleInsert() {
+        List<ILoggingEvent> eventls = new ArrayList<>(16);
+
+        final Throwable _t = new RuntimeException("msg level 3",
+                new IOException("msg level 2",
+                        new FileNotFoundException("msg level 1")));
+
+        long t = System.currentTimeMillis();
+        for (int i = 0; i < 20; i++) {
+            ILoggingEvent e =new LoggingEvent(
+                            "logger name ??? haha " + i, (ch.qos.logback.classic.Logger)LOGGER,
+                            Level.ERROR, "hahaha messsssage " + i, _t, null);
+            eventP.persist(e);
+        }
+        long tt = System.currentTimeMillis();
+        System.out.println(tt - t);
+    }
+
+    @Test
+    public void async() throws Throwable {
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("=====================");
+            }
+        });
+        long t = System.currentTimeMillis();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                batchInsert();
+            }
+        });
+        executor.shutdown();
+        executor.awaitTermination(10, TimeUnit.SECONDS);
+        long tt = System.currentTimeMillis();
+        System.out.println(tt - t);
+    }
 }

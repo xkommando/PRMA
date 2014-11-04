@@ -8,6 +8,8 @@ import com.caibowen.prma.store.dao.*;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,21 +40,50 @@ public class EventPersistImpl implements EventPersist {
                 EventDO po = getDO(event);
                 final long evId = eventDAO.insert(po);
 
-
                 Map<String, String> prop = LogEventAux.extractProperties(event);
                 if (prop != null)
-                    if (! propertyDAO.insertAll(evId, prop))
-                        ; // error
+                    if (! propertyDAO.insertIfAbsent(evId, prop))
+                        throw new RuntimeException("cannot insert properties[" + prop + "]"); // error
 
                 IThrowableProxy tpox = event.getThrowableProxy();
                 if (tpox != null) {
-                    exceptionDAO.insert(evId, tpox);
+                    exceptionDAO.insertIfAbsent(evId, tpox);
                 }
                 return null;
             }
         });
     }
 
+    @Override
+    public void batchPersist(final List<ILoggingEvent> ls) {
+        eventDAO.execute(new TransactionCallback<Object>() {
+            @Override
+            public Object withTransaction(@Nonnull Transaction transaction) throws Exception {
+
+                List<EventDO> dols = new ArrayList<EventDO>(ls.size());
+                for (ILoggingEvent _e : ls)
+                    dols.add(getDO(_e));
+
+                final List<Long> ids = eventDAO.batchInsert(dols);
+
+                for (int i = 0; i < ids.size(); i++) {
+                    ILoggingEvent event = ls.get(i);
+                    long evId = ids.get(i);
+                    Map<String, String> prop = LogEventAux.extractProperties(event);
+                    if (prop != null)
+                        if (! propertyDAO.insertIfAbsent(evId, prop))
+                            throw new RuntimeException("cannot insert properties[" + prop + "]"); // error
+
+                    IThrowableProxy tpox = event.getThrowableProxy();
+                    if (tpox != null) {
+                        exceptionDAO.insertIfAbsent(evId, tpox);
+                    }
+                }
+
+                return null;
+            }
+        });
+    }
 
     private EventDO getDO(ILoggingEvent event) {
 
@@ -92,6 +123,7 @@ public class EventPersistImpl implements EventPersist {
                     + "  could not save value["
                     + (null == obj ? "null" : obj.toString()) + "] with id " + hash);
     }
+
 
 
 

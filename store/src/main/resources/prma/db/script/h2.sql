@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS `stack_trace` (
 -- partial cached
 CREATE TABLE IF NOT EXISTS `exception` (
   id				    INT8          NOT NULL,    -- hash of name
-  time_created  INT8          NOT NULL,
   except_name   INT4          NOT NULL,
   except_msg    INT4          NOT NULL,
   stack_traces  BINARY(1023)  NOT NULL,

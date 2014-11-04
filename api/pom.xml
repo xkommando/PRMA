@@ -11,12 +11,12 @@
 
     <artifactId>api</artifactId>
 
-    <!--<dependencies>-->
-        <!--<dependency>-->
-            <!--<groupId>com.caibowen.prma</groupId>-->
-            <!--<artifactId>core</artifactId>-->
-            <!--<version>${prma-version}</version>-->
-        <!--</dependency>-->
-    <!--</dependencies>-->
+    <dependencies>
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf-version}</version>
+        </dependency>
+    </dependencies>
 
 </project>

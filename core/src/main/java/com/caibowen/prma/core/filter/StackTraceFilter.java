@@ -1,4 +1,4 @@
-package com.caibowen.prma.store.filter;
+package com.caibowen.prma.core.filter;
 
 /**
  * @author BowenCai

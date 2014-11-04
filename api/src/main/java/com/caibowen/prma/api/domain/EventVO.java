@@ -10,7 +10,7 @@ import java.util.Map;
  * @author BowenCai
  * @since 26-10-2014.
  */
-public class Event implements Serializable {
+public class EventVO implements Serializable {
 
     private static final long serialVersionUID = -8179577194579626226L;
 
@@ -102,9 +102,9 @@ public class Event implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Event)) return false;
+        if (!(o instanceof EventVO)) return false;
 
-        Event event = (Event) o;
+        EventVO event = (EventVO) o;
 
         if (id != event.id) return false;
         if (timeCreated != event.timeCreated) return false;
