@@ -1,8 +1,5 @@
 package com.caibowen.prma.store.test;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.LoggingEvent;
 import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
@@ -10,6 +7,8 @@ import com.caibowen.gplume.jdbc.transaction.JdbcTransactionManager;
 import com.caibowen.gplume.jdbc.transaction.Transaction;
 import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
 import com.caibowen.gplume.jdbc.transaction.TransactionManager;
+import com.caibowen.prma.api.LogLevel;
+import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.store.EventPersist;
 import com.caibowen.prma.store.dao.EventDAO;
 import com.caibowen.prma.store.dao.Int4DAO;
@@ -20,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
 import javax.sql.DataSource;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -160,12 +158,6 @@ public class TestDAO {
 
     @Test
     public void dao_tnx() {
-        final Throwable _t = new RuntimeException("msg level 3",
-                new IOException("msg level 2",
-                        new FileNotFoundException("msg level 1")));
-
-        LoggingEvent le = new LoggingEvent(
-                "logger name ??? haha", (ch.qos.logback.classic.Logger)LOGGER, Level.ERROR, "hahaha messsssage", _t, null);
 
         // once with no inner exception, once with exception from a random procedure.
 //        eventP.persist(le);
@@ -218,27 +210,38 @@ public class TestDAO {
     public void batchInsert() {
         System.out.println("enter batch");
 
-        List<ILoggingEvent> eventls = new ArrayList<>(16);
+        List<EventVO> eventls = new ArrayList<>(16);
 
-        final Throwable _t = new RuntimeException("msg level 3",
+        Throwable[] _fk = new Throwable[]{new RuntimeException("msg level 3",
                 new IOException("msg level 2",
-                        new FileNotFoundException("msg level 1")));
+                        new FileNotFoundException("msg level 1")))};
 
         long t = System.currentTimeMillis();
+        StackTraceElement s = (new Throwable().getStackTrace()[0]);
         for (int i = 0; i < 20; i++) {
-            eventls.add(new LoggingEvent(
-                    "logger name ??? haha " + i, (ch.qos.logback.classic.Logger)LOGGER,
-                    Level.ERROR, "hahaha messsssage " + i, _t, null)
-            );
+            eventls.add(new EventVO(
+                    System.currentTimeMillis(),
+                    LogLevel.ERROR,
+                    "logger name ??? haha " + i,
+                    Thread.currentThread().getName(),
+                    s,
+                    "hahaha messsssage " + i,
+                    null,
+                    _fk));
         }
+
         eventP.batchPersist(eventls);
         long tt = System.currentTimeMillis();
         System.out.println("Time: " + (tt - t));
     }
+//    new FileNotFoundException("msg level 1")));
+
+//    LoggingEvent le = new LoggingEvent(
+//            "logger name ??? haha", (ch.qos.logback.classic.Logger)LOGGER, Level.ERROR, "hahaha messsssage", _t, null);
 
     @Test
     public void singleInsert() {
-        List<ILoggingEvent> eventls = new ArrayList<>(16);
+        List<EventVO> eventls = new ArrayList<>(16);
 
         final Throwable _t = new RuntimeException("msg level 3",
                 new IOException("msg level 2",
@@ -246,10 +249,16 @@ public class TestDAO {
 
         long t = System.currentTimeMillis();
         for (int i = 0; i < 20; i++) {
-            ILoggingEvent e =new LoggingEvent(
-                            "logger name ??? haha " + i, (ch.qos.logback.classic.Logger)LOGGER,
-                            Level.ERROR, "hahaha messsssage " + i, _t, null);
-            eventP.persist(e);
+            eventP.persist(new EventVO(
+                    System.currentTimeMillis(),
+                    LogLevel.ERROR,
+                    "logger name ??? haha " + i,
+                    Thread.currentThread().getName(),
+                    new Throwable().getStackTrace()[0],
+                    "hahaha messsssage " + i,
+                    null,
+                    new Throwable[]{_t})
+            );
         }
         long tt = System.currentTimeMillis();
         System.out.println(tt - t);

@@ -1,6 +1,8 @@
 package com.caibowen.prma.logger.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.caibowen.gplume.annotation.ConstMethod;
+import com.caibowen.gplume.annotation.Internal;
 import com.caibowen.prma.store.EventPersistImpl;
 
 import javax.inject.Inject;

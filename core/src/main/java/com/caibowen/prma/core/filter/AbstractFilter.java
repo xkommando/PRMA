@@ -39,4 +39,18 @@ public abstract class AbstractFilter<E> implements Filter<E> {
         return next;
     }
 
+    @Override
+    public void start() {
+        started = true;
+    }
+
+    @Override
+    public void stop() {
+        started = false;
+    }
+
+    @Override
+    public boolean isStarted() {
+        return started;
+    }
 }

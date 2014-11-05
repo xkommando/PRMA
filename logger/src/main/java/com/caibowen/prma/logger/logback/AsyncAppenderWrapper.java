@@ -43,22 +43,23 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
         if (executor == null || executor.isShutdown()) {
 
             executor = new ThreadPoolExecutor(0, 256, 60L, TimeUnit.SECONDS,
-                    new SynchronousQueue<Runnable>(), new RejectedExecutionHandler() {
-
-                @Override
-                public void rejectedExecution(final Runnable r, ThreadPoolExecutor executor) {
-                    class _R implements Runnable {
-                        @Override
-                        public void run() {
-                            r.run();
-                        }
-                    }
-                    if (r instanceof _R)
-                        r.run();
-                    else
-                        executor.execute(new _R());
-                }
-            });
+                    new SynchronousQueue<Runnable>());
+//            new RejectedExecutionHandler() {
+//
+//                @Override
+//                public void rejectedExecution(final Runnable r, ThreadPoolExecutor executor) {
+//                    class _R implements Runnable {
+//                        @Override
+//                        public void run() {
+//                            r.run();
+//                        }
+//                    }
+//                    if (r instanceof _R)
+//                        r.run();
+//                    else
+//                        executor.execute(new _R());
+//                }
+//            });
         }
         super.start();
     }

@@ -34,6 +34,15 @@ public class ExceptionDO implements Serializable {
      */
     public int[] stackTraces;
 
+    public ExceptionDO() {}
+
+    public ExceptionDO(long id, int exceptName, int exceptMsg, int[] stackTraces) {
+        this.id = id;
+        this.exceptName = exceptName;
+        this.exceptMsg = exceptMsg;
+        this.stackTraces = stackTraces;
+    }
+
     public long getId() {
         return id;
     }

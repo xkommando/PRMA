@@ -1,6 +1,7 @@
 package com.caibowen.prma.core.filter;
 
 import com.caibowen.gplume.common.URIPrefixTrie;
+import com.caibowen.gplume.common.URISuffixTrie;
 import com.caibowen.gplume.misc.Str;
 
 import java.io.BufferedReader;
@@ -9,20 +10,26 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 
 /**
- * Filter by String or String prefix
+ * Filter by prefix, suffix or entire string
+ *
  *
  * @author BowenCai
  * @since 30-10-2014.
  */
-public class StrPrefixFilter extends AbstractFilter<String> {
+public class StrFilter extends AbstractFilter<String> {
 
     @Override
     protected int doAccept(String e) {
         return null == ignoreByFullMatch.get(e)
-                && null == ignorePrefix.matchPrefix(e) ? 1 : -1;
+                && null == ignorePrefix.matchPrefix(e)
+                && null == ignoreSuffix.matchPrefix(e) ? 1 : -1;
     }
 
     static HashMap<String, Object> ignoreByFullMatch = new HashMap<>(128);
+    /**
+     * match suffix
+     */
+    static URISuffixTrie<Object> ignoreSuffix = new URISuffixTrie<>();
     /**
      * match prefix
      */
@@ -40,7 +47,9 @@ public class StrPrefixFilter extends AbstractFilter<String> {
             return;
 
 
-        if (buf.endsWith("*"))
+        if (buf.startsWith("*"))
+            ignoreSuffix.branch(buf.substring(0, buf.length() - 1), NA);
+        else if (buf.endsWith("*"))
             ignorePrefix.branch(buf.substring(0, buf.length() - 1), NA);
         else
             ignoreByFullMatch.put(buf, NA);
@@ -62,6 +71,7 @@ public class StrPrefixFilter extends AbstractFilter<String> {
             }
         } catch (Throwable e ) {
             // ????
+            e.printStackTrace();
         } finally {
             try {
                 if (reader != null)
@@ -70,6 +80,7 @@ public class StrPrefixFilter extends AbstractFilter<String> {
                     ins.close();
             } catch (Throwable e) {
                 // LOGGGG
+                e.printStackTrace();
             }
         }
 
@@ -77,16 +88,13 @@ public class StrPrefixFilter extends AbstractFilter<String> {
     }
 
     @Override
-    public boolean isStarted() {
-        return started;
-    }
-
-    @Override
     public void stop() {
         NA = null;
         ignoreByFullMatch.clear();
         ignorePrefix.clear();
+        started = false;
     }
+
 
 
 }

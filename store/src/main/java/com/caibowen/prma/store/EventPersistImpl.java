@@ -1,9 +1,8 @@
 package com.caibowen.prma.store;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.classic.spi.IThrowableProxy;
 import com.caibowen.gplume.jdbc.transaction.Transaction;
 import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
+import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.store.dao.*;
 
 import javax.annotation.Nonnull;
@@ -32,7 +31,7 @@ public class EventPersistImpl implements EventPersist {
     @Inject ExceptionDAO exceptionDAO;
 
 
-    public void persist(final ILoggingEvent event) {
+    public void persist(final EventVO event) {
 
         eventDAO.execute(new TransactionCallback<Object>() {
             @Override
@@ -40,12 +39,12 @@ public class EventPersistImpl implements EventPersist {
                 EventDO po = getDO(event);
                 final long evId = eventDAO.insert(po);
 
-                Map<String, String> prop = LogEventAux.extractProperties(event);
+                Map prop = event.properties;
                 if (prop != null)
                     if (! propertyDAO.insertIfAbsent(evId, prop))
                         throw new RuntimeException("cannot insert properties[" + prop + "]"); // error
 
-                IThrowableProxy tpox = event.getThrowableProxy();
+                Throwable[] tpox = event.exceptions;
                 if (tpox != null) {
                     exceptionDAO.insertIfAbsent(evId, tpox);
                 }
@@ -55,26 +54,26 @@ public class EventPersistImpl implements EventPersist {
     }
 
     @Override
-    public void batchPersist(final List<ILoggingEvent> ls) {
+    public void batchPersist(final List<EventVO> ls) {
         eventDAO.execute(new TransactionCallback<Object>() {
             @Override
             public Object withTransaction(@Nonnull Transaction transaction) throws Exception {
 
                 List<EventDO> dols = new ArrayList<EventDO>(ls.size());
-                for (ILoggingEvent _e : ls)
+                for (EventVO _e : ls)
                     dols.add(getDO(_e));
 
                 final List<Long> ids = eventDAO.batchInsert(dols);
 
                 for (int i = 0; i < ids.size(); i++) {
-                    ILoggingEvent event = ls.get(i);
+                    EventVO event = ls.get(i);
                     long evId = ids.get(i);
-                    Map<String, String> prop = LogEventAux.extractProperties(event);
+                    Map prop = event.properties;
                     if (prop != null)
                         if (! propertyDAO.insertIfAbsent(evId, prop))
                             throw new RuntimeException("cannot insert properties[" + prop + "]"); // error
 
-                    IThrowableProxy tpox = event.getThrowableProxy();
+                    Throwable[] tpox = event.exceptions;
                     if (tpox != null) {
                         exceptionDAO.insertIfAbsent(evId, tpox);
                     }
@@ -85,12 +84,12 @@ public class EventPersistImpl implements EventPersist {
         });
     }
 
-    private EventDO getDO(ILoggingEvent event) {
+    private EventDO getDO(EventVO event) {
 
         EventDO vo = new EventDO();
-        vo.timeCreated = event.getTimeStamp();
+        vo.timeCreated = event.timeCreated;
 
-        StackTraceElement callerST = LogEventAux.callerST(event);
+        StackTraceElement callerST = event.callerStackTrace;
         final int _callerID = callerST.hashCode();
         if (! stackTraceDAO.putIfAbsent(_callerID, callerST))
             throw new RuntimeException("could not save stack trace "
@@ -108,13 +107,38 @@ public class EventPersistImpl implements EventPersist {
         persist(threadDAO, _threadID, _tn);
         vo.threadId = _threadID;
 
-        vo.flag = LogEventAux.flag(event);
-        vo.level = LogEventAux.level(event);
-        vo.message = event.getFormattedMessage();
+        vo.flag = flag(event);
+        vo.level = (byte)event.level.levelInt;
+        vo.message = event.message;
 
         return vo;
     }
 
+
+
+    public static final short PROPERTIES_EXIST = 0x01;
+    public static final short EXCEPTION_EXISTS = 0x02;
+
+    public static byte flag(EventVO event) {
+        byte mask = 0;
+//
+//        int mdcPropSize = 0;
+//        if (event.getMDCPropertyMap() != null) {
+//            mdcPropSize = event.getMDCPropertyMap().keySet().size();
+//        }
+//        int contextPropSize = 0;
+//        if (event.getLoggerContextVO().getPropertyMap() != null) {
+//            contextPropSize = event.getLoggerContextVO().getPropertyMap().size();
+//        }
+//
+//        if (mdcPropSize > 0 || contextPropSize > 0) {
+//            mask = PROPERTIES_EXIST;
+//        }
+//        if (event.getThrowableProxy() != null) {
+//            mask |= EXCEPTION_EXISTS;
+//        }
+        return mask;
+    }
 
     private static <V> void
     persist(Int4DAO<V> dao, int hash, V obj) {

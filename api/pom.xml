@@ -16,7 +16,14 @@
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
             <version>${protobuf-version}</version>
+            <optional>true</optional>
         </dependency>
+
+        <!--<dependency>-->
+            <!--<groupId>org.msgpack</groupId>-->
+            <!--<artifactId>msgpack</artifactId>-->
+            <!--<version>0.6.8</version>-->
+        <!--</dependency>-->
     </dependencies>
 
 </project>

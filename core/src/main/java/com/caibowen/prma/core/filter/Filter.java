@@ -16,7 +16,9 @@ public interface Filter<E> extends LifeCycle {
      */
     @NoExcept
     int accept(E e);
+
     Filter getNext();
+
     void setNext(Filter ef);
 
 }

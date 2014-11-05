@@ -1,9 +1,11 @@
-package com.caibowen.prma.api.domain;
+package com.caibowen.prma.api.model;
 
 import com.caibowen.prma.api.LogLevel;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,8 +26,36 @@ public class EventVO implements Serializable {
 
     public String message;
 
-    @Nullable Map<String, Object> properties;
-    @Nullable Map<String, Throwable> exceptions;
+    @Nullable
+    public Map<String, Object> properties;
+
+    @Nullable
+    public List<ExceptionVO> exceptions;
+
+    public EventVO() {}
+
+    public EventVO(long timeCreated, LogLevel level, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Map<String, Object> properties, List<ExceptionVO> exceptions) {
+        this.timeCreated = timeCreated;
+        this.level = level;
+        this.loggerName = loggerName;
+        this.threadName = threadName;
+        this.callerStackTrace = callerStackTrace;
+        this.message = message;
+        this.properties = properties;
+        this.exceptions = exceptions;
+    }
+
+    public EventVO(long id, long timeCreated, LogLevel level, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Map<String, Object> properties, List<ExceptionVO> exceptions) {
+        this.id = id;
+        this.timeCreated = timeCreated;
+        this.level = level;
+        this.loggerName = loggerName;
+        this.threadName = threadName;
+        this.callerStackTrace = callerStackTrace;
+        this.message = message;
+        this.properties = properties;
+        this.exceptions = exceptions;
+    }
 
     public long getId() {
         return id;
@@ -91,11 +121,11 @@ public class EventVO implements Serializable {
         this.properties = properties;
     }
 
-    public Map<String, Throwable> getExceptions() {
+    public List<ExceptionVO> getExceptions() {
         return exceptions;
     }
 
-    public void setExceptions(Map<String, Throwable> exceptions) {
+    public void setExceptions(List<ExceptionVO> exceptions) {
         this.exceptions = exceptions;
     }
 
@@ -135,6 +165,7 @@ public class EventVO implements Serializable {
 
     @Override
     public String toString() {
+
         return "Event{" +
                 "id=" + id +
                 ", timeCreated=" + timeCreated +

@@ -1,6 +1,6 @@
 package com.caibowen.prma.store.test;
 
-import com.caibowen.prma.core.filter.StrPrefixFilter;
+import com.caibowen.prma.core.filter.StrFilter;
 import org.junit.Test;
 
 /**
@@ -12,7 +12,7 @@ public class FilterTest {
 
     @Test
     public void t1() {
-        StrPrefixFilter filter = new StrPrefixFilter();
+        StrFilter filter = new StrFilter();
         filter.start();
         System.out.println(filter.accept("comment"));
     }

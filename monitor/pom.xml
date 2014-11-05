@@ -15,9 +15,20 @@
     <dependencies>
         <dependency>
             <groupId>com.caibowen.prma</groupId>
+            <artifactId>api</artifactId>
+            <version>${prma-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.caibowen.prma</groupId>
             <artifactId>core</artifactId>
             <version>${prma-version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <optional>true</optional>
+        </dependency>
+
     </dependencies>
 
 </project>

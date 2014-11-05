@@ -52,12 +52,12 @@ public final class Exception {
     /**
      * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
      */
-    java.util.List<com.caibowen.prma.api.proto.StackTrace.StackTracePO> 
+    java.util.List<StackTrace.StackTracePO>
         getStacktracesList();
     /**
      * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
      */
-    com.caibowen.prma.api.proto.StackTrace.StackTracePO getStacktraces(int index);
+    StackTrace.StackTracePO getStacktraces(int index);
     /**
      * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
      */
@@ -65,12 +65,13 @@ public final class Exception {
     /**
      * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
      */
-    java.util.List<? extends com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder> 
+    java.util.List<? extends StackTrace.StackTracePOOrBuilder>
         getStacktracesOrBuilderList();
-    /**
-     * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
-     */
-    com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder getStacktracesOrBuilder(
+
+      /**
+       * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
+       */
+    StackTrace.StackTracePOOrBuilder getStacktracesOrBuilder(
             int index);
   }
   /**
@@ -144,10 +145,10 @@ public final class Exception {
             }
             case 34: {
               if (!((mutable_bitField0_ & 0x00000008) == 0x00000008)) {
-                stacktraces_ = new java.util.ArrayList<com.caibowen.prma.api.proto.StackTrace.StackTracePO>();
+                stacktraces_ = new java.util.ArrayList<StackTrace.StackTracePO>();
                 mutable_bitField0_ |= 0x00000008;
               }
-              stacktraces_.add(input.readMessage(com.caibowen.prma.api.proto.StackTrace.StackTracePO.PARSER, extensionRegistry));
+              stacktraces_.add(input.readMessage(StackTrace.StackTracePO.PARSER, extensionRegistry));
               break;
             }
           }
@@ -293,17 +294,17 @@ public final class Exception {
     }
 
     public static final int STACKTRACES_FIELD_NUMBER = 4;
-    private java.util.List<com.caibowen.prma.api.proto.StackTrace.StackTracePO> stacktraces_;
+    private java.util.List<StackTrace.StackTracePO> stacktraces_;
     /**
      * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
      */
-    public java.util.List<com.caibowen.prma.api.proto.StackTrace.StackTracePO> getStacktracesList() {
+    public java.util.List<StackTrace.StackTracePO> getStacktracesList() {
       return stacktraces_;
     }
     /**
      * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
      */
-    public java.util.List<? extends com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder> 
+    public java.util.List<? extends StackTrace.StackTracePOOrBuilder>
         getStacktracesOrBuilderList() {
       return stacktraces_;
     }
@@ -316,13 +317,13 @@ public final class Exception {
     /**
      * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
      */
-    public com.caibowen.prma.api.proto.StackTrace.StackTracePO getStacktraces(int index) {
+    public StackTrace.StackTracePO getStacktraces(int index) {
       return stacktraces_.get(index);
     }
     /**
      * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
      */
-    public com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder getStacktracesOrBuilder(
+    public StackTrace.StackTracePOOrBuilder getStacktracesOrBuilder(
         int index) {
       return stacktraces_.get(index);
     }
@@ -856,22 +857,22 @@ public final class Exception {
         return this;
       }
 
-      private java.util.List<com.caibowen.prma.api.proto.StackTrace.StackTracePO> stacktraces_ =
+      private java.util.List<StackTrace.StackTracePO> stacktraces_ =
         java.util.Collections.emptyList();
       private void ensureStacktracesIsMutable() {
         if (!((bitField0_ & 0x00000008) == 0x00000008)) {
-          stacktraces_ = new java.util.ArrayList<com.caibowen.prma.api.proto.StackTrace.StackTracePO>(stacktraces_);
+          stacktraces_ = new java.util.ArrayList<StackTrace.StackTracePO>(stacktraces_);
           bitField0_ |= 0x00000008;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.caibowen.prma.api.proto.StackTrace.StackTracePO, com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder, com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder> stacktracesBuilder_;
+          StackTrace.StackTracePO, StackTrace.StackTracePO.Builder, StackTrace.StackTracePOOrBuilder> stacktracesBuilder_;
 
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public java.util.List<com.caibowen.prma.api.proto.StackTrace.StackTracePO> getStacktracesList() {
+      public java.util.List<StackTrace.StackTracePO> getStacktracesList() {
         if (stacktracesBuilder_ == null) {
           return java.util.Collections.unmodifiableList(stacktraces_);
         } else {
@@ -891,7 +892,7 @@ public final class Exception {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public com.caibowen.prma.api.proto.StackTrace.StackTracePO getStacktraces(int index) {
+      public StackTrace.StackTracePO getStacktraces(int index) {
         if (stacktracesBuilder_ == null) {
           return stacktraces_.get(index);
         } else {
@@ -902,7 +903,7 @@ public final class Exception {
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
       public Builder setStacktraces(
-          int index, com.caibowen.prma.api.proto.StackTrace.StackTracePO value) {
+          int index, StackTrace.StackTracePO value) {
         if (stacktracesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -919,7 +920,7 @@ public final class Exception {
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
       public Builder setStacktraces(
-          int index, com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder builderForValue) {
+          int index, StackTrace.StackTracePO.Builder builderForValue) {
         if (stacktracesBuilder_ == null) {
           ensureStacktracesIsMutable();
           stacktraces_.set(index, builderForValue.build());
@@ -932,7 +933,7 @@ public final class Exception {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public Builder addStacktraces(com.caibowen.prma.api.proto.StackTrace.StackTracePO value) {
+      public Builder addStacktraces(StackTrace.StackTracePO value) {
         if (stacktracesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -949,7 +950,7 @@ public final class Exception {
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
       public Builder addStacktraces(
-          int index, com.caibowen.prma.api.proto.StackTrace.StackTracePO value) {
+          int index, StackTrace.StackTracePO value) {
         if (stacktracesBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -966,7 +967,7 @@ public final class Exception {
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
       public Builder addStacktraces(
-          com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder builderForValue) {
+          StackTrace.StackTracePO.Builder builderForValue) {
         if (stacktracesBuilder_ == null) {
           ensureStacktracesIsMutable();
           stacktraces_.add(builderForValue.build());
@@ -980,7 +981,7 @@ public final class Exception {
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
       public Builder addStacktraces(
-          int index, com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder builderForValue) {
+          int index, StackTrace.StackTracePO.Builder builderForValue) {
         if (stacktracesBuilder_ == null) {
           ensureStacktracesIsMutable();
           stacktraces_.add(index, builderForValue.build());
@@ -994,7 +995,7 @@ public final class Exception {
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
       public Builder addAllStacktraces(
-          Iterable<? extends com.caibowen.prma.api.proto.StackTrace.StackTracePO> values) {
+          Iterable<? extends StackTrace.StackTracePO> values) {
         if (stacktracesBuilder_ == null) {
           ensureStacktracesIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -1034,14 +1035,14 @@ public final class Exception {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder getStacktracesBuilder(
+      public StackTrace.StackTracePO.Builder getStacktracesBuilder(
           int index) {
         return getStacktracesFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder getStacktracesOrBuilder(
+      public StackTrace.StackTracePOOrBuilder getStacktracesOrBuilder(
           int index) {
         if (stacktracesBuilder_ == null) {
           return stacktraces_.get(index);  } else {
@@ -1051,7 +1052,7 @@ public final class Exception {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public java.util.List<? extends com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder> 
+      public java.util.List<? extends StackTrace.StackTracePOOrBuilder>
            getStacktracesOrBuilderList() {
         if (stacktracesBuilder_ != null) {
           return stacktracesBuilder_.getMessageOrBuilderList();
@@ -1062,31 +1063,31 @@ public final class Exception {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder addStacktracesBuilder() {
+      public StackTrace.StackTracePO.Builder addStacktracesBuilder() {
         return getStacktracesFieldBuilder().addBuilder(
-            com.caibowen.prma.api.proto.StackTrace.StackTracePO.getDefaultInstance());
+            StackTrace.StackTracePO.getDefaultInstance());
       }
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder addStacktracesBuilder(
+      public StackTrace.StackTracePO.Builder addStacktracesBuilder(
           int index) {
         return getStacktracesFieldBuilder().addBuilder(
-            index, com.caibowen.prma.api.proto.StackTrace.StackTracePO.getDefaultInstance());
+            index, StackTrace.StackTracePO.getDefaultInstance());
       }
       /**
        * <code>repeated .com.caibowen.prma.api.proto.StackTracePO stacktraces = 4;</code>
        */
-      public java.util.List<com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder> 
+      public java.util.List<StackTrace.StackTracePO.Builder>
            getStacktracesBuilderList() {
         return getStacktracesFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.caibowen.prma.api.proto.StackTrace.StackTracePO, com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder, com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder> 
+          StackTrace.StackTracePO, StackTrace.StackTracePO.Builder, StackTrace.StackTracePOOrBuilder>
           getStacktracesFieldBuilder() {
         if (stacktracesBuilder_ == null) {
           stacktracesBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              com.caibowen.prma.api.proto.StackTrace.StackTracePO, com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder, com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder>(
+              StackTrace.StackTracePO, StackTrace.StackTracePO.Builder, StackTrace.StackTracePOOrBuilder>(
                   stacktraces_,
                   ((bitField0_ & 0x00000008) == 0x00000008),
                   getParentForChildren(),
@@ -1139,7 +1140,7 @@ public final class Exception {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.caibowen.prma.api.proto.StackTrace.getDescriptor(),
+          StackTrace.getDescriptor(),
         }, assigner);
     internal_static_com_caibowen_prma_api_proto_ExceptionPO_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -1147,7 +1148,7 @@ public final class Exception {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_com_caibowen_prma_api_proto_ExceptionPO_descriptor,
         new String[] { "Id", "ExceptionName", "ExceptionMsg", "Stacktraces", });
-    com.caibowen.prma.api.proto.StackTrace.getDescriptor();
+    StackTrace.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

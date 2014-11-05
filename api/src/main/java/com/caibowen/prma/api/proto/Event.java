@@ -31,13 +31,13 @@ public final class Event {
     long getTimeCreated();
 
     /**
-     * <code>required .com.caibowen.prma.api.proto.LogLevelPO level = 3;</code>
+     * <code>required uint32 level = 3;</code>
      */
     boolean hasLevel();
     /**
-     * <code>required .com.caibowen.prma.api.proto.LogLevelPO level = 3;</code>
+     * <code>required uint32 level = 3;</code>
      */
-    com.caibowen.prma.api.proto.LogLevel.LogLevelPO getLevel();
+    int getLevel();
 
     /**
      * <code>required string logger_name = 4;</code>
@@ -88,11 +88,11 @@ public final class Event {
     /**
      * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
      */
-    com.caibowen.prma.api.proto.StackTrace.StackTracePO getCallerSt();
+    StackTrace.StackTracePO getCallerSt();
     /**
      * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
      */
-    com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder getCallerStOrBuilder();
+    StackTrace.StackTracePOOrBuilder getCallerStOrBuilder();
 
     /**
      * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
@@ -121,12 +121,12 @@ public final class Event {
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
-    java.util.List<com.caibowen.prma.api.proto.Exception.ExceptionPO> 
+    java.util.List<Exception.ExceptionPO>
         getExceptionsList();
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
-    com.caibowen.prma.api.proto.Exception.ExceptionPO getExceptions(int index);
+    Exception.ExceptionPO getExceptions(int index);
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
@@ -134,12 +134,12 @@ public final class Event {
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
-    java.util.List<? extends com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder> 
+    java.util.List<? extends Exception.ExceptionPOOrBuilder>
         getExceptionsOrBuilderList();
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
-    com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
+    Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
             int index);
   }
   /**
@@ -205,14 +205,8 @@ public final class Event {
               break;
             }
             case 24: {
-              int rawValue = input.readEnum();
-              com.caibowen.prma.api.proto.LogLevel.LogLevelPO value = com.caibowen.prma.api.proto.LogLevel.LogLevelPO.valueOf(rawValue);
-              if (value == null) {
-                unknownFields.mergeVarintField(3, rawValue);
-              } else {
-                bitField0_ |= 0x00000004;
-                level_ = value;
-              }
+              bitField0_ |= 0x00000004;
+              level_ = input.readUInt32();
               break;
             }
             case 34: {
@@ -234,11 +228,11 @@ public final class Event {
               break;
             }
             case 58: {
-              com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder subBuilder = null;
+              StackTrace.StackTracePO.Builder subBuilder = null;
               if (((bitField0_ & 0x00000040) == 0x00000040)) {
                 subBuilder = callerSt_.toBuilder();
               }
-              callerSt_ = input.readMessage(com.caibowen.prma.api.proto.StackTrace.StackTracePO.PARSER, extensionRegistry);
+              callerSt_ = input.readMessage(StackTrace.StackTracePO.PARSER, extensionRegistry);
               if (subBuilder != null) {
                 subBuilder.mergeFrom(callerSt_);
                 callerSt_ = subBuilder.buildPartial();
@@ -256,10 +250,10 @@ public final class Event {
             }
             case 74: {
               if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
-                exceptions_ = new java.util.ArrayList<com.caibowen.prma.api.proto.Exception.ExceptionPO>();
+                exceptions_ = new java.util.ArrayList<Exception.ExceptionPO>();
                 mutable_bitField0_ |= 0x00000100;
               }
-              exceptions_.add(input.readMessage(com.caibowen.prma.api.proto.Exception.ExceptionPO.PARSER, extensionRegistry));
+              exceptions_.add(input.readMessage(Exception.ExceptionPO.PARSER, extensionRegistry));
               break;
             }
           }
@@ -912,17 +906,17 @@ public final class Event {
     }
 
     public static final int LEVEL_FIELD_NUMBER = 3;
-    private com.caibowen.prma.api.proto.LogLevel.LogLevelPO level_;
+    private int level_;
     /**
-     * <code>required .com.caibowen.prma.api.proto.LogLevelPO level = 3;</code>
+     * <code>required uint32 level = 3;</code>
      */
     public boolean hasLevel() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .com.caibowen.prma.api.proto.LogLevelPO level = 3;</code>
+     * <code>required uint32 level = 3;</code>
      */
-    public com.caibowen.prma.api.proto.LogLevel.LogLevelPO getLevel() {
+    public int getLevel() {
       return level_;
     }
 
@@ -1053,7 +1047,7 @@ public final class Event {
     }
 
     public static final int CALLER_ST_FIELD_NUMBER = 7;
-    private com.caibowen.prma.api.proto.StackTrace.StackTracePO callerSt_;
+    private StackTrace.StackTracePO callerSt_;
     /**
      * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
      */
@@ -1063,13 +1057,13 @@ public final class Event {
     /**
      * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
      */
-    public com.caibowen.prma.api.proto.StackTrace.StackTracePO getCallerSt() {
+    public StackTrace.StackTracePO getCallerSt() {
       return callerSt_;
     }
     /**
      * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
      */
-    public com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder getCallerStOrBuilder() {
+    public StackTrace.StackTracePOOrBuilder getCallerStOrBuilder() {
       return callerSt_;
     }
 
@@ -1109,17 +1103,17 @@ public final class Event {
     }
 
     public static final int EXCEPTIONS_FIELD_NUMBER = 9;
-    private java.util.List<com.caibowen.prma.api.proto.Exception.ExceptionPO> exceptions_;
+    private java.util.List<Exception.ExceptionPO> exceptions_;
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
-    public java.util.List<com.caibowen.prma.api.proto.Exception.ExceptionPO> getExceptionsList() {
+    public java.util.List<Exception.ExceptionPO> getExceptionsList() {
       return exceptions_;
     }
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
-    public java.util.List<? extends com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder> 
+    public java.util.List<? extends Exception.ExceptionPOOrBuilder>
         getExceptionsOrBuilderList() {
       return exceptions_;
     }
@@ -1132,13 +1126,13 @@ public final class Event {
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
-    public com.caibowen.prma.api.proto.Exception.ExceptionPO getExceptions(int index) {
+    public Exception.ExceptionPO getExceptions(int index) {
       return exceptions_.get(index);
     }
     /**
      * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
      */
-    public com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
+    public Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
         int index) {
       return exceptions_.get(index);
     }
@@ -1146,11 +1140,11 @@ public final class Event {
     private void initFields() {
       id_ = 0L;
       timeCreated_ = 0L;
-      level_ = com.caibowen.prma.api.proto.LogLevel.LogLevelPO.ERROR;
+      level_ = 0;
       loggerName_ = "";
       threadName_ = "";
       fmtMsg_ = "";
-      callerSt_ = com.caibowen.prma.api.proto.StackTrace.StackTracePO.getDefaultInstance();
+      callerSt_ = StackTrace.StackTracePO.getDefaultInstance();
       properties_ = java.util.Collections.emptyList();
       exceptions_ = java.util.Collections.emptyList();
     }
@@ -1218,7 +1212,7 @@ public final class Event {
         output.writeUInt64(2, timeCreated_);
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeEnum(3, level_.getNumber());
+        output.writeUInt32(3, level_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         output.writeBytes(4, getLoggerNameBytes());
@@ -1257,7 +1251,7 @@ public final class Event {
       }
       if (((bitField0_ & 0x00000004) == 0x00000004)) {
         size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(3, level_.getNumber());
+          .computeUInt32Size(3, level_);
       }
       if (((bitField0_ & 0x00000008) == 0x00000008)) {
         size += com.google.protobuf.CodedOutputStream
@@ -1407,7 +1401,7 @@ public final class Event {
         bitField0_ = (bitField0_ & ~0x00000001);
         timeCreated_ = 0L;
         bitField0_ = (bitField0_ & ~0x00000002);
-        level_ = com.caibowen.prma.api.proto.LogLevel.LogLevelPO.ERROR;
+        level_ = 0;
         bitField0_ = (bitField0_ & ~0x00000004);
         loggerName_ = "";
         bitField0_ = (bitField0_ & ~0x00000008);
@@ -1416,7 +1410,7 @@ public final class Event {
         fmtMsg_ = "";
         bitField0_ = (bitField0_ & ~0x00000020);
         if (callerStBuilder_ == null) {
-          callerSt_ = com.caibowen.prma.api.proto.StackTrace.StackTracePO.getDefaultInstance();
+          callerSt_ = StackTrace.StackTracePO.getDefaultInstance();
         } else {
           callerStBuilder_.clear();
         }
@@ -1741,37 +1735,34 @@ public final class Event {
         return this;
       }
 
-      private com.caibowen.prma.api.proto.LogLevel.LogLevelPO level_ = com.caibowen.prma.api.proto.LogLevel.LogLevelPO.ERROR;
+      private int level_ ;
       /**
-       * <code>required .com.caibowen.prma.api.proto.LogLevelPO level = 3;</code>
+       * <code>required uint32 level = 3;</code>
        */
       public boolean hasLevel() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
       /**
-       * <code>required .com.caibowen.prma.api.proto.LogLevelPO level = 3;</code>
+       * <code>required uint32 level = 3;</code>
        */
-      public com.caibowen.prma.api.proto.LogLevel.LogLevelPO getLevel() {
+      public int getLevel() {
         return level_;
       }
       /**
-       * <code>required .com.caibowen.prma.api.proto.LogLevelPO level = 3;</code>
+       * <code>required uint32 level = 3;</code>
        */
-      public Builder setLevel(com.caibowen.prma.api.proto.LogLevel.LogLevelPO value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
+      public Builder setLevel(int value) {
         bitField0_ |= 0x00000004;
         level_ = value;
         onChanged();
         return this;
       }
       /**
-       * <code>required .com.caibowen.prma.api.proto.LogLevelPO level = 3;</code>
+       * <code>required uint32 level = 3;</code>
        */
       public Builder clearLevel() {
         bitField0_ = (bitField0_ & ~0x00000004);
-        level_ = com.caibowen.prma.api.proto.LogLevel.LogLevelPO.ERROR;
+        level_ = 0;
         onChanged();
         return this;
       }
@@ -2004,9 +1995,9 @@ public final class Event {
         return this;
       }
 
-      private com.caibowen.prma.api.proto.StackTrace.StackTracePO callerSt_ = com.caibowen.prma.api.proto.StackTrace.StackTracePO.getDefaultInstance();
+      private StackTrace.StackTracePO callerSt_ = StackTrace.StackTracePO.getDefaultInstance();
       private com.google.protobuf.SingleFieldBuilder<
-          com.caibowen.prma.api.proto.StackTrace.StackTracePO, com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder, com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder> callerStBuilder_;
+          StackTrace.StackTracePO, StackTrace.StackTracePO.Builder, StackTrace.StackTracePOOrBuilder> callerStBuilder_;
       /**
        * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
        */
@@ -2016,7 +2007,7 @@ public final class Event {
       /**
        * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
        */
-      public com.caibowen.prma.api.proto.StackTrace.StackTracePO getCallerSt() {
+      public StackTrace.StackTracePO getCallerSt() {
         if (callerStBuilder_ == null) {
           return callerSt_;
         } else {
@@ -2026,7 +2017,7 @@ public final class Event {
       /**
        * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
        */
-      public Builder setCallerSt(com.caibowen.prma.api.proto.StackTrace.StackTracePO value) {
+      public Builder setCallerSt(StackTrace.StackTracePO value) {
         if (callerStBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2043,7 +2034,7 @@ public final class Event {
        * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
        */
       public Builder setCallerSt(
-          com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder builderForValue) {
+          StackTrace.StackTracePO.Builder builderForValue) {
         if (callerStBuilder_ == null) {
           callerSt_ = builderForValue.build();
           onChanged();
@@ -2056,12 +2047,12 @@ public final class Event {
       /**
        * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
        */
-      public Builder mergeCallerSt(com.caibowen.prma.api.proto.StackTrace.StackTracePO value) {
+      public Builder mergeCallerSt(StackTrace.StackTracePO value) {
         if (callerStBuilder_ == null) {
           if (((bitField0_ & 0x00000040) == 0x00000040) &&
-              callerSt_ != com.caibowen.prma.api.proto.StackTrace.StackTracePO.getDefaultInstance()) {
+              callerSt_ != StackTrace.StackTracePO.getDefaultInstance()) {
             callerSt_ =
-              com.caibowen.prma.api.proto.StackTrace.StackTracePO.newBuilder(callerSt_).mergeFrom(value).buildPartial();
+              StackTrace.StackTracePO.newBuilder(callerSt_).mergeFrom(value).buildPartial();
           } else {
             callerSt_ = value;
           }
@@ -2077,7 +2068,7 @@ public final class Event {
        */
       public Builder clearCallerSt() {
         if (callerStBuilder_ == null) {
-          callerSt_ = com.caibowen.prma.api.proto.StackTrace.StackTracePO.getDefaultInstance();
+          callerSt_ = StackTrace.StackTracePO.getDefaultInstance();
           onChanged();
         } else {
           callerStBuilder_.clear();
@@ -2088,7 +2079,7 @@ public final class Event {
       /**
        * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
        */
-      public com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder getCallerStBuilder() {
+      public StackTrace.StackTracePO.Builder getCallerStBuilder() {
         bitField0_ |= 0x00000040;
         onChanged();
         return getCallerStFieldBuilder().getBuilder();
@@ -2096,7 +2087,7 @@ public final class Event {
       /**
        * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
        */
-      public com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder getCallerStOrBuilder() {
+      public StackTrace.StackTracePOOrBuilder getCallerStOrBuilder() {
         if (callerStBuilder_ != null) {
           return callerStBuilder_.getMessageOrBuilder();
         } else {
@@ -2107,11 +2098,11 @@ public final class Event {
        * <code>required .com.caibowen.prma.api.proto.StackTracePO caller_st = 7;</code>
        */
       private com.google.protobuf.SingleFieldBuilder<
-          com.caibowen.prma.api.proto.StackTrace.StackTracePO, com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder, com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder> 
+          StackTrace.StackTracePO, StackTrace.StackTracePO.Builder, StackTrace.StackTracePOOrBuilder>
           getCallerStFieldBuilder() {
         if (callerStBuilder_ == null) {
           callerStBuilder_ = new com.google.protobuf.SingleFieldBuilder<
-              com.caibowen.prma.api.proto.StackTrace.StackTracePO, com.caibowen.prma.api.proto.StackTrace.StackTracePO.Builder, com.caibowen.prma.api.proto.StackTrace.StackTracePOOrBuilder>(
+              StackTrace.StackTracePO, StackTrace.StackTracePO.Builder, StackTrace.StackTracePOOrBuilder>(
                   getCallerSt(),
                   getParentForChildren(),
                   isClean());
@@ -2360,22 +2351,22 @@ public final class Event {
         return propertiesBuilder_;
       }
 
-      private java.util.List<com.caibowen.prma.api.proto.Exception.ExceptionPO> exceptions_ =
+      private java.util.List<Exception.ExceptionPO> exceptions_ =
         java.util.Collections.emptyList();
       private void ensureExceptionsIsMutable() {
         if (!((bitField0_ & 0x00000100) == 0x00000100)) {
-          exceptions_ = new java.util.ArrayList<com.caibowen.prma.api.proto.Exception.ExceptionPO>(exceptions_);
+          exceptions_ = new java.util.ArrayList<Exception.ExceptionPO>(exceptions_);
           bitField0_ |= 0x00000100;
          }
       }
 
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.caibowen.prma.api.proto.Exception.ExceptionPO, com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder, com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder> exceptionsBuilder_;
+          Exception.ExceptionPO, Exception.ExceptionPO.Builder, Exception.ExceptionPOOrBuilder> exceptionsBuilder_;
 
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public java.util.List<com.caibowen.prma.api.proto.Exception.ExceptionPO> getExceptionsList() {
+      public java.util.List<Exception.ExceptionPO> getExceptionsList() {
         if (exceptionsBuilder_ == null) {
           return java.util.Collections.unmodifiableList(exceptions_);
         } else {
@@ -2395,7 +2386,7 @@ public final class Event {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public com.caibowen.prma.api.proto.Exception.ExceptionPO getExceptions(int index) {
+      public Exception.ExceptionPO getExceptions(int index) {
         if (exceptionsBuilder_ == null) {
           return exceptions_.get(index);
         } else {
@@ -2406,7 +2397,7 @@ public final class Event {
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
       public Builder setExceptions(
-          int index, com.caibowen.prma.api.proto.Exception.ExceptionPO value) {
+          int index, Exception.ExceptionPO value) {
         if (exceptionsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2423,7 +2414,7 @@ public final class Event {
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
       public Builder setExceptions(
-          int index, com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder builderForValue) {
+          int index, Exception.ExceptionPO.Builder builderForValue) {
         if (exceptionsBuilder_ == null) {
           ensureExceptionsIsMutable();
           exceptions_.set(index, builderForValue.build());
@@ -2436,7 +2427,7 @@ public final class Event {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public Builder addExceptions(com.caibowen.prma.api.proto.Exception.ExceptionPO value) {
+      public Builder addExceptions(Exception.ExceptionPO value) {
         if (exceptionsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2453,7 +2444,7 @@ public final class Event {
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
       public Builder addExceptions(
-          int index, com.caibowen.prma.api.proto.Exception.ExceptionPO value) {
+          int index, Exception.ExceptionPO value) {
         if (exceptionsBuilder_ == null) {
           if (value == null) {
             throw new NullPointerException();
@@ -2470,7 +2461,7 @@ public final class Event {
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
       public Builder addExceptions(
-          com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder builderForValue) {
+          Exception.ExceptionPO.Builder builderForValue) {
         if (exceptionsBuilder_ == null) {
           ensureExceptionsIsMutable();
           exceptions_.add(builderForValue.build());
@@ -2484,7 +2475,7 @@ public final class Event {
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
       public Builder addExceptions(
-          int index, com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder builderForValue) {
+          int index, Exception.ExceptionPO.Builder builderForValue) {
         if (exceptionsBuilder_ == null) {
           ensureExceptionsIsMutable();
           exceptions_.add(index, builderForValue.build());
@@ -2498,7 +2489,7 @@ public final class Event {
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
       public Builder addAllExceptions(
-          Iterable<? extends com.caibowen.prma.api.proto.Exception.ExceptionPO> values) {
+          Iterable<? extends Exception.ExceptionPO> values) {
         if (exceptionsBuilder_ == null) {
           ensureExceptionsIsMutable();
           com.google.protobuf.AbstractMessageLite.Builder.addAll(
@@ -2538,14 +2529,14 @@ public final class Event {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder getExceptionsBuilder(
+      public Exception.ExceptionPO.Builder getExceptionsBuilder(
           int index) {
         return getExceptionsFieldBuilder().getBuilder(index);
       }
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
+      public Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
           int index) {
         if (exceptionsBuilder_ == null) {
           return exceptions_.get(index);  } else {
@@ -2555,7 +2546,7 @@ public final class Event {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public java.util.List<? extends com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder> 
+      public java.util.List<? extends Exception.ExceptionPOOrBuilder>
            getExceptionsOrBuilderList() {
         if (exceptionsBuilder_ != null) {
           return exceptionsBuilder_.getMessageOrBuilderList();
@@ -2566,31 +2557,31 @@ public final class Event {
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder addExceptionsBuilder() {
+      public Exception.ExceptionPO.Builder addExceptionsBuilder() {
         return getExceptionsFieldBuilder().addBuilder(
-            com.caibowen.prma.api.proto.Exception.ExceptionPO.getDefaultInstance());
+            Exception.ExceptionPO.getDefaultInstance());
       }
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder addExceptionsBuilder(
+      public Exception.ExceptionPO.Builder addExceptionsBuilder(
           int index) {
         return getExceptionsFieldBuilder().addBuilder(
-            index, com.caibowen.prma.api.proto.Exception.ExceptionPO.getDefaultInstance());
+            index, Exception.ExceptionPO.getDefaultInstance());
       }
       /**
        * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
        */
-      public java.util.List<com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder> 
+      public java.util.List<Exception.ExceptionPO.Builder>
            getExceptionsBuilderList() {
         return getExceptionsFieldBuilder().getBuilderList();
       }
       private com.google.protobuf.RepeatedFieldBuilder<
-          com.caibowen.prma.api.proto.Exception.ExceptionPO, com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder, com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder> 
+          Exception.ExceptionPO, Exception.ExceptionPO.Builder, Exception.ExceptionPOOrBuilder>
           getExceptionsFieldBuilder() {
         if (exceptionsBuilder_ == null) {
           exceptionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
-              com.caibowen.prma.api.proto.Exception.ExceptionPO, com.caibowen.prma.api.proto.Exception.ExceptionPO.Builder, com.caibowen.prma.api.proto.Exception.ExceptionPOOrBuilder>(
+              Exception.ExceptionPO, Exception.ExceptionPO.Builder, Exception.ExceptionPOOrBuilder>(
                   exceptions_,
                   ((bitField0_ & 0x00000100) == 0x00000100),
                   getParentForChildren(),
@@ -2631,18 +2622,16 @@ public final class Event {
   static {
     String[] descriptorData = {
       "\n\013Event.proto\022\033com.caibowen.prma.api.pro" +
-      "to\032\020StackTrace.proto\032\017Exception.proto\032\016L" +
-      "ogLevel.proto\"\215\003\n\007EventPO\022\n\n\002id\030\001 \002(\004\022\024\n" +
-      "\014time_created\030\002 \002(\004\0226\n\005level\030\003 \002(\0162\'.com" +
-      ".caibowen.prma.api.proto.LogLevelPO\022\023\n\013l" +
-      "ogger_name\030\004 \002(\t\022\023\n\013thread_name\030\005 \002(\t\022\017\n" +
-      "\007fmt_msg\030\006 \002(\t\022<\n\tcaller_st\030\007 \002(\0132).com." +
-      "caibowen.prma.api.proto.StackTracePO\022A\n\n" +
-      "properties\030\010 \003(\0132-.com.caibowen.prma.api" +
-      ".proto.EventPO.Property\022<\n\nexceptions\030\t ",
-      "\003(\0132(.com.caibowen.prma.api.proto.Except" +
-      "ionPO\032.\n\010Property\022\017\n\007map_key\030\001 \002(\t\022\021\n\tma" +
-      "p_value\030\002 \002(\014"
+      "to\032\020StackTrace.proto\032\017Exception.proto\"\344\002" +
+      "\n\007EventPO\022\n\n\002id\030\001 \002(\004\022\024\n\014time_created\030\002 " +
+      "\002(\004\022\r\n\005level\030\003 \002(\r\022\023\n\013logger_name\030\004 \002(\t\022" +
+      "\023\n\013thread_name\030\005 \002(\t\022\017\n\007fmt_msg\030\006 \002(\t\022<\n" +
+      "\tcaller_st\030\007 \002(\0132).com.caibowen.prma.api" +
+      ".proto.StackTracePO\022A\n\nproperties\030\010 \003(\0132" +
+      "-.com.caibowen.prma.api.proto.EventPO.Pr" +
+      "operty\022<\n\nexceptions\030\t \003(\0132(.com.caibowe" +
+      "n.prma.api.proto.ExceptionPO\032.\n\010Property",
+      "\022\017\n\007map_key\030\001 \002(\t\022\021\n\tmap_value\030\002 \002(\014"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2655,9 +2644,8 @@ public final class Event {
     com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
         new com.google.protobuf.Descriptors.FileDescriptor[] {
-          com.caibowen.prma.api.proto.StackTrace.getDescriptor(),
-          com.caibowen.prma.api.proto.Exception.getDescriptor(),
-          com.caibowen.prma.api.proto.LogLevel.getDescriptor(),
+          StackTrace.getDescriptor(),
+          Exception.getDescriptor(),
         }, assigner);
     internal_static_com_caibowen_prma_api_proto_EventPO_descriptor =
       getDescriptor().getMessageTypes().get(0);
@@ -2671,9 +2659,8 @@ public final class Event {
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_com_caibowen_prma_api_proto_EventPO_Property_descriptor,
         new String[] { "MapKey", "MapValue", });
-    com.caibowen.prma.api.proto.StackTrace.getDescriptor();
-    com.caibowen.prma.api.proto.Exception.getDescriptor();
-    com.caibowen.prma.api.proto.LogLevel.getDescriptor();
+    StackTrace.getDescriptor();
+    Exception.getDescriptor();
   }
 
   // @@protoc_insertion_point(outer_class_scope)

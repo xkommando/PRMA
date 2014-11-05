@@ -1,8 +1,9 @@
-package com.caibowen.prma.api.domain;
+package com.caibowen.prma.api.model;
 
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,9 +23,35 @@ public class ExceptionVO implements Serializable {
     /**
      * ordered
      */
-    public List<StackTraceElement> stackTraces;
+    public StackTraceElement[] stackTraces;
 
-//    public
+
+    public ExceptionVO(){}
+
+    public ExceptionVO(String exceptionName, String exceptionMessage, StackTraceElement[] stackTraces) {
+
+        long expID =  (long) exceptionName.hashCode() << 32 | exceptionMessage.hashCode() & 0xFFFFFFFFL;
+        final long kMul = 0x9ddfea08eb382d69L;
+        for (StackTraceElement st : stackTraces) {
+            long _s = st.hashCode();
+            long _a = ((expID) ^ _s ) * kMul;
+            _a ^= _a >> 47;
+            expID = (_s ^ _a) * kMul;
+            expID ^= expID >> 47;
+            expID *= kMul;
+        }
+        this.id = expID;
+        this.exceptionName = exceptionName;
+        this.exceptionMessage = exceptionMessage;
+        this.stackTraces = stackTraces;
+    }
+
+    public ExceptionVO(long id, String exceptionName, String exceptionMessage, StackTraceElement[] stackTraces) {
+        this.id = id;
+        this.exceptionName = exceptionName;
+        this.exceptionMessage = exceptionMessage;
+        this.stackTraces = stackTraces;
+    }
 
     public long getId() {
         return id;
@@ -50,11 +77,11 @@ public class ExceptionVO implements Serializable {
         this.exceptionMessage = exceptionMessage;
     }
 
-    public List<StackTraceElement> getStackTraces() {
+    public StackTraceElement[] getStackTraces() {
         return stackTraces;
     }
 
-    public void setStackTraces(List<StackTraceElement> stackTraces) {
+    public void setStackTraces(StackTraceElement[] stackTraces) {
         this.stackTraces = stackTraces;
     }
 
@@ -69,8 +96,7 @@ public class ExceptionVO implements Serializable {
         if (exceptionMessage != null ? !exceptionMessage.equals(exception.exceptionMessage) : exception.exceptionMessage != null)
             return false;
         if (!exceptionName.equals(exception.exceptionName)) return false;
-        if (!stackTraces.equals(exception.stackTraces)) return false;
-
+        if (!Arrays.equals(stackTraces, exception.stackTraces)) return false;
         return true;
     }
 
@@ -79,7 +105,7 @@ public class ExceptionVO implements Serializable {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + exceptionName.hashCode();
         result = 31 * result + (exceptionMessage != null ? exceptionMessage.hashCode() : 0);
-        result = 31 * result + stackTraces.hashCode();
+        result = 31 * result + Arrays.hashCode(stackTraces);
         return result;
     }
 
@@ -89,7 +115,7 @@ public class ExceptionVO implements Serializable {
                 "id=" + id +
                 ", exceptionName='" + exceptionName + '\'' +
                 ", exceptionMessage='" + exceptionMessage + '\'' +
-                ", stackTraces=" + stackTraces +
+                ", stackTraces=" + Arrays.toString(stackTraces) +
                 '}';
     }
 }

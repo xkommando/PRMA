@@ -1,7 +1,5 @@
 package com.caibowen.prma.store.dao.impl;
 
-import ch.qos.logback.classic.spi.IThrowableProxy;
-import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
@@ -42,14 +40,12 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     public static final int[] EMPTY_INTS = {};
 
     @Override
-    public boolean insertIfAbsent(long eventId, IThrowableProxy tpox) throws Exception {
-        final ArrayList<ExceptionDO> vols = new ArrayList<>(16);
-        IThrowableProxy px = tpox;
-        while (px != null) {
+    public boolean insertIfAbsent(long eventId, Throwable[] tpox) throws Exception {
+        final ArrayList<ExceptionDO> vols = new ArrayList<>(tpox.length);
+        for (Throwable px : tpox) {
             ExceptionDO vo = getDO(px);
             if (! hasKey(vo.id))
                 vols.add(vo);
-            px = px.getCause();
         }
 
         if (vols.isEmpty())
@@ -58,20 +54,6 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
             return insert(eventId, vols);
     }
 
-    @Override
-    public boolean insert(long eventId, IThrowableProxy tpox) throws Exception {
-        final ArrayList<ExceptionDO> vols = new ArrayList<>(16);
-        IThrowableProxy px = tpox;
-        while (px != null) {
-            ExceptionDO vo = getDO(px);
-            vols.add(vo);
-            px = px.getCause();
-        }
-        if (vols.isEmpty())
-            return true;
-        else
-            return insert(eventId, vols);
-    }
 
     @Override
     public boolean insert(final long eventID, final List<ExceptionDO> vols) {
@@ -118,12 +100,11 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         return true;
     }
 
-    //    if (event.getThrowableProxy() != null)
-    ExceptionDO getDO(@Nonnull IThrowableProxy tpox) {
+    ExceptionDO getDO(@Nonnull Throwable tpox) {
 
         ExceptionDO vo = new ExceptionDO();
 
-        String _thwName = tpox.getClassName();
+        String _thwName = tpox.getClass().getName();
         final int thwID = _thwName.hashCode();
         persist(exceptNameDAO, thwID, _thwName);
         vo.exceptName = thwID;
@@ -134,12 +115,12 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         persist(exceptMsgDAO, msgID, _msg);
         vo.exceptMsg = msgID;
 
-        StackTraceElementProxy[] stps = tpox.getStackTraceElementProxyArray();
+        StackTraceElement[] stps = tpox.getStackTrace();
         int[] buf;
         if (stps != null && stps.length > 0) {
             buf = new int[stps.length];
             for (int i = 0; i < stps.length; i++) {
-                StackTraceElement st = stps[i].getStackTraceElement();
+                StackTraceElement st = stps[i];
                 int id = st.hashCode();
                 if (!stackTraceDAO.putIfAbsent(id, st))
                     throw new RuntimeException("could not save stack trace "

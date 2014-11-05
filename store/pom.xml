@@ -17,23 +17,12 @@
             <artifactId>api</artifactId>
             <version>${prma-version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.caibowen.prma</groupId>
-            <artifactId>core</artifactId>
-            <version>${prma-version}</version>
-        </dependency>
+
         <dependency>
             <groupId>com.caibowen.gplumeframework</groupId>
             <artifactId>gplume</artifactId>
             <version>${gplume-version}</version>
         </dependency>
-
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback-version}</version>
-        </dependency>
-
 
         <dependency>
             <groupId>mysql</groupId>

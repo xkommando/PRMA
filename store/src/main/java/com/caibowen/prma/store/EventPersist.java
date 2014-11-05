@@ -1,6 +1,6 @@
 package com.caibowen.prma.store;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.caibowen.prma.api.model.EventVO;
 
 import java.util.List;
 
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface EventPersist {
 
-    void persist(ILoggingEvent event);
+    void persist(EventVO event);
 
-    void batchPersist(List<ILoggingEvent> ls);
+    void batchPersist(List<EventVO> ls);
 }
