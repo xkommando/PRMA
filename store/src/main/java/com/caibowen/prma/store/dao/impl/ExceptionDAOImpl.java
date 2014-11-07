@@ -5,6 +5,7 @@ import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.gplume.misc.Hashing;
+import com.caibowen.prma.api.model.ExceptionVO;
 import com.caibowen.prma.store.ExceptionDO;
 import com.caibowen.prma.store.dao.ExceptionDAO;
 import com.caibowen.prma.store.dao.Int4DAO;
@@ -40,23 +41,20 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     public static final int[] EMPTY_INTS = {};
 
     @Override
-    public boolean insertIfAbsent(long eventId, Throwable[] tpox) throws Exception {
-        final ArrayList<ExceptionDO> vols = new ArrayList<>(tpox.length);
-        for (Throwable px : tpox) {
-            ExceptionDO vo = getDO(px);
-            if (! hasKey(vo.id))
-                vols.add(vo);
+    public boolean insertIfAbsent(final long eventId, final List<ExceptionVO> tpox) throws Exception {
+        ArrayList<ExceptionDO> dos = new ArrayList<>(tpox.size());
+        for (ExceptionVO d : tpox) {
+            if (! hasKey(d.id))
+                dos.add(getDO(d));
         }
-
-        if (vols.isEmpty())
-            return true;
+        if (dos.size() > 0)
+            return insertAll(eventId, dos);
         else
-            return insert(eventId, vols);
+            return true;
     }
 
 
-    @Override
-    public boolean insert(final long eventID, final List<ExceptionDO> vols) {
+    public boolean insertAll(final long eventID, final List<ExceptionDO> vols) {
 
         batchInsert(new StatementCreator() {
             @Override
@@ -80,7 +78,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
             }
         }, null, null);
 
-        insert(new StatementCreator() {
+        batchInsert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -98,6 +96,40 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         }, null, null);
 
         return true;
+    }
+
+    ExceptionDO getDO(@Nonnull ExceptionVO tpox) {
+        ExceptionDO vo = new ExceptionDO();
+
+        String _thwName = tpox.getClass().getName();
+        final int thwID = _thwName.hashCode();
+        persist(exceptNameDAO, thwID, _thwName);
+        vo.exceptName = thwID;
+
+        String _msg = tpox.exceptionMessage;
+        final int msgID = _msg.hashCode();
+        persist(exceptMsgDAO, msgID, _msg);
+        vo.exceptMsg = msgID;
+
+        StackTraceElement[] stps = tpox.stackTraces;
+        int[] buf;
+        if (stps != null && stps.length > 0) {
+            buf = new int[stps.length];
+            for (int i = 0; i < stps.length; i++) {
+                StackTraceElement st = stps[i];
+                int id = st.hashCode();
+                if (!stackTraceDAO.putIfAbsent(id, st))
+                    throw new RuntimeException("could not save stack trace "
+                            + st.toString());
+
+                buf[i] = id;
+            }
+        } else
+            buf = EMPTY_INTS;
+
+        vo.id = tpox.id;
+        vo.stackTraces = buf;
+        return vo;
     }
 
     ExceptionDO getDO(@Nonnull Throwable tpox) {
@@ -134,9 +166,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
 
         vo.id = expID;
         vo.stackTraces = buf;
-
         return vo;
-
     }
 
     @Override

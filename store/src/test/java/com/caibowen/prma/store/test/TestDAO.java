@@ -1,5 +1,6 @@
 package com.caibowen.prma.store.test;
 
+import com.caibowen.gplume.common.collection.ImmutableArraySet;
 import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
@@ -9,6 +10,7 @@ import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
 import com.caibowen.gplume.jdbc.transaction.TransactionManager;
 import com.caibowen.prma.api.LogLevel;
 import com.caibowen.prma.api.model.EventVO;
+import com.caibowen.prma.api.model.ExceptionVO;
 import com.caibowen.prma.store.EventPersist;
 import com.caibowen.prma.store.dao.EventDAO;
 import com.caibowen.prma.store.dao.Int4DAO;
@@ -24,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -97,7 +100,7 @@ public class TestDAO {
         // prepare
         bootstrap.setStreamProvider(new ClassLoaderInputStreamProvider(this.getClass().getClassLoader()));
 
-        String manifestPath = "classpath:store_assemble_test.xml";
+        String manifestPath = "classpath:store_assemble.xml";
         bootstrap.setManifestPath(manifestPath);
 
         ds = connect();
@@ -214,10 +217,18 @@ public class TestDAO {
 
         Throwable[] _fk = new Throwable[]{new RuntimeException("msg level 3",
                 new IOException("msg level 2",
-                        new FileNotFoundException("msg level 1")))};
+                        new FileNotFoundException("msg level 1"))), new IOException("msg level 1")};
 
-        long t = System.currentTimeMillis();
+        long t1 = System.currentTimeMillis();
         StackTraceElement s = (new Throwable().getStackTrace()[0]);
+
+        final ArrayList<ExceptionVO> vols = new ArrayList<ExceptionVO>(16);
+
+        for (Throwable t : _fk)
+            vols.add(new ExceptionVO(t.getClass().getName(), t.getMessage(), t.getStackTrace()));
+
+        Set<String> mks = new ImmutableArraySet<>(new Object[]{"marker1", "marker2", "mk3"});
+
         for (int i = 0; i < 20; i++) {
             eventls.add(new EventVO(
                     System.currentTimeMillis(),
@@ -226,43 +237,43 @@ public class TestDAO {
                     Thread.currentThread().getName(),
                     s,
                     "hahaha messsssage " + i,
-                    null,
-                    _fk));
+                    -1L,
+                    null, vols, mks));
         }
 
         eventP.batchPersist(eventls);
         long tt = System.currentTimeMillis();
-        System.out.println("Time: " + (tt - t));
+        System.out.println("Time: " + (tt - t1));
     }
 //    new FileNotFoundException("msg level 1")));
 
 //    LoggingEvent le = new LoggingEvent(
 //            "logger name ??? haha", (ch.qos.logback.classic.Logger)LOGGER, Level.ERROR, "hahaha messsssage", _t, null);
 
-    @Test
-    public void singleInsert() {
-        List<EventVO> eventls = new ArrayList<>(16);
-
-        final Throwable _t = new RuntimeException("msg level 3",
-                new IOException("msg level 2",
-                        new FileNotFoundException("msg level 1")));
-
-        long t = System.currentTimeMillis();
-        for (int i = 0; i < 20; i++) {
-            eventP.persist(new EventVO(
-                    System.currentTimeMillis(),
-                    LogLevel.ERROR,
-                    "logger name ??? haha " + i,
-                    Thread.currentThread().getName(),
-                    new Throwable().getStackTrace()[0],
-                    "hahaha messsssage " + i,
-                    null,
-                    new Throwable[]{_t})
-            );
-        }
-        long tt = System.currentTimeMillis();
-        System.out.println(tt - t);
-    }
+//    @Test
+//    public void singleInsert() {
+//        List<EventVO> eventls = new ArrayList<>(16);
+//
+//        final Throwable _t = new RuntimeException("msg level 3",
+//                new IOException("msg level 2",
+//                        new FileNotFoundException("msg level 1")));
+//
+//        long t = System.currentTimeMillis();
+//        for (int i = 0; i < 20; i++) {
+//            eventP.persist(new EventVO(
+//                    System.currentTimeMillis(),
+//                    LogLevel.ERROR,
+//                    "logger name ??? haha " + i,
+//                    Thread.currentThread().getName(),
+//                    new Throwable().getStackTrace()[0],
+//                    "hahaha messsssage " + i,
+//                    null,
+//                    new Throwable[]{_t})
+//            );
+//        }
+//        long tt = System.currentTimeMillis();
+//        System.out.println(tt - t);
+//    }
 
     @Test
     public void async() throws Throwable {

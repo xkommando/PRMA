@@ -1,4 +1,4 @@
-package com.caibowen.prma.monitor.checker;
+package com.caibowen.prma.monitor.eval;
 
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.core.filter.StrFilter;
@@ -9,12 +9,12 @@ import javax.inject.Inject;
  * @author BowenCai
  * @since 5-11-2014.
  */
-public class LoggerNameChecker implements Checker {
+public class LoggerNameEval implements Evaluator {
 
     @Inject StrFilter filter;
 
     @Override
-    public int check(EventVO vo) {
+    public int eval(EventVO vo) {
         return filter.accept(vo.getLoggerName());
     }
 

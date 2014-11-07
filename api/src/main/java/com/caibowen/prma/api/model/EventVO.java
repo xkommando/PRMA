@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author BowenCai
@@ -26,26 +27,33 @@ public class EventVO implements Serializable {
 
     public String message;
 
+    public Long reserved;
+
     @Nullable
     public Map<String, Object> properties;
 
     @Nullable
     public List<ExceptionVO> exceptions;
 
+    @Nullable
+    public Set<String> markers;
+
     public EventVO() {}
 
-    public EventVO(long timeCreated, LogLevel level, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Map<String, Object> properties, List<ExceptionVO> exceptions) {
+    public EventVO(long timeCreated, LogLevel level, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Long reserved, Map<String, Object> properties, List<ExceptionVO> exceptions, Set<String> markers) {
         this.timeCreated = timeCreated;
         this.level = level;
         this.loggerName = loggerName;
         this.threadName = threadName;
         this.callerStackTrace = callerStackTrace;
         this.message = message;
+        this.reserved = reserved;
         this.properties = properties;
         this.exceptions = exceptions;
+        this.markers = markers;
     }
 
-    public EventVO(long id, long timeCreated, LogLevel level, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Map<String, Object> properties, List<ExceptionVO> exceptions) {
+    public EventVO(long id, long timeCreated, LogLevel level, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Long reserved, Map<String, Object> properties, List<ExceptionVO> exceptions, Set<String> markers) {
         this.id = id;
         this.timeCreated = timeCreated;
         this.level = level;
@@ -53,8 +61,10 @@ public class EventVO implements Serializable {
         this.threadName = threadName;
         this.callerStackTrace = callerStackTrace;
         this.message = message;
+        this.reserved = reserved;
         this.properties = properties;
         this.exceptions = exceptions;
+        this.markers = markers;
     }
 
     public long getId() {
@@ -113,6 +123,14 @@ public class EventVO implements Serializable {
         this.message = message;
     }
 
+    public Long getReserved() {
+        return reserved;
+    }
+
+    public void setReserved(Long reserved) {
+        this.reserved = reserved;
+    }
+
     public Map<String, Object> getProperties() {
         return properties;
     }
@@ -129,22 +147,34 @@ public class EventVO implements Serializable {
         this.exceptions = exceptions;
     }
 
+    @Nullable
+    public Set<String> getMarkers() {
+        return markers;
+    }
+
+    public void setMarkers(@Nullable Set<String> markers) {
+        this.markers = markers;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof EventVO)) return false;
 
-        EventVO event = (EventVO) o;
+        EventVO eventVO = (EventVO) o;
 
-        if (id != event.id) return false;
-        if (timeCreated != event.timeCreated) return false;
-        if (level != event.level) return false;
-        if (!loggerName.equals(event.loggerName)) return false;
-        if (!message.equals(event.message)) return false;
-        if (!threadName.equals(event.threadName)) return false;
-        if (!callerStackTrace.equals(event.callerStackTrace)) return false;
-        if (exceptions != null ? !exceptions.equals(event.exceptions) : event.exceptions != null) return false;
-        if (properties != null ? !properties.equals(event.properties) : event.properties != null) return false;
+        if (id != eventVO.id) return false;
+        if (timeCreated != eventVO.timeCreated) return false;
+        if (level != eventVO.level) return false;
+        if (!threadName.equals(eventVO.threadName)) return false;
+        if (!loggerName.equals(eventVO.loggerName)) return false;
+        if (!message.equals(eventVO.message)) return false;
+
+        if (reserved != null ? !reserved.equals(eventVO.reserved) : eventVO.reserved != null) return false;
+        if (!callerStackTrace.equals(eventVO.callerStackTrace)) return false;
+        if (exceptions != null ? !exceptions.equals(eventVO.exceptions) : eventVO.exceptions != null) return false;
+        if (markers != null ? !markers.equals(eventVO.markers) : eventVO.markers != null) return false;
+        if (properties != null ? !properties.equals(eventVO.properties) : eventVO.properties != null) return false;
 
         return true;
     }
@@ -158,24 +188,10 @@ public class EventVO implements Serializable {
         result = 31 * result + threadName.hashCode();
         result = 31 * result + callerStackTrace.hashCode();
         result = 31 * result + message.hashCode();
+        result = 31 * result + (reserved != null ? reserved.hashCode() : 0);
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
         result = 31 * result + (exceptions != null ? exceptions.hashCode() : 0);
+        result = 31 * result + (markers != null ? markers.hashCode() : 0);
         return result;
-    }
-
-    @Override
-    public String toString() {
-
-        return "Event{" +
-                "id=" + id +
-                ", timeCreated=" + timeCreated +
-                ", level=" + level +
-                ", loggerName='" + loggerName + '\'' +
-                ", threadName='" + threadName + '\'' +
-                ", callerStackTrace=" + callerStackTrace +
-                ", message='" + message + '\'' +
-                ", properties=" + properties +
-                ", exceptions=" + exceptions +
-                '}';
     }
 }

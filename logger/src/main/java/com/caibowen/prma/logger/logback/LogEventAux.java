@@ -2,11 +2,12 @@ package com.caibowen.prma.logger.logback;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import com.caibowen.gplume.common.collection.ImmutableArraySet;
+import org.slf4j.Marker;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author BowenCai
@@ -16,6 +17,23 @@ public final class LogEventAux {
 
     private LogEventAux(){}
 
+    @Nonnull
+    public static Set<String> extractMarkers(ILoggingEvent event) {
+        Marker marker = event.getMarker();
+        if (marker == null)
+            return null;
+        Set<String> ret = null;
+        Iterator<Marker> iter = marker.iterator();
+        if (iter.hasNext()) {
+            ret = new HashSet<String>(8);
+            while (iter.hasNext())
+                ret.add(iter.next().getName());
+
+            ret.add(marker.getName());
+            return ret;
+        }
+        return new ImmutableArraySet<>(new Object[]{marker.getName()});
+    }
 
     public static
     @Nullable Map<String, String> extractProperties(ILoggingEvent event) {

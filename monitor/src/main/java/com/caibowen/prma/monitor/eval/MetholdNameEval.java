@@ -1,4 +1,4 @@
-package com.caibowen.prma.monitor.checker;
+package com.caibowen.prma.monitor.eval;
 
 import com.caibowen.prma.api.model.EventVO;
 
@@ -6,10 +6,10 @@ import com.caibowen.prma.api.model.EventVO;
  * @author BowenCai
  * @since 5-11-2014.
  */
-public class MessageChecker implements Checker {
+public class MetholdNameEval implements Evaluator {
 
     @Override
-    public int check(EventVO vo) {
+    public int eval(EventVO vo) {
         return 0;
     }
 }

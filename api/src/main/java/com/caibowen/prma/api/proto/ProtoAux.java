@@ -6,6 +6,7 @@ import com.google.protobuf.ByteString;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author BowenCai
@@ -15,6 +16,9 @@ public final class ProtoAux {
 
     private ProtoAux(){}
 
+    /**
+     * cached builders
+     */
     public static final ThreadLocal<Event.EventPO.Builder> eventTB = new ThreadLocal<Event.EventPO.Builder>(){
         @Override
         protected Event.EventPO.Builder initialValue() {
@@ -41,6 +45,7 @@ public final class ProtoAux {
             return Event.EventPO.Property.newBuilder();
         }
     };
+
 
     public static StackTrace.StackTracePO buildStackTrace(StackTraceElement ste) {
 
@@ -87,6 +92,8 @@ public final class ProtoAux {
                 .setLoggerName(e.loggerName)
                 .setThreadName(e.threadName)
                 .setTimeCreated(e.timeCreated);
+        if (e.reserved != null)
+            eb.setReserved(e.getReserved());
 
         List<ExceptionVO> exs = e.exceptions;
         if (exs != null && exs.size() > 0)
@@ -97,17 +104,20 @@ public final class ProtoAux {
         if (m != null && m.size() > 0)
             for (Map.Entry<String, Object> ety : m.entrySet())
                 eb.addProperties(buildProp(ety));
+        Set<String> mk = e.getMarkers();
+        if (mk != null && mk.size() > 0)
+            eb.addAllMarkers(mk);
 
         Event.EventPO p = eb.build();
         eb.clear();
+
         return p;
     }
 
     public static EventVO fromEventPO(Event.EventPO po) {
         EventVO v = new EventVO();
-
-
-        return v;
+        throw new UnsupportedOperationException("not implemented yet");
+//        return v;
     }
 
 }

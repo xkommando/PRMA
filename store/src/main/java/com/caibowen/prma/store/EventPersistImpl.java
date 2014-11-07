@@ -3,6 +3,7 @@ package com.caibowen.prma.store;
 import com.caibowen.gplume.jdbc.transaction.Transaction;
 import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
 import com.caibowen.prma.api.model.EventVO;
+import com.caibowen.prma.api.model.ExceptionVO;
 import com.caibowen.prma.store.dao.*;
 
 import javax.annotation.Nonnull;
@@ -10,6 +11,7 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * main class for LogEvent storage
@@ -30,6 +32,7 @@ public class EventPersistImpl implements EventPersist {
 
     @Inject ExceptionDAO exceptionDAO;
 
+    @Inject MarkerDAO markerDAO;
 
     public void persist(final EventVO event) {
 
@@ -44,10 +47,14 @@ public class EventPersistImpl implements EventPersist {
                     if (! propertyDAO.insertIfAbsent(evId, prop))
                         throw new RuntimeException("cannot insert properties[" + prop + "]"); // error
 
-                Throwable[] tpox = event.exceptions;
-                if (tpox != null) {
+                List<ExceptionVO> tpox = event.exceptions;
+                if (tpox != null && tpox.size() > 0)
                     exceptionDAO.insertIfAbsent(evId, tpox);
-                }
+
+                Set<String> mks = event.markers;
+                if (mks != null && mks.size() > 0)
+                    markerDAO.insertIfAbsent(evId, mks);
+
                 return null;
             }
         });
@@ -73,10 +80,14 @@ public class EventPersistImpl implements EventPersist {
                         if (! propertyDAO.insertIfAbsent(evId, prop))
                             throw new RuntimeException("cannot insert properties[" + prop + "]"); // error
 
-                    Throwable[] tpox = event.exceptions;
-                    if (tpox != null) {
+                    List<ExceptionVO> tpox = event.exceptions;
+                    if (tpox != null)
                         exceptionDAO.insertIfAbsent(evId, tpox);
-                    }
+
+
+                    Set<String> mks = event.markers;
+                    if (mks != null && mks.size() > 0)
+                        markerDAO.insertIfAbsent(evId, mks);
                 }
 
                 return null;

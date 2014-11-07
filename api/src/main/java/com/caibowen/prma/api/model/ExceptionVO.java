@@ -30,6 +30,15 @@ public class ExceptionVO implements Serializable {
 
     public ExceptionVO(String exceptionName, String exceptionMessage, StackTraceElement[] stackTraces) {
 
+
+        this.id = calculateID(exceptionName, exceptionMessage, stackTraces);
+        this.exceptionName = exceptionName;
+        this.exceptionMessage = exceptionMessage;
+        this.stackTraces = stackTraces;
+    }
+
+    public static final long calculateID(String exceptionName, String exceptionMessage, StackTraceElement[] stackTraces) {
+
         long expID =  (long) exceptionName.hashCode() << 32 | exceptionMessage.hashCode() & 0xFFFFFFFFL;
         final long kMul = 0x9ddfea08eb382d69L;
         for (StackTraceElement st : stackTraces) {
@@ -40,10 +49,7 @@ public class ExceptionVO implements Serializable {
             expID ^= expID >> 47;
             expID *= kMul;
         }
-        this.id = expID;
-        this.exceptionName = exceptionName;
-        this.exceptionMessage = exceptionMessage;
-        this.stackTraces = stackTraces;
+        return expID;
     }
 
     public ExceptionVO(long id, String exceptionName, String exceptionMessage, StackTraceElement[] stackTraces) {

@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * @author BowenCai
@@ -29,6 +30,7 @@ public class EventAdapter implements EventTranslator<ILoggingEvent> {
     public EventVO to(ILoggingEvent event) {
 
         Map prop = LogEventAux.extractProperties(event);
+        Set<String> makers = LogEventAux.extractMarkers(event);
 
         IThrowableProxy px = event.getThrowableProxy();
         final ArrayList<ExceptionVO> vols = (px != null ? new ArrayList<ExceptionVO>(16) : null);
@@ -46,8 +48,8 @@ public class EventAdapter implements EventTranslator<ILoggingEvent> {
         return new EventVO(event.getTimeStamp(), level(event.getLevel()),
                 event.getLoggerName(), event.getThreadName(),
                 callerST(event),
-                event.getFormattedMessage(),
-                prop, vols);
+                event.getFormattedMessage(), null,
+                prop, vols, makers);
     }
 
     public static LogLevel level(Level le) {

@@ -4,20 +4,21 @@ import "StackTrace.proto";
 import "Exception.proto";
 
 message EventPO {
-    required uint64 id = 1; // not generated yet
+    required uint64 id = 1;
     required uint64 time_created = 2;
     required uint32 level = 3;
     required string logger_name = 4;
     required string thread_name = 5;
     required string fmt_msg = 6;
     required StackTracePO caller_st = 7;
-
+    optional uint64 reserved = 8;
     message Property {
         required string map_key  = 1;
         required bytes map_value = 2;
     }
-    repeated Property properties = 8;
+    repeated Property properties = 9;
 
-    repeated ExceptionPO exceptions = 9;
+    repeated ExceptionPO exceptions = 10;
 
+    repeated string markers = 11;
 }

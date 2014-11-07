@@ -8,6 +8,12 @@ CREATE TABLE IF NOT EXISTS `thread_name` (
   PRIMARY KEY (id)
 );
 
+CREATE TABLE IF NOT EXISTS `marker_name` (
+  id				    INT4 	    NOT NULL,     -- hash of name
+  `value`        VARCHAR(255)  NOT NULL,
+  PRIMARY KEY (id)
+);
+
 -- fully cached
 CREATE TABLE IF NOT EXISTS `logger_name` (
   id				    INT4 	    NOT NULL,    -- hash of value
@@ -67,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `event` (
   PRIMARY KEY (id),
   FOREIGN KEY (logger_id) REFERENCES logger_name(id),
   FOREIGN KEY (thread_id) REFERENCES thread_name(id),
-  FOREIGN KEY (caller_id) REFERENCES caller(id)
+  FOREIGN KEY (caller_sk_id) REFERENCES caller(id)
 );
 
 CREATE UNIQUE SPATIAL INDEX IF NOT EXISTS idx_event_time ON `event`(`time_created`);
@@ -97,6 +103,11 @@ CREATE TABLE IF NOT EXISTS `j_event_exception`(
   PRIMARY KEY (seq, event_id, except_id)
 );
 
+CREATE TABLE IF NOT EXISTS `j_event_marker` (
+  marker_id     INT4        NOT NULL,
+  event_id    INT8        NOT NULL,
+  PRIMARY KEY (event_id, marker_id)
+);
 
 
 -- ALTER TABLE  `event` SET REFERENTIAL_INTEGRITY FALSE;

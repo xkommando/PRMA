@@ -95,52 +95,80 @@ public final class Event {
     StackTrace.StackTracePOOrBuilder getCallerStOrBuilder();
 
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>optional uint64 reserved = 8;</code>
+     */
+    boolean hasReserved();
+    /**
+     * <code>optional uint64 reserved = 8;</code>
+     */
+    long getReserved();
+
+    /**
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     java.util.List<EventPO.Property>
         getPropertiesList();
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     EventPO.Property getProperties(int index);
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     int getPropertiesCount();
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     java.util.List<? extends EventPO.PropertyOrBuilder>
         getPropertiesOrBuilderList();
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     EventPO.PropertyOrBuilder getPropertiesOrBuilder(
             int index);
 
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     java.util.List<Exception.ExceptionPO>
         getExceptionsList();
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     Exception.ExceptionPO getExceptions(int index);
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     int getExceptionsCount();
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     java.util.List<? extends Exception.ExceptionPOOrBuilder>
         getExceptionsOrBuilderList();
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
             int index);
+
+    /**
+     * <code>repeated string markers = 11;</code>
+     */
+    com.google.protobuf.ProtocolStringList
+        getMarkersList();
+    /**
+     * <code>repeated string markers = 11;</code>
+     */
+    int getMarkersCount();
+    /**
+     * <code>repeated string markers = 11;</code>
+     */
+    String getMarkers(int index);
+    /**
+     * <code>repeated string markers = 11;</code>
+     */
+    com.google.protobuf.ByteString
+        getMarkersBytes(int index);
   }
   /**
    * Protobuf type {@code com.caibowen.prma.api.proto.EventPO}
@@ -240,20 +268,34 @@ public final class Event {
               bitField0_ |= 0x00000040;
               break;
             }
-            case 66: {
-              if (!((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
-                properties_ = new java.util.ArrayList<Property>();
-                mutable_bitField0_ |= 0x00000080;
-              }
-              properties_.add(input.readMessage(Property.PARSER, extensionRegistry));
+            case 64: {
+              bitField0_ |= 0x00000080;
+              reserved_ = input.readUInt64();
               break;
             }
             case 74: {
               if (!((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
-                exceptions_ = new java.util.ArrayList<Exception.ExceptionPO>();
+                properties_ = new java.util.ArrayList<Property>();
                 mutable_bitField0_ |= 0x00000100;
               }
+              properties_.add(input.readMessage(Property.PARSER, extensionRegistry));
+              break;
+            }
+            case 82: {
+              if (!((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
+                exceptions_ = new java.util.ArrayList<Exception.ExceptionPO>();
+                mutable_bitField0_ |= 0x00000200;
+              }
               exceptions_.add(input.readMessage(Exception.ExceptionPO.PARSER, extensionRegistry));
+              break;
+            }
+            case 90: {
+              com.google.protobuf.ByteString bs = input.readBytes();
+              if (!((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+                markers_ = new com.google.protobuf.LazyStringArrayList();
+                mutable_bitField0_ |= 0x00000400;
+              }
+              markers_.add(bs);
               break;
             }
           }
@@ -264,11 +306,14 @@ public final class Event {
         throw new com.google.protobuf.InvalidProtocolBufferException(
             e.getMessage()).setUnfinishedMessage(this);
       } finally {
-        if (((mutable_bitField0_ & 0x00000080) == 0x00000080)) {
+        if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
           properties_ = java.util.Collections.unmodifiableList(properties_);
         }
-        if (((mutable_bitField0_ & 0x00000100) == 0x00000100)) {
+        if (((mutable_bitField0_ & 0x00000200) == 0x00000200)) {
           exceptions_ = java.util.Collections.unmodifiableList(exceptions_);
+        }
+        if (((mutable_bitField0_ & 0x00000400) == 0x00000400)) {
+          markers_ = markers_.getUnmodifiableView();
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -1067,74 +1112,118 @@ public final class Event {
       return callerSt_;
     }
 
-    public static final int PROPERTIES_FIELD_NUMBER = 8;
+    public static final int RESERVED_FIELD_NUMBER = 8;
+    private long reserved_;
+    /**
+     * <code>optional uint64 reserved = 8;</code>
+     */
+    public boolean hasReserved() {
+      return ((bitField0_ & 0x00000080) == 0x00000080);
+    }
+    /**
+     * <code>optional uint64 reserved = 8;</code>
+     */
+    public long getReserved() {
+      return reserved_;
+    }
+
+    public static final int PROPERTIES_FIELD_NUMBER = 9;
     private java.util.List<Property> properties_;
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     public java.util.List<Property> getPropertiesList() {
       return properties_;
     }
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     public java.util.List<? extends PropertyOrBuilder>
         getPropertiesOrBuilderList() {
       return properties_;
     }
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     public int getPropertiesCount() {
       return properties_.size();
     }
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     public Property getProperties(int index) {
       return properties_.get(index);
     }
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
      */
     public PropertyOrBuilder getPropertiesOrBuilder(
         int index) {
       return properties_.get(index);
     }
 
-    public static final int EXCEPTIONS_FIELD_NUMBER = 9;
+    public static final int EXCEPTIONS_FIELD_NUMBER = 10;
     private java.util.List<Exception.ExceptionPO> exceptions_;
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     public java.util.List<Exception.ExceptionPO> getExceptionsList() {
       return exceptions_;
     }
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     public java.util.List<? extends Exception.ExceptionPOOrBuilder>
         getExceptionsOrBuilderList() {
       return exceptions_;
     }
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     public int getExceptionsCount() {
       return exceptions_.size();
     }
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     public Exception.ExceptionPO getExceptions(int index) {
       return exceptions_.get(index);
     }
     /**
-     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+     * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
      */
     public Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
         int index) {
       return exceptions_.get(index);
+    }
+
+    public static final int MARKERS_FIELD_NUMBER = 11;
+    private com.google.protobuf.LazyStringList markers_;
+    /**
+     * <code>repeated string markers = 11;</code>
+     */
+    public com.google.protobuf.ProtocolStringList
+        getMarkersList() {
+      return markers_;
+    }
+    /**
+     * <code>repeated string markers = 11;</code>
+     */
+    public int getMarkersCount() {
+      return markers_.size();
+    }
+    /**
+     * <code>repeated string markers = 11;</code>
+     */
+    public String getMarkers(int index) {
+      return markers_.get(index);
+    }
+    /**
+     * <code>repeated string markers = 11;</code>
+     */
+    public com.google.protobuf.ByteString
+        getMarkersBytes(int index) {
+      return markers_.getByteString(index);
     }
 
     private void initFields() {
@@ -1145,8 +1234,10 @@ public final class Event {
       threadName_ = "";
       fmtMsg_ = "";
       callerSt_ = StackTrace.StackTracePO.getDefaultInstance();
+      reserved_ = 0L;
       properties_ = java.util.Collections.emptyList();
       exceptions_ = java.util.Collections.emptyList();
+      markers_ = com.google.protobuf.LazyStringArrayList.EMPTY;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1226,11 +1317,17 @@ public final class Event {
       if (((bitField0_ & 0x00000040) == 0x00000040)) {
         output.writeMessage(7, callerSt_);
       }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        output.writeUInt64(8, reserved_);
+      }
       for (int i = 0; i < properties_.size(); i++) {
-        output.writeMessage(8, properties_.get(i));
+        output.writeMessage(9, properties_.get(i));
       }
       for (int i = 0; i < exceptions_.size(); i++) {
-        output.writeMessage(9, exceptions_.get(i));
+        output.writeMessage(10, exceptions_.get(i));
+      }
+      for (int i = 0; i < markers_.size(); i++) {
+        output.writeBytes(11, markers_.getByteString(i));
       }
       getUnknownFields().writeTo(output);
     }
@@ -1269,13 +1366,26 @@ public final class Event {
         size += com.google.protobuf.CodedOutputStream
           .computeMessageSize(7, callerSt_);
       }
+      if (((bitField0_ & 0x00000080) == 0x00000080)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(8, reserved_);
+      }
       for (int i = 0; i < properties_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(8, properties_.get(i));
+          .computeMessageSize(9, properties_.get(i));
       }
       for (int i = 0; i < exceptions_.size(); i++) {
         size += com.google.protobuf.CodedOutputStream
-          .computeMessageSize(9, exceptions_.get(i));
+          .computeMessageSize(10, exceptions_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < markers_.size(); i++) {
+          dataSize += com.google.protobuf.CodedOutputStream
+            .computeBytesSizeNoTag(markers_.getByteString(i));
+        }
+        size += dataSize;
+        size += 1 * getMarkersList().size();
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1415,18 +1525,22 @@ public final class Event {
           callerStBuilder_.clear();
         }
         bitField0_ = (bitField0_ & ~0x00000040);
+        reserved_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000080);
         if (propertiesBuilder_ == null) {
           properties_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000100);
         } else {
           propertiesBuilder_.clear();
         }
         if (exceptionsBuilder_ == null) {
           exceptions_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000100);
+          bitField0_ = (bitField0_ & ~0x00000200);
         } else {
           exceptionsBuilder_.clear();
         }
+        markers_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000400);
         return this;
       }
 
@@ -1487,24 +1601,33 @@ public final class Event {
         } else {
           result.callerSt_ = callerStBuilder_.build();
         }
+        if (((from_bitField0_ & 0x00000080) == 0x00000080)) {
+          to_bitField0_ |= 0x00000080;
+        }
+        result.reserved_ = reserved_;
         if (propertiesBuilder_ == null) {
-          if (((bitField0_ & 0x00000080) == 0x00000080)) {
+          if (((bitField0_ & 0x00000100) == 0x00000100)) {
             properties_ = java.util.Collections.unmodifiableList(properties_);
-            bitField0_ = (bitField0_ & ~0x00000080);
+            bitField0_ = (bitField0_ & ~0x00000100);
           }
           result.properties_ = properties_;
         } else {
           result.properties_ = propertiesBuilder_.build();
         }
         if (exceptionsBuilder_ == null) {
-          if (((bitField0_ & 0x00000100) == 0x00000100)) {
+          if (((bitField0_ & 0x00000200) == 0x00000200)) {
             exceptions_ = java.util.Collections.unmodifiableList(exceptions_);
-            bitField0_ = (bitField0_ & ~0x00000100);
+            bitField0_ = (bitField0_ & ~0x00000200);
           }
           result.exceptions_ = exceptions_;
         } else {
           result.exceptions_ = exceptionsBuilder_.build();
         }
+        if (((bitField0_ & 0x00000400) == 0x00000400)) {
+          markers_ = markers_.getUnmodifiableView();
+          bitField0_ = (bitField0_ & ~0x00000400);
+        }
+        result.markers_ = markers_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1548,11 +1671,14 @@ public final class Event {
         if (other.hasCallerSt()) {
           mergeCallerSt(other.getCallerSt());
         }
+        if (other.hasReserved()) {
+          setReserved(other.getReserved());
+        }
         if (propertiesBuilder_ == null) {
           if (!other.properties_.isEmpty()) {
             if (properties_.isEmpty()) {
               properties_ = other.properties_;
-              bitField0_ = (bitField0_ & ~0x00000080);
+              bitField0_ = (bitField0_ & ~0x00000100);
             } else {
               ensurePropertiesIsMutable();
               properties_.addAll(other.properties_);
@@ -1565,7 +1691,7 @@ public final class Event {
               propertiesBuilder_.dispose();
               propertiesBuilder_ = null;
               properties_ = other.properties_;
-              bitField0_ = (bitField0_ & ~0x00000080);
+              bitField0_ = (bitField0_ & ~0x00000100);
               propertiesBuilder_ = 
                 com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getPropertiesFieldBuilder() : null;
@@ -1578,7 +1704,7 @@ public final class Event {
           if (!other.exceptions_.isEmpty()) {
             if (exceptions_.isEmpty()) {
               exceptions_ = other.exceptions_;
-              bitField0_ = (bitField0_ & ~0x00000100);
+              bitField0_ = (bitField0_ & ~0x00000200);
             } else {
               ensureExceptionsIsMutable();
               exceptions_.addAll(other.exceptions_);
@@ -1591,7 +1717,7 @@ public final class Event {
               exceptionsBuilder_.dispose();
               exceptionsBuilder_ = null;
               exceptions_ = other.exceptions_;
-              bitField0_ = (bitField0_ & ~0x00000100);
+              bitField0_ = (bitField0_ & ~0x00000200);
               exceptionsBuilder_ = 
                 com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
                    getExceptionsFieldBuilder() : null;
@@ -1599,6 +1725,16 @@ public final class Event {
               exceptionsBuilder_.addAllMessages(other.exceptions_);
             }
           }
+        }
+        if (!other.markers_.isEmpty()) {
+          if (markers_.isEmpty()) {
+            markers_ = other.markers_;
+            bitField0_ = (bitField0_ & ~0x00000400);
+          } else {
+            ensureMarkersIsMutable();
+            markers_.addAll(other.markers_);
+          }
+          onChanged();
         }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
@@ -2111,12 +2247,44 @@ public final class Event {
         return callerStBuilder_;
       }
 
+      private long reserved_ ;
+      /**
+       * <code>optional uint64 reserved = 8;</code>
+       */
+      public boolean hasReserved() {
+        return ((bitField0_ & 0x00000080) == 0x00000080);
+      }
+      /**
+       * <code>optional uint64 reserved = 8;</code>
+       */
+      public long getReserved() {
+        return reserved_;
+      }
+      /**
+       * <code>optional uint64 reserved = 8;</code>
+       */
+      public Builder setReserved(long value) {
+        bitField0_ |= 0x00000080;
+        reserved_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional uint64 reserved = 8;</code>
+       */
+      public Builder clearReserved() {
+        bitField0_ = (bitField0_ & ~0x00000080);
+        reserved_ = 0L;
+        onChanged();
+        return this;
+      }
+
       private java.util.List<Property> properties_ =
         java.util.Collections.emptyList();
       private void ensurePropertiesIsMutable() {
-        if (!((bitField0_ & 0x00000080) == 0x00000080)) {
+        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
           properties_ = new java.util.ArrayList<Property>(properties_);
-          bitField0_ |= 0x00000080;
+          bitField0_ |= 0x00000100;
          }
       }
 
@@ -2124,7 +2292,7 @@ public final class Event {
           Property, Property.Builder, PropertyOrBuilder> propertiesBuilder_;
 
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public java.util.List<Property> getPropertiesList() {
         if (propertiesBuilder_ == null) {
@@ -2134,7 +2302,7 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public int getPropertiesCount() {
         if (propertiesBuilder_ == null) {
@@ -2144,7 +2312,7 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Property getProperties(int index) {
         if (propertiesBuilder_ == null) {
@@ -2154,7 +2322,7 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder setProperties(
           int index, Property value) {
@@ -2171,7 +2339,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder setProperties(
           int index, Property.Builder builderForValue) {
@@ -2185,7 +2353,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder addProperties(Property value) {
         if (propertiesBuilder_ == null) {
@@ -2201,7 +2369,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder addProperties(
           int index, Property value) {
@@ -2218,7 +2386,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder addProperties(
           Property.Builder builderForValue) {
@@ -2232,7 +2400,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder addProperties(
           int index, Property.Builder builderForValue) {
@@ -2246,7 +2414,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder addAllProperties(
           Iterable<? extends Property> values) {
@@ -2261,12 +2429,12 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder clearProperties() {
         if (propertiesBuilder_ == null) {
           properties_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000080);
+          bitField0_ = (bitField0_ & ~0x00000100);
           onChanged();
         } else {
           propertiesBuilder_.clear();
@@ -2274,7 +2442,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Builder removeProperties(int index) {
         if (propertiesBuilder_ == null) {
@@ -2287,14 +2455,14 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Property.Builder getPropertiesBuilder(
           int index) {
         return getPropertiesFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public PropertyOrBuilder getPropertiesOrBuilder(
           int index) {
@@ -2304,7 +2472,7 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public java.util.List<? extends PropertyOrBuilder>
            getPropertiesOrBuilderList() {
@@ -2315,14 +2483,14 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Property.Builder addPropertiesBuilder() {
         return getPropertiesFieldBuilder().addBuilder(
             Property.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public Property.Builder addPropertiesBuilder(
           int index) {
@@ -2330,7 +2498,7 @@ public final class Event {
             index, Property.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 8;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.EventPO.Property properties = 9;</code>
        */
       public java.util.List<Property.Builder>
            getPropertiesBuilderList() {
@@ -2343,7 +2511,7 @@ public final class Event {
           propertiesBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
               Property, Property.Builder, PropertyOrBuilder>(
                   properties_,
-                  ((bitField0_ & 0x00000080) == 0x00000080),
+                  ((bitField0_ & 0x00000100) == 0x00000100),
                   getParentForChildren(),
                   isClean());
           properties_ = null;
@@ -2354,9 +2522,9 @@ public final class Event {
       private java.util.List<Exception.ExceptionPO> exceptions_ =
         java.util.Collections.emptyList();
       private void ensureExceptionsIsMutable() {
-        if (!((bitField0_ & 0x00000100) == 0x00000100)) {
+        if (!((bitField0_ & 0x00000200) == 0x00000200)) {
           exceptions_ = new java.util.ArrayList<Exception.ExceptionPO>(exceptions_);
-          bitField0_ |= 0x00000100;
+          bitField0_ |= 0x00000200;
          }
       }
 
@@ -2364,7 +2532,7 @@ public final class Event {
           Exception.ExceptionPO, Exception.ExceptionPO.Builder, Exception.ExceptionPOOrBuilder> exceptionsBuilder_;
 
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public java.util.List<Exception.ExceptionPO> getExceptionsList() {
         if (exceptionsBuilder_ == null) {
@@ -2374,7 +2542,7 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public int getExceptionsCount() {
         if (exceptionsBuilder_ == null) {
@@ -2384,7 +2552,7 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Exception.ExceptionPO getExceptions(int index) {
         if (exceptionsBuilder_ == null) {
@@ -2394,7 +2562,7 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder setExceptions(
           int index, Exception.ExceptionPO value) {
@@ -2411,7 +2579,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder setExceptions(
           int index, Exception.ExceptionPO.Builder builderForValue) {
@@ -2425,7 +2593,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder addExceptions(Exception.ExceptionPO value) {
         if (exceptionsBuilder_ == null) {
@@ -2441,7 +2609,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder addExceptions(
           int index, Exception.ExceptionPO value) {
@@ -2458,7 +2626,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder addExceptions(
           Exception.ExceptionPO.Builder builderForValue) {
@@ -2472,7 +2640,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder addExceptions(
           int index, Exception.ExceptionPO.Builder builderForValue) {
@@ -2486,7 +2654,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder addAllExceptions(
           Iterable<? extends Exception.ExceptionPO> values) {
@@ -2501,12 +2669,12 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder clearExceptions() {
         if (exceptionsBuilder_ == null) {
           exceptions_ = java.util.Collections.emptyList();
-          bitField0_ = (bitField0_ & ~0x00000100);
+          bitField0_ = (bitField0_ & ~0x00000200);
           onChanged();
         } else {
           exceptionsBuilder_.clear();
@@ -2514,7 +2682,7 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Builder removeExceptions(int index) {
         if (exceptionsBuilder_ == null) {
@@ -2527,14 +2695,14 @@ public final class Event {
         return this;
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Exception.ExceptionPO.Builder getExceptionsBuilder(
           int index) {
         return getExceptionsFieldBuilder().getBuilder(index);
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Exception.ExceptionPOOrBuilder getExceptionsOrBuilder(
           int index) {
@@ -2544,7 +2712,7 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public java.util.List<? extends Exception.ExceptionPOOrBuilder>
            getExceptionsOrBuilderList() {
@@ -2555,14 +2723,14 @@ public final class Event {
         }
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Exception.ExceptionPO.Builder addExceptionsBuilder() {
         return getExceptionsFieldBuilder().addBuilder(
             Exception.ExceptionPO.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public Exception.ExceptionPO.Builder addExceptionsBuilder(
           int index) {
@@ -2570,7 +2738,7 @@ public final class Event {
             index, Exception.ExceptionPO.getDefaultInstance());
       }
       /**
-       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 9;</code>
+       * <code>repeated .com.caibowen.prma.api.proto.ExceptionPO exceptions = 10;</code>
        */
       public java.util.List<Exception.ExceptionPO.Builder>
            getExceptionsBuilderList() {
@@ -2583,12 +2751,105 @@ public final class Event {
           exceptionsBuilder_ = new com.google.protobuf.RepeatedFieldBuilder<
               Exception.ExceptionPO, Exception.ExceptionPO.Builder, Exception.ExceptionPOOrBuilder>(
                   exceptions_,
-                  ((bitField0_ & 0x00000100) == 0x00000100),
+                  ((bitField0_ & 0x00000200) == 0x00000200),
                   getParentForChildren(),
                   isClean());
           exceptions_ = null;
         }
         return exceptionsBuilder_;
+      }
+
+      private com.google.protobuf.LazyStringList markers_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      private void ensureMarkersIsMutable() {
+        if (!((bitField0_ & 0x00000400) == 0x00000400)) {
+          markers_ = new com.google.protobuf.LazyStringArrayList(markers_);
+          bitField0_ |= 0x00000400;
+         }
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public com.google.protobuf.ProtocolStringList
+          getMarkersList() {
+        return markers_.getUnmodifiableView();
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public int getMarkersCount() {
+        return markers_.size();
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public String getMarkers(int index) {
+        return markers_.get(index);
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public com.google.protobuf.ByteString
+          getMarkersBytes(int index) {
+        return markers_.getByteString(index);
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public Builder setMarkers(
+          int index, String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMarkersIsMutable();
+        markers_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public Builder addMarkers(
+          String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMarkersIsMutable();
+        markers_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public Builder addAllMarkers(
+          Iterable<String> values) {
+        ensureMarkersIsMutable();
+        com.google.protobuf.AbstractMessageLite.Builder.addAll(
+            values, markers_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public Builder clearMarkers() {
+        markers_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000400);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated string markers = 11;</code>
+       */
+      public Builder addMarkersBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureMarkersIsMutable();
+        markers_.add(value);
+        onChanged();
+        return this;
       }
 
       // @@protoc_insertion_point(builder_scope:com.caibowen.prma.api.proto.EventPO)
@@ -2622,16 +2883,17 @@ public final class Event {
   static {
     String[] descriptorData = {
       "\n\013Event.proto\022\033com.caibowen.prma.api.pro" +
-      "to\032\020StackTrace.proto\032\017Exception.proto\"\344\002" +
+      "to\032\020StackTrace.proto\032\017Exception.proto\"\207\003" +
       "\n\007EventPO\022\n\n\002id\030\001 \002(\004\022\024\n\014time_created\030\002 " +
       "\002(\004\022\r\n\005level\030\003 \002(\r\022\023\n\013logger_name\030\004 \002(\t\022" +
       "\023\n\013thread_name\030\005 \002(\t\022\017\n\007fmt_msg\030\006 \002(\t\022<\n" +
       "\tcaller_st\030\007 \002(\0132).com.caibowen.prma.api" +
-      ".proto.StackTracePO\022A\n\nproperties\030\010 \003(\0132" +
-      "-.com.caibowen.prma.api.proto.EventPO.Pr" +
-      "operty\022<\n\nexceptions\030\t \003(\0132(.com.caibowe" +
-      "n.prma.api.proto.ExceptionPO\032.\n\010Property",
-      "\022\017\n\007map_key\030\001 \002(\t\022\021\n\tmap_value\030\002 \002(\014"
+      ".proto.StackTracePO\022\020\n\010reserved\030\010 \001(\004\022A\n" +
+      "\nproperties\030\t \003(\0132-.com.caibowen.prma.ap" +
+      "i.proto.EventPO.Property\022<\n\nexceptions\030\n" +
+      " \003(\0132(.com.caibowen.prma.api.proto.Excep",
+      "tionPO\022\017\n\007markers\030\013 \003(\t\032.\n\010Property\022\017\n\007m" +
+      "ap_key\030\001 \002(\t\022\021\n\tmap_value\030\002 \002(\014"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2652,7 +2914,7 @@ public final class Event {
     internal_static_com_caibowen_prma_api_proto_EventPO_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_com_caibowen_prma_api_proto_EventPO_descriptor,
-        new String[] { "Id", "TimeCreated", "Level", "LoggerName", "ThreadName", "FmtMsg", "CallerSt", "Properties", "Exceptions", });
+        new String[] { "Id", "TimeCreated", "Level", "LoggerName", "ThreadName", "FmtMsg", "CallerSt", "Reserved", "Properties", "Exceptions", "Markers", });
     internal_static_com_caibowen_prma_api_proto_EventPO_Property_descriptor =
       internal_static_com_caibowen_prma_api_proto_EventPO_descriptor.getNestedTypes().get(0);
     internal_static_com_caibowen_prma_api_proto_EventPO_Property_fieldAccessorTable = new

@@ -13,15 +13,15 @@
         <!--</dataSource>-->
     <!--</appender>-->
 
-    <appender name="DB" class="ch.qos.logback.classic.db.DBAppender">
-        <!--<param name="fuckParam" value="fuckParam value" />-->
-        <connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">
-            <driverClass>com.mysql.jdbc.Driver</driverClass>
-            <url>jdbc:mysql://localhost:3306/c1_parknshop</url>
-            <user>bitranger</user>
-            <password>123456</password>
-        </connectionSource>
-    </appender>
+    <!--<appender name="DB" class="ch.qos.logback.classic.db.DBAppender">-->
+        <!--&lt;!&ndash;<param name="fuckParam" value="fuckParam value" />&ndash;&gt;-->
+        <!--<connectionSource class="ch.qos.logback.core.db.DriverManagerConnectionSource">-->
+            <!--<driverClass>com.mysql.jdbc.Driver</driverClass>-->
+            <!--<url>jdbc:mysql://localhost:3306/c1_parknshop</url>-->
+            <!--<user>bitranger</user>-->
+            <!--<password>123456</password>-->
+        <!--</connectionSource>-->
+    <!--</appender>-->
 
     <!--<bean id="dataSource"-->
           <!--class="org.apache.commons.dbcp.BasicDataSource">-->
@@ -36,9 +36,9 @@
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="db-logger" level="TRACE" additivity="true">
-        <appender-ref ref="DB"/>
-    </logger>
+    <!--<logger name="db-logger" level="TRACE" additivity="true">-->
+        <!--<appender-ref ref="DB"/>-->
+    <!--</logger>-->
 
     <logger name="console-logger" level="TRACE" additivity="true">
         <appender-ref ref="STDOUT"/>

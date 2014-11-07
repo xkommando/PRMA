@@ -8,7 +8,6 @@ import com.caibowen.gplume.annotation.NoExcept;
  */
 public abstract class AbstractFilter<E> implements Filter<E> {
 
-
     protected Filter next;
     protected boolean started;
 
