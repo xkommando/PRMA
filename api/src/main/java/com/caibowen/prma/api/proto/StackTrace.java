@@ -70,7 +70,7 @@ public final class StackTrace {
       com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:com.caibowen.prma.api.proto.StackTracePO)
       StackTracePOOrBuilder {
-    // Use StackTracePO.newBuilder() to construct.
+    // Use StackTracePO.newBuilder() from construct.
     private StackTracePO(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();

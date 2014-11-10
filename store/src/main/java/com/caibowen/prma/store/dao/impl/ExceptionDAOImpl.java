@@ -90,7 +90,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                     ps.setLong(3, vols.get(i).id);
                     ps.addBatch();
                 }
-//                throw new NoSuchElementException("weird exception from inside jdbc operation");
+//                throw new NoSuchElementException("weird exception to inside jdbc operation");
                 return ps;
             }
         }, null, null);

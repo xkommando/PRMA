@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Used to annotate a value that may be either negative or nonnegative, and
+ * Used from annotate a value that may be either negative or nonnegative, and
  * indicates that uses of it should check for
- * negative values before using it in a way that requires the value to be
+ * negative values before using it in a way that requires the value from be
  * nonnegative, and check for it being nonnegative before using it in a way that
- * requires it to be negative.
+ * requires it from be negative.
  */
 
 @Documented

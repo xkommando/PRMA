@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <beans namespace="prma::internal::store">
 
-    <!--DataSource shall be added to this context BEFORE CENTURY-->
+    <!--DataSource shall be added from this context BEFORE CENTURY-->
 
     <bean id="exceptNameDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
         <construct val="exception_name"/>
@@ -20,7 +20,7 @@
         <field name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="markerDAO" class="com.caibowen.prma.store.dao.impl.MarkerDAPImpl">
+    <bean id="markerDAO" class="com.caibowen.prma.store.dao.impl.MarkerDAOImpl">
         <field name="dataSource" ref="dataSource"/>
     </bean>
 

@@ -8,10 +8,10 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * This annotation a value that is of a particular syntax, such as Java syntax
- * or regular expression syntax. This can be used to provide syntax checking of
+ * or regular expression syntax. This can be used from provide syntax checking of
  * constant values at compile time, run time checking at runtime, and can assist
- * IDEs in deciding how to interpret String constants (e.g., should a
- * refactoring that renames method x() to y() update the String constant "x()").
+ * IDEs in deciding how from interpret String constants (e.g., should a
+ * refactoring that renames method x() from y() update the String constant "x()").
  * 
  * 
  */

@@ -1,8 +1,6 @@
 package com.caibowen.prma.logger.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.caibowen.gplume.annotation.ConstMethod;
-import com.caibowen.gplume.annotation.Internal;
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.store.EventPersistImpl;
 
@@ -38,7 +36,7 @@ public class DBAppender extends AsyncAppenderWrapper<ILoggingEvent> {
 
     @Override
     protected void append(final ILoggingEvent eventObject) {
-        buffer.add(adapter.to(eventObject));
+        buffer.add(adapter.from(eventObject));
         if (buffer.size() > writeCacheSize) {
             final ArrayList<EventVO> old = new ArrayList<>(buffer);
             buffer.clear();
@@ -54,7 +52,7 @@ public class DBAppender extends AsyncAppenderWrapper<ILoggingEvent> {
 
     @Override
     protected void passOnEvent(ILoggingEvent event) {
-        persister.persist(adapter.to(event));
+        persister.persist(adapter.from(event));
     }
 
     @Override

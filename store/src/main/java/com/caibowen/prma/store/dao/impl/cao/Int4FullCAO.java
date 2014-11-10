@@ -1,190 +1,207 @@
 package com.caibowen.prma.store.dao.impl.cao;
 
+import com.caibowen.gplume.annotation.ConstMethod;
+import com.caibowen.gplume.misc.Assert;
 import com.caibowen.prma.store.dao.Int4DAO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * all data is stored in the memory, read operations only reach the memory
- * when write data, the value is write through to the DB.
- * <p/>
+ * all data is stored in the memory.
+ * read operation done in memory
+ * write operation is buffered.
+ *
  * for logger name, thread name, exception name
  *
  * @author BowenCai
  * @since 26-10-2014.
  */
-public class Int4FullCAO<V> implements Int4DAO<V> {
+public class Int4FullCAO<V> implements Int4DAO<V>, Serializable {
+
+    private static final long serialVersionUID = 4978434148771799147L;
 
     @Inject
     Int4DAO<V> db;
 
+    private Map<Integer, V> mem = new ConcurrentHashMap<>(256);
+//    private ReadWriteLock lock = new ReentrantReadWriteLock();
+
     @Inject int writeCacheSize;
+    protected Map<Integer, V> buffer = new ConcurrentHashMap<>(64);
 
-    private Map<Integer, V> mem = new HashMap<>(256);
-    private ReadWriteLock prepare = new ReentrantReadWriteLock();
-
-
-    synchronized public void init() {
+    @Override
+    public void start() {
+        Assert.notNull(db);
+        db.start();
         mem.putAll(db.entries());
     }
 
     @Override
-    public boolean hasKey(int key) {
-        prepare.readLock().lock();
-        try {
-            return mem.containsKey(key);
-        } finally {
-            prepare.readLock().unlock();
+    public void stop() {
+        if (buffer.size() != 0) {
+                db.putAll(buffer);
+                buffer.clear();
         }
+        db.stop();
+    }
+
+    @Override
+    public boolean isStarted() {
+        return db.isStarted();
+    }
+
+    @Override
+    public boolean hasKey(int key) {
+            return mem.containsKey(key);
     }
 
     @Override
     public boolean hasVal(@Nonnull V val) {
-        prepare.readLock().lock();
-        try {
             return mem.containsValue(val);
-        } finally {
-            prepare.readLock().unlock();
-        }
     }
 
     @Nullable
     @Override
     public V get(int key) {
-        prepare.readLock().lock();
-        try {
             return mem.get(key);
-        } finally {
-            prepare.readLock().unlock();
-        }
     }
 
+    /**
+     *  return new array list of values.
+     */
+    @ConstMethod
     @Nonnull
     @Override
     public List<Integer> keys() {
-        prepare.readLock().lock();
-        try {
             return new ArrayList<>(mem.keySet());
-        } finally {
-            prepare.readLock().unlock();
-        }
     }
 
     @Nonnull
     @Override
     public List<V> values() {
-        prepare.readLock().lock();
-        try {
             return new ArrayList<>(mem.values());
-        } finally {
-            prepare.readLock().unlock();
-        }
     }
 
     @Nonnull
     @Override
     public Map<Integer, V> entries() {
-        prepare.readLock().lock();
-        try {
             return Collections.unmodifiableMap(mem);
-        } finally {
-            prepare.readLock().unlock();
-        }
     }
 
-    protected HashMap<Integer, V> cache;
-    @Nonnull
     @Override
     public boolean put(int key, @Nonnull V value) {
-        prepare.writeLock().lock();
-        try {
-            cache.put(key, value);
             mem.put(key, value);
-            if (cache.size() > writeCacheSize) {
-                boolean ok = db.putAll(cache);
-                if (!ok) {
-                    for (Map.Entry<Integer, V> e : cache.entrySet())
-                        mem.remove(e.getKey());
-                }
-                cache.clear();
-                return ok;
+            buffer.put(key, value);
+            if (buffer.size() < writeCacheSize)
+                return true;
+        synchronized (db) {
+            // batch insert
+            boolean ok = db.putAll(buffer);
+            if (!ok) {
+                for (Map.Entry<Integer, V> e : buffer.entrySet())
+                    mem.remove(e.getKey());
             }
-            return true;
-        } finally {
-            prepare.writeLock().unlock();
+            buffer.clear();
+            return ok;
         }
-
     }
+
+
+    @Override
+    public boolean putIfAbsent(@Nonnull Map<Integer, V> values) {
+            for (Map.Entry<Integer, V> e : values.entrySet()) {
+                Integer k = e.getKey();
+                V va = e.getValue();
+                if (null == mem.put(k, va))
+                    buffer.put(k, va);
+            }
+            boolean ret;
+            if (buffer.size() < writeCacheSize)
+                return true;
+        synchronized (db) {
+            ret = db.putAll(buffer);
+            if (!ret)
+                for (Map.Entry<Integer, V> e2 : buffer.entrySet())
+                    mem.remove(e2.getKey());
+            buffer.clear();
+            return ret;
+        }
+    }
+
 
     @Override
     public boolean putIfAbsent(int key, @Nonnull V value) {
-        boolean ret = true;
-        if (!mem.containsKey(key)) {
-            prepare.writeLock().lock();
-            try {
-                ret = db.putIfAbsent(key, value);
-                if (ret)
-                    mem.put(key, value);
-            } finally {
-                prepare.writeLock().unlock();
-            }
+        if (mem.containsKey(key))
+            return true;
+
+        boolean ret;
+            mem.put(key, value);
+            buffer.put(key, value);
+            if (buffer.size() < writeCacheSize)
+                return true;
+            // batch insert
+        synchronized (db) {
+            ret = db.putAll(buffer);
+            if (!ret)
+                for (Map.Entry<Integer, V> e : buffer.entrySet())
+                    mem.remove(e.getKey());
+            buffer.clear();
+            return ret;
         }
-        return ret;
     }
 
     @Override
-    public boolean putAll(@Nonnull Map<Integer, V> map) {
-        boolean ok = false;
-        prepare.writeLock().lock();
-        try {
-            ok =db.putAll(map);
-            if (ok)
-                mem.putAll(map);
-        } finally {
-            prepare.writeLock().unlock();
-        }
+    synchronized public boolean putAll(@Nonnull Map<Integer, V> map) {
+        boolean ok = db.putAll(map);
+        if (ok)
+            mem.putAll(map);
         return ok;
     }
 
-    @Nonnull
+
+    /**
+     *
+     * low frequency operation, no buffer
+     */
     @Override
     public boolean update(int key, @Nonnull V value) {
         boolean ok = true;
         V ov = mem.get(key);
         if (!value.equals(ov)) {
-            prepare.writeLock().lock();
-            try {
+            synchronized (db) {
                 ok = db.update(key, value);
                 if (ok)
                     mem.put(key, value);
-            } finally {
-                prepare.writeLock().unlock();
             }
         }
         return ok;
     }
 
+    /**
+     *
+     * low frequency operation, no buffer
+     */
     @Nullable
     @Override
     public V remove(int key, boolean returnVal) throws SQLException {
         V ov = mem.get(key);
         if (ov != null) {
-            prepare.writeLock().lock();
-            try {
+            synchronized (db){
                 db.remove(key, false);
                 mem.remove(key);
-            } finally {
-                prepare.writeLock().unlock();
             }
         }
         return returnVal ? ov : null;
     }
+
 
     public int getWriteCacheSize() {
         return writeCacheSize;

@@ -14,7 +14,7 @@ public interface Evaluator {
      * 2. java code block eval integrate
      * 3. monitor eval chain building
      * 4. notify stmp, http post
-     * 5. gplume bean namespace support
+     * 5. gplume bean namespace support -> OK
      * 6. context build
      * 7. analyzing API
      *

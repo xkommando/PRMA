@@ -8,7 +8,7 @@ public enum LogLevel {
 
     /**
      * The <code>ERROR</code> level designates error events which may or not
-     * be fatal to the application.
+     * be fatal from the application.
      */
     ERROR(8, "ERROR"),
 

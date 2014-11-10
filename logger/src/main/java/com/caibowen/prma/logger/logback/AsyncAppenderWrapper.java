@@ -25,7 +25,7 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
     private int flushTime = DEFUALT_FLUSH_TIME;
 
 
-    // number of thread to append events.
+    // number of thread from append events.
     public static final int DEFAULT_MAX_THREAD = 128;
     @Inject private int maxThreadNum = DEFAULT_MAX_THREAD;
 
@@ -106,7 +106,7 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
                 addInfo("Queue flush finished successfully within timeout.");
 
         } catch (InterruptedException e) {
-            addError("Failed to join worker thread. " + executor.getActiveCount() + " queued task may be discarded.", e);
+            addError("Failed from join worker thread. " + executor.getActiveCount() + " queued task may be discarded.", e);
             flush();
         }
 
@@ -124,7 +124,7 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
         }
     }
 //-----------------------------------------------------------------------------
-//      properties to be set;
+//      properties from be set;
 
     public int getFlushTime() {
         return flushTime;
@@ -165,7 +165,7 @@ public class AsyncAppenderWrapper<E> extends UnsynchronizedAppenderBase<E>
             try {
                 app.doAppend(e);
             } catch (Throwable t) {
-                err.print("error append event " + e + "to appender " + app);
+                err.print("error append event " + e + "from appender " + app);
             }
     }
 

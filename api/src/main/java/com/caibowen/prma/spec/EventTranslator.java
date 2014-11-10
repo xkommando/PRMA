@@ -8,6 +8,6 @@ import com.caibowen.prma.api.model.EventVO;
  */
 public interface EventTranslator<V> {
 
-    EventVO to(V otherEvent);
-    V from(EventVO vo);
+    EventVO from(V otherEvent);
+    V to(EventVO vo);
 }

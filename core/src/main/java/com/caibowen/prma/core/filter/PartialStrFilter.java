@@ -2,6 +2,7 @@ package com.caibowen.prma.core.filter;
 
 import com.caibowen.gplume.common.collection.URIPrefixTrie;
 import com.caibowen.gplume.common.collection.URISuffixTrie;
+import com.caibowen.gplume.misc.Str;
 
 /**
  * @author BowenCai
@@ -20,6 +21,12 @@ public class PartialStrFilter extends StrFilter {
 
     @Override
     protected void handle(String buf) {
+        /**
+         * skip # comment;
+         */
+        int idx = buf.indexOf('#');
+        if (idx != -1 && Str.Utils.isBlank(buf.substring(0, idx)))
+            return;
 
         if (buf.startsWith("*"))
             ignoreSuffix.makeBranch(buf.substring(0, buf.length() - 1), NA);

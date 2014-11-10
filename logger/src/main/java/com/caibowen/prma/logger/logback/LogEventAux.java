@@ -2,7 +2,11 @@ package com.caibowen.prma.logger.logback;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.IThrowableProxy;
+import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.caibowen.gplume.common.collection.ImmutableArraySet;
+import com.caibowen.prma.api.LogLevel;
+import com.caibowen.prma.api.model.ExceptionVO;
 import org.slf4j.Marker;
 
 import javax.annotation.Nonnull;
@@ -17,23 +21,11 @@ public final class LogEventAux {
 
     private LogEventAux(){}
 
-    @Nonnull
-    public static Set<String> extractMarkers(ILoggingEvent event) {
-        Marker marker = event.getMarker();
-        if (marker == null)
-            return null;
-        Set<String> ret = null;
-        Iterator<Marker> iter = marker.iterator();
-        if (iter.hasNext()) {
-            ret = new HashSet<String>(8);
-            while (iter.hasNext())
-                ret.add(iter.next().getName());
-
-            ret.add(marker.getName());
-            return ret;
-        }
-        return new ImmutableArraySet<>(new Object[]{marker.getName()});
+    public static LogLevel level(Level le) {
+        int val = le.levelInt / Level.TRACE_INT;
+        return LogLevel.values()[4 - val / 2];
     }
+
 
     public static
     @Nullable Map<String, String> extractProperties(ILoggingEvent event) {
@@ -76,10 +68,10 @@ public final class LogEventAux {
 
 
 //    trace 8
-//    DEBUG level is converted to 7,
-// INFO is converted to 6,
-// WARN is converted to 4
-// and ERROR is converted to 3.
+//    DEBUG level is converted from 7,
+// INFO is converted from 6,
+// WARN is converted from 4
+// and ERROR is converted from 3.
 
     public static
     byte level(ILoggingEvent event) {
@@ -111,5 +103,6 @@ public final class LogEventAux {
 //        }
         return mask;
     }
+
 
 }

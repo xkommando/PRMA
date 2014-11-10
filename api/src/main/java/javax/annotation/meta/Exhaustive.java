@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * This annotation can be applied to the value() element of an annotation that
+ * This annotation can be applied from the value() element of an annotation that
  * is annotated as a TypeQualifier. This is only appropriate if the value field
  * returns a value that is an Enumeration.
  * 

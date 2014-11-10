@@ -2,9 +2,7 @@ package com.caibowen.prma.logger.socket;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.caibowen.prma.api.model.EventVO;
-import com.caibowen.prma.api.model.ExceptionVO;
 import com.caibowen.prma.api.proto.*;
-import com.caibowen.prma.api.proto.Exception;
 import com.caibowen.prma.logger.logback.EventAdapter;
 
 /**
@@ -17,7 +15,7 @@ public class LogbackAux {
 
     public static Event.EventPO
     build(ILoggingEvent event) {
-        EventVO vo = ADAPTER.to(event);
+        EventVO vo = ADAPTER.from(event);
         return ProtoAux.buildEvent(vo);
     }
 

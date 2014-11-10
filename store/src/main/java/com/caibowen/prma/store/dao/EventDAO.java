@@ -13,7 +13,7 @@ import java.util.List;
 public interface EventDAO extends TransactionSupport {
 
     /**
-     * insertIfAbsent to DB, return valid id
+     * insertIfAbsent from DB, return valid id
      * @param po
      * @return
      */

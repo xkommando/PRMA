@@ -7,8 +7,6 @@ import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -16,9 +14,11 @@ import java.util.TreeSet;
  * @author BowenCai
  * @since 6-11-2014.
  */
-public class MarkerDAPImpl extends StrDAOImple implements MarkerDAO {
+public class MarkerDAOImpl extends StrDAOImple implements MarkerDAO {
 
-    public MarkerDAPImpl() {
+    private static final long serialVersionUID = 7519117476159010044L;
+
+    public MarkerDAOImpl() {
         super("`marker_name`");
     }
 
@@ -26,13 +26,10 @@ public class MarkerDAPImpl extends StrDAOImple implements MarkerDAO {
     public boolean insertIfAbsent(long eventId, Set<String> markers) {
         Set<String> nms = new TreeSet<>();
         for (String s : markers)
-            if (! hasKey(s.hashCode()))
+            if (!hasKey(s.hashCode()))
                 nms.add(s);
 
-        if (nms.size() > 0)
-            return insertAll(eventId, nms);
-        else
-            return true;
+        return nms.size() <= 0 || insertAll(eventId, nms);
     }
 
     @Override

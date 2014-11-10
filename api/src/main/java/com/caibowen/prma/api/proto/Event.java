@@ -177,7 +177,7 @@ public final class Event {
       com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:com.caibowen.prma.api.proto.EventPO)
       EventPOOrBuilder {
-    // Use EventPO.newBuilder() to construct.
+    // Use EventPO.newBuilder() from construct.
     private EventPO(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
@@ -380,7 +380,7 @@ public final class Event {
         com.google.protobuf.GeneratedMessage implements
         // @@protoc_insertion_point(message_implements:com.caibowen.prma.api.proto.EventPO.Property)
         PropertyOrBuilder {
-      // Use Property.newBuilder() to construct.
+      // Use Property.newBuilder() from construct.
       private Property(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
         this.unknownFields = builder.getUnknownFields();
@@ -2883,7 +2883,7 @@ public final class Event {
   static {
     String[] descriptorData = {
       "\n\013Event.proto\022\033com.caibowen.prma.api.pro" +
-      "to\032\020StackTrace.proto\032\017Exception.proto\"\207\003" +
+      "from\032\020StackTrace.proto\032\017Exception.proto\"\207\003" +
       "\n\007EventPO\022\n\n\002id\030\001 \002(\004\022\024\n\014time_created\030\002 " +
       "\002(\004\022\r\n\005level\030\003 \002(\r\022\023\n\013logger_name\030\004 \002(\t\022" +
       "\023\n\013thread_name\030\005 \002(\t\022\017\n\007fmt_msg\030\006 \002(\t\022<\n" +

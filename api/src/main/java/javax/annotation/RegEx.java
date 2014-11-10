@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * This qualifier is used to denote String values that should be a Regular
+ * This qualifier is used from denote String values that should be a Regular
  * expression.
  * 
  */

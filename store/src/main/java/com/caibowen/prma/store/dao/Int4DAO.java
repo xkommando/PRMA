@@ -1,5 +1,7 @@
 package com.caibowen.prma.store.dao;
 
+import com.caibowen.prma.core.LifeCycle;
+
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.sql.SQLException;
@@ -12,14 +14,14 @@ import java.util.Map;
  * the hashCode() of the actual key is inserted as the id of the value.
  *
  * WARN:
- * 1. a 32-bit int is used to identify a string key, possible hash collision !
+ * 1. a 32-bit int is used from identify a string key, possible hash collision !
  * 2. the hashCode() of some java class, e.g., java.lang.String, is not standardized,
  *      and is implementation dependent.
  *
  * @author BowenCai
  * @since 22-10-2014.
  */
-public interface Int4DAO<V> {
+public interface Int4DAO<V> extends LifeCycle {
 
     boolean
     hasKey(int key);
@@ -43,17 +45,19 @@ public interface Int4DAO<V> {
     Map<Integer, V>
     entries();
 
-    @Nonnull boolean
+    boolean
     put(int key, @Nonnull final V value);
 
-    @Nonnull boolean
+    boolean
     putIfAbsent(int key, @Nonnull final V value);
 
+    boolean
+    putIfAbsent(@Nonnull Map<Integer, V> values);
 
     boolean
     putAll(@Nonnull final Map<Integer, V> map);
 
-    @Nonnull boolean
+    boolean
     update(int key, @Nonnull V value);
 
 

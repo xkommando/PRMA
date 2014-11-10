@@ -5,6 +5,7 @@ import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.prma.store.dao.PropertyDAO;
 
+import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -22,20 +23,18 @@ public class PropertyDAOImpl extends JdbcSupport implements PropertyDAO {
 
         Iterator iter = prop.entrySet().iterator();
         while (iter.hasNext()) {
-            Map.Entry pairs = (Map.Entry)iter.next();
+            Map.Entry pairs = (Map.Entry) iter.next();
             if (hasKey(pairs.getKey().hashCode()))
                 iter.remove();
         }
-        if (prop.isEmpty())
-            return true;
-        else
-            return insertAll(eventId, prop);
+        return prop.isEmpty() || insertAll(eventId, prop);
     }
 
     @Override
     public boolean insertAll(final long eventId, final Map<String, String> prop) {
 
         batchInsert(new StatementCreator() {
+            @Nonnull
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -51,6 +50,7 @@ public class PropertyDAOImpl extends JdbcSupport implements PropertyDAO {
         }, null, null);
 
         batchInsert(new StatementCreator() {
+            @Nonnull
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
@@ -70,11 +70,11 @@ public class PropertyDAOImpl extends JdbcSupport implements PropertyDAO {
     @Override
     public boolean hasKey(final int hash) {
         return queryForObject(new StatementCreator() {
+            @Nonnull
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
-                PreparedStatement ps = con.prepareStatement(
+                return con.prepareStatement(
                         "SELECT count(1) FROM `property` WHERE id = " + hash);
-                return ps;
             }
         }, RowMapping.BOOLEAN_ROW_MAPPING);
     }

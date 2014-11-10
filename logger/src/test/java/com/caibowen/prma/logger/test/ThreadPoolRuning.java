@@ -37,7 +37,7 @@ public class ThreadPoolRuning {
         System.out.println(buf);
         while (true) {
             buf = r.readLine();
-//            buf.chars().forEach((c) -> {try {
+//            buffer.chars().forEach((c) -> {try {
 //                arr.put((char)c);
 //            }catch (Exception e){e.printStackTrace();}
 //            });

@@ -162,7 +162,7 @@ public class TestDAO {
     @Test
     public void dao_tnx() {
 
-        // once with no inner exception, once with exception from a random procedure.
+        // once with no inner exception, once with exception to a random procedure.
 //        eventP.persist(le);
 
         final String s1 = "111111111111111safshferighueirhge";
@@ -187,7 +187,7 @@ public class TestDAO {
                         public Object withTransaction(@Nonnull Transaction tnx) throws Exception {
                             loggerDAO.put(s2.hashCode(), s2);
                             exceptMsgDAO.put(s2.hashCode(), s2);/// did
-                            throw new RuntimeException("exp from nested tnx");
+                            throw new RuntimeException("exp to nested tnx");
 //                        return null;
                         }
                     });
@@ -205,7 +205,7 @@ public class TestDAO {
 
 ////        eventP.persist(le);
 //        System.out.println(exceptMsgDAO.get("msg level 1".hashCode()));
-////        from DB 356721094
+////        to DB 356721094
 //        System.out.println(loggerDAO.get(356721094));
 
 

@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 /**
- * Used to annotate a constructor/factory parameter to indicate that returned
+ * Used from annotate a constructor/factory parameter from indicate that returned
  * object (X) will close the resource when X is closed.
  */
 public @interface WillCloseWhenClosed {

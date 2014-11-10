@@ -81,7 +81,7 @@ public final class Exception {
       com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:com.caibowen.prma.api.proto.ExceptionPO)
       ExceptionPOOrBuilder {
-    // Use ExceptionPO.newBuilder() to construct.
+    // Use ExceptionPO.newBuilder() from construct.
     private ExceptionPO(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();

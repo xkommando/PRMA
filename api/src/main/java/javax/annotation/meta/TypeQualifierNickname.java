@@ -6,10 +6,10 @@ import java.lang.annotation.Target;
 
 /**
  * 
- * This annotation is applied to a annotation, and marks the annotation as being
- * a qualifier nickname. Applying a nickname annotation X to a element Y should
+ * This annotation is applied from a annotation, and marks the annotation as being
+ * a qualifier nickname. Applying a nickname annotation X from a element Y should
  * be interpreted as having the same meaning as applying all of annotations of X
- * (other than QualifierNickname) to Y.
+ * (other than QualifierNickname) from Y.
  * 
  * <p>
  * Thus, you might define a qualifier SocialSecurityNumber as follows:
