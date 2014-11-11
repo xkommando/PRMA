@@ -1,6 +1,6 @@
 package com.caibowen.prma.store.dao.impl.cao;
 
-import com.caibowen.gplume.cache.mem.Int4LIRSCache;
+import com.caibowen.prma.spi.Int4CacheProvider;
 import com.caibowen.gplume.misc.Assert;
 import com.caibowen.prma.store.dao.Int4DAO;
 
@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import javax.inject.Inject;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -17,31 +18,30 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * level 1 exception message, stack trace, property, marker
  * level 2 exception, event
  *
- *
  * @author BowenCai
  * @since 26-10-2014.
  */
 public class Int4LIRSCAO<V> implements Int4DAO<V> {
 
-    @Inject Int4DAO<V> db;
+    @Inject
+    Int4DAO<V> db;
 
-    protected Int4LIRSCache<V> cache;
+    protected Int4CacheProvider cache;
 
-    @Inject int writeCacheSize;
-    protected HashMap<Integer, V> buffer = new HashMap<>(64);
-    protected ReadWriteLock lock = new ReentrantReadWriteLock();
+    @Inject
+    int writeBufferSize;
 
+    protected ConcurrentHashMap<Integer, V> buffer = new ConcurrentHashMap<>(64);
 
     @Override
     public void start() {
         Assert.notNull(db);
         db.start();
-        cache = new Int4LIRSCache<>(-1, -1);
     }
 
     @Override
     public void stop() {
-        if (! buffer.isEmpty()) {
+        if (!buffer.isEmpty()) {
             db.putAll(buffer);
             buffer.clear();
         }
@@ -56,131 +56,93 @@ public class Int4LIRSCAO<V> implements Int4DAO<V> {
 
     @Override
     public boolean hasKey(int key) {
-        lock.readLock().lock();
-        try {
-            return cache.containsKey(key) || db.hasKey(key);
-        } finally {
-            lock.readLock().unlock();
-        }
+        return cache.contains(key) || db.hasKey(key);
     }
 
     @Override
     public boolean hasVal(@Nonnull V val) {
-        lock.readLock().lock();
-        try {
-            return cache.containsValue(val) || db.hasVal(val);
-        } finally {
-            lock.readLock().unlock();
-        }
+        return db.hasVal(val);
     }
 
     @Nullable
     @Override
     public V get(int key) {
-        lock.readLock().lock();
-        try {
-            V v = cache.get(key);
-            if (v == null) {
+        V v = (V) cache.get(key);
+        if (v == null) {
+            synchronized (db) {
                 v = db.get(key);
                 if (v != null)
                     cache.put(key, v); // cache is thread safe.
             }
-            return v;
-        } finally {
-            lock.readLock().unlock();
         }
+        return v;
     }
 
     @Nonnull
     @Override
     public List<Integer> keys() {
-        lock.readLock().lock();
-        try {
-            return new ArrayList<>(db.keys());
-        } finally {
-            lock.readLock().unlock();
-        }
+        return new ArrayList<>(db.keys());
     }
 
     @Nonnull
     @Override
     public List<V> values() {
-        lock.readLock().lock();
-        try {
-            return new ArrayList<>(db.values());
-        } finally {
-            lock.readLock().unlock();
-        }
+        return new ArrayList<>(db.values());
     }
 
     @Nonnull
     @Override
     public Map<Integer, V> entries() {
-        lock.readLock().lock();
-        try {
-            return Collections.unmodifiableMap(db.entries());
-        } finally {
-            lock.readLock().unlock();
-        }
+        return Collections.unmodifiableMap(db.entries());
     }
 
     @Override
     public boolean put(int key, @Nonnull V value) {
-        lock.writeLock().lock();
-        try {
-            cache.put(key, value);
-            buffer.put(key, value);
-            if (buffer.size() < writeCacheSize)
-                return true;
+        cache.put(key, value);
+        buffer.put(key, value);
+        if (buffer.size() < writeBufferSize)
+            return true;
 
+        synchronized (db) {
             // batch insert
             boolean ok = db.putAll(buffer);
             if (!ok) {
                 for (Map.Entry<Integer, V> e : buffer.entrySet())
-                    cache.remove(e.getKey());
+                    cache.remove(e.getKey(), false);
             }
             buffer.clear();
             return ok;
-        } finally {
-            lock.writeLock().unlock();
         }
     }
 
     @Override
     public boolean putIfAbsent(int key, @Nonnull V value) {
-        if (cache.containsKey(key))
+        if (cache.contains(key) || db.hasKey(key))
             return true;
         boolean ret;
-        lock.writeLock().lock();
-        try {
-            cache.put(key, value);
-            buffer.put(key, value);
-            if (buffer.size() < writeCacheSize)
-                return true;
-            // batch insert
+        cache.put(key, value);
+        buffer.put(key, value);
+        if (buffer.size() < writeBufferSize)
+            return true;
+        // batch insert
+        synchronized (db) {
             ret = db.putAll(buffer);
             if (!ret)
                 for (Map.Entry<Integer, V> e : buffer.entrySet())
-                    cache.remove(e.getKey());
+                    cache.remove(e.getKey(), false);
             buffer.clear();
             return ret;
-        } finally {
-            lock.writeLock().unlock();
         }
     }
 
     @Override
     public boolean putAll(@Nonnull Map<Integer, V> map) {
-        boolean ok = false;
-        lock.writeLock().lock();
-        try {
-            ok =db.putAll(map);
+        synchronized (db) {
+            boolean ok = db.putAll(map);
             if (ok)
-                cache.putAll(map);
-        } finally {
-            lock.writeLock().unlock();
+                cache.putAll((Map<Integer, Object>) map);
+            return ok;
         }
-        return ok;
     }
 
     @Override
@@ -188,17 +150,17 @@ public class Int4LIRSCAO<V> implements Int4DAO<V> {
         for (Map.Entry<Integer, V> e : values.entrySet()) {
             Integer k = e.getKey();
             V va = e.getValue();
-            if (null == cache.put(k, va) && !hasKey(k))
+            if (null == cache.putIfAbsent(k, va) && !db.hasKey(k))
                 buffer.put(k, va);
         }
         boolean ret;
-        if (buffer.size() < writeCacheSize)
+        if (buffer.size() < writeBufferSize)
             return true;
         synchronized (db) {
             ret = db.putAll(buffer);
             if (!ret)
                 for (Map.Entry<Integer, V> e2 : buffer.entrySet())
-                    cache.remove(e2.getKey());
+                    cache.remove(e2.getKey(), false);
             buffer.clear();
             return ret;
         }
@@ -207,15 +169,12 @@ public class Int4LIRSCAO<V> implements Int4DAO<V> {
     @Override
     public boolean update(int key, @Nonnull V value) {
         boolean ok = true;
-        V ov = cache.get(key);
+        V ov = (V) cache.get(key);
         if (!value.equals(ov)) {
-            lock.writeLock().lock();
-            try {
+            synchronized (db) {
                 ok = db.update(key, value);
                 if (ok)
                     cache.put(key, value);
-            } finally {
-                lock.writeLock().unlock();
             }
         }
         return ok;
@@ -224,17 +183,14 @@ public class Int4LIRSCAO<V> implements Int4DAO<V> {
     @Nullable
     @Override
     public V remove(int key, boolean returnVal) throws SQLException {
-        V ov = cache.get(key);
+        V ov = (V) cache.get(key);
         returnVal = returnVal && ov == null;
-        lock.writeLock().lock();
-        try {
+        synchronized (db) {
             if (returnVal)
                 ov = db.remove(key, false);
             else
                 db.remove(key, false);
-            cache.remove(key);
-        } finally {
-            lock.writeLock().unlock();
+            cache.remove(key, false);
         }
         return ov;
     }

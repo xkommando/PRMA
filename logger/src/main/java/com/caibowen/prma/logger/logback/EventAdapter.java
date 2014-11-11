@@ -7,7 +7,7 @@ import com.caibowen.gplume.common.collection.ImmutableArraySet;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.api.model.ExceptionVO;
-import com.caibowen.prma.spec.EventTranslator;
+import com.caibowen.prma.spi.EventTranslator;
 import org.slf4j.Marker;
 
 import javax.annotation.Nonnull;

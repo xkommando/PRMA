@@ -1,4 +1,4 @@
-package com.caibowen.prma.core.filter;
+package com.caibowen.prma.core.filter.basic;
 
 import com.caibowen.gplume.annotation.NoExcept;
 import com.caibowen.prma.core.LifeCycle;

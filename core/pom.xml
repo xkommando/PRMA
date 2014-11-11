@@ -17,6 +17,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.caibowen.prma</groupId>
+            <artifactId>api</artifactId>
+            <version>${prma-version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.caibowen.gplumeframework</groupId>
             <artifactId>gplume</artifactId>
             <version>${gplume-version}</version>

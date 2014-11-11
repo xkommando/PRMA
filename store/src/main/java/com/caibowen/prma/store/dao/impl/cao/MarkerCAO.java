@@ -24,7 +24,7 @@ public class MarkerCAO extends Int4LIRSCAO<String> implements MarkerDAO {
         synchronized (db) {
             for (String e : markers) {
                 Integer k = e.hashCode();
-                if (null == cache.put(k, e) && !hasKey(k))
+                if (!cache.contains(k) && !hasKey(k))
                     mks.add(e);
             }
 
@@ -34,7 +34,7 @@ public class MarkerCAO extends Int4LIRSCAO<String> implements MarkerDAO {
             boolean ret = db.insertAll(eventId, mks);
             if (!ret)
                 for (String e2 : markers)
-                    cache.remove(e2.hashCode());
+                    cache.remove(e2.hashCode(), false);
             return ret;
         }
     }
@@ -45,6 +45,6 @@ public class MarkerCAO extends Int4LIRSCAO<String> implements MarkerDAO {
         if (ret)
             for (String s : markers)
                 cache.put(s.hashCode(), s);
-        return false;
+        return true;
     }
 }

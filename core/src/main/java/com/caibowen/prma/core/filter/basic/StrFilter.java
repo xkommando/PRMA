@@ -1,8 +1,6 @@
-package com.caibowen.prma.core.filter;
+package com.caibowen.prma.core.filter.basic;
 
-import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.InputStreamCallback;
-import com.caibowen.gplume.context.InputStreamProviderProxy;
 import com.caibowen.gplume.context.InputStreamSupport;
 import com.caibowen.gplume.misc.Str;
 
@@ -11,7 +9,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.stream.StreamSupport;
 
 /**
  * Filter by prefix, suffix or entire string

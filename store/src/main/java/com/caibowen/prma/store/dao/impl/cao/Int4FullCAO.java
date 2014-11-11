@@ -2,6 +2,7 @@ package com.caibowen.prma.store.dao.impl.cao;
 
 import com.caibowen.gplume.annotation.ConstMethod;
 import com.caibowen.gplume.misc.Assert;
+import com.caibowen.prma.spi.Int4CacheProvider;
 import com.caibowen.prma.store.dao.Int4DAO;
 
 import javax.annotation.Nonnull;
@@ -11,14 +12,12 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * all data is stored in the memory.
  * read operation done in memory
  * write operation is buffered.
- *
+ * <p/>
  * for logger name, thread name, exception name
  *
  * @author BowenCai
@@ -31,24 +30,24 @@ public class Int4FullCAO<V> implements Int4DAO<V>, Serializable {
     @Inject
     Int4DAO<V> db;
 
-    private Map<Integer, V> mem = new ConcurrentHashMap<>(256);
-//    private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private Int4CacheProvider mem;
 
-    @Inject int writeCacheSize;
-    protected Map<Integer, V> buffer = new ConcurrentHashMap<>(64);
+    @Inject
+    int writeBufferSize;
+    protected ConcurrentHashMap<Integer, V> buffer = new ConcurrentHashMap<>(64);
 
     @Override
     public void start() {
         Assert.notNull(db);
         db.start();
-        mem.putAll(db.entries());
+        mem.putAll((Map<Integer, Object>) db.entries());
     }
 
     @Override
     public void stop() {
         if (buffer.size() != 0) {
-                db.putAll(buffer);
-                buffer.clear();
+            db.putAll(buffer);
+            buffer.clear();
         }
         db.stop();
     }
@@ -60,54 +59,54 @@ public class Int4FullCAO<V> implements Int4DAO<V>, Serializable {
 
     @Override
     public boolean hasKey(int key) {
-            return mem.containsKey(key);
+        return mem.contains(key);
     }
 
     @Override
     public boolean hasVal(@Nonnull V val) {
-            return mem.containsValue(val);
+        return db.hasVal(val);
     }
 
     @Nullable
     @Override
     public V get(int key) {
-            return mem.get(key);
+        return (V) mem.get(key);
     }
 
     /**
-     *  return new array list of values.
+     * return new array list of values.
      */
     @ConstMethod
     @Nonnull
     @Override
     public List<Integer> keys() {
-            return new ArrayList<>(mem.keySet());
+        return new ArrayList<>(mem.keys());
     }
 
     @Nonnull
     @Override
     public List<V> values() {
-            return new ArrayList<>(mem.values());
+        return db.values();
     }
 
     @Nonnull
     @Override
     public Map<Integer, V> entries() {
-            return Collections.unmodifiableMap(mem);
+        return Collections.unmodifiableMap(db.entries());
     }
 
     @Override
     public boolean put(int key, @Nonnull V value) {
-            mem.put(key, value);
-            buffer.put(key, value);
-            if (buffer.size() < writeCacheSize)
-                return true;
+        mem.put(key, value);
+        buffer.put(key, value);
+        if (buffer.size() < writeBufferSize)
+            return true;
         synchronized (db) {
             // batch insert
             boolean ok = db.putAll(buffer);
             if (!ok) {
                 for (Map.Entry<Integer, V> e : buffer.entrySet())
-                    mem.remove(e.getKey());
+                    mem.remove(e.getKey(), false);
             }
             buffer.clear();
             return ok;
@@ -117,20 +116,20 @@ public class Int4FullCAO<V> implements Int4DAO<V>, Serializable {
 
     @Override
     public boolean putIfAbsent(@Nonnull Map<Integer, V> values) {
-            for (Map.Entry<Integer, V> e : values.entrySet()) {
-                Integer k = e.getKey();
-                V va = e.getValue();
-                if (null == mem.put(k, va))
-                    buffer.put(k, va);
-            }
-            boolean ret;
-            if (buffer.size() < writeCacheSize)
-                return true;
+        for (Map.Entry<Integer, V> e : values.entrySet()) {
+            Integer k = e.getKey();
+            V va = e.getValue();
+            if (null == mem.putIfAbsent(k, va))
+                buffer.put(k, va);
+        }
+        boolean ret;
+        if (buffer.size() < writeBufferSize)
+            return true;
         synchronized (db) {
             ret = db.putAll(buffer);
             if (!ret)
                 for (Map.Entry<Integer, V> e2 : buffer.entrySet())
-                    mem.remove(e2.getKey());
+                    mem.remove(e2.getKey(), false);
             buffer.clear();
             return ret;
         }
@@ -139,20 +138,20 @@ public class Int4FullCAO<V> implements Int4DAO<V>, Serializable {
 
     @Override
     public boolean putIfAbsent(int key, @Nonnull V value) {
-        if (mem.containsKey(key))
+        if (mem.contains(key))
             return true;
 
         boolean ret;
-            mem.put(key, value);
-            buffer.put(key, value);
-            if (buffer.size() < writeCacheSize)
-                return true;
-            // batch insert
+        mem.put(key, value);
+        buffer.put(key, value);
+        if (buffer.size() < writeBufferSize)
+            return true;
+        // batch insert
         synchronized (db) {
             ret = db.putAll(buffer);
             if (!ret)
                 for (Map.Entry<Integer, V> e : buffer.entrySet())
-                    mem.remove(e.getKey());
+                    mem.remove(e.getKey(), false);
             buffer.clear();
             return ret;
         }
@@ -162,19 +161,18 @@ public class Int4FullCAO<V> implements Int4DAO<V>, Serializable {
     synchronized public boolean putAll(@Nonnull Map<Integer, V> map) {
         boolean ok = db.putAll(map);
         if (ok)
-            mem.putAll(map);
+            mem.putAll((Map<Integer, Object>) map);
         return ok;
     }
 
 
     /**
-     *
      * low frequency operation, no buffer
      */
     @Override
     public boolean update(int key, @Nonnull V value) {
         boolean ok = true;
-        V ov = mem.get(key);
+        V ov = (V) mem.get(key);
         if (!value.equals(ov)) {
             synchronized (db) {
                 ok = db.update(key, value);
@@ -186,28 +184,27 @@ public class Int4FullCAO<V> implements Int4DAO<V>, Serializable {
     }
 
     /**
-     *
      * low frequency operation, no buffer
      */
     @Nullable
     @Override
     public V remove(int key, boolean returnVal) throws SQLException {
-        V ov = mem.get(key);
+        V ov = (V) mem.get(key);
         if (ov != null) {
-            synchronized (db){
+            synchronized (db) {
                 db.remove(key, false);
-                mem.remove(key);
+                mem.remove(key, false);
             }
         }
         return returnVal ? ov : null;
     }
 
 
-    public int getWriteCacheSize() {
-        return writeCacheSize;
+    public int getWriteBufferSize() {
+        return writeBufferSize;
     }
 
-    public void setWriteCacheSize(int writeCacheSize) {
-        this.writeCacheSize = writeCacheSize;
+    public void setWriteBufferSize(int writeBufferSize) {
+        this.writeBufferSize = writeBufferSize;
     }
 }

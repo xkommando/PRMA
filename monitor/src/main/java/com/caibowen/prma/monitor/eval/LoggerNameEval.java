@@ -1,7 +1,7 @@
 package com.caibowen.prma.monitor.eval;
 
 import com.caibowen.prma.api.model.EventVO;
-import com.caibowen.prma.core.filter.StrFilter;
+import com.caibowen.prma.core.filter.basic.StrFilter;
 
 import javax.inject.Inject;
 

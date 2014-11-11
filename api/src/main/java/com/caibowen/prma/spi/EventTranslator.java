@@ -1,4 +1,4 @@
-package com.caibowen.prma.spec;
+package com.caibowen.prma.spi;
 
 import com.caibowen.prma.api.model.EventVO;
 
