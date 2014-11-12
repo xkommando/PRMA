@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS `exception_msg` (
 CREATE TABLE IF NOT EXISTS `stack_trace` (
   id				    INT8 	        NOT NULL,   -- hash of all caller data
   `file`        VARCHAR(255)  NOT NULL,
-  `class`       VARCHAR(255)  NOT NULL,
+  `class`       VARCHAR(255),
   `function`    VARCHAR(255)  NOT NULL,
   `line`        INT4          NOT NULL,
 
@@ -52,12 +52,10 @@ CREATE TABLE IF NOT EXISTS `stack_trace` (
 CREATE TABLE IF NOT EXISTS `exception` (
   id				    INT8          NOT NULL,    -- hash of name
   except_name   INT4          NOT NULL,
-  except_msg    INT4          NOT NULL,
+  except_msg    INT4,
   stack_traces  BINARY(1023)  NOT NULL,
   PRIMARY KEY (id)
 );
-
-CREATE UNIQUE SPATIAL INDEX IF NOT EXISTS idx_exception_time ON `exception`(`time_created`);
 
 CREATE TABLE IF NOT EXISTS `event` (
 	id				    IDENTITY 	    NOT NULL,
@@ -65,11 +63,11 @@ CREATE TABLE IF NOT EXISTS `event` (
 	level 			  TINYINT		    NOT NULL,
 	logger_id		  INT4		      NOT NULL,
 	thread_id		  INT4		      NOT NULL,
-  caller_sk_id  INT8		      NOT NULL, -- caller stack trace
-	flag			    TINYINT		    NOT NULL,
+  caller_sk_id  INT8, -- caller stack trace
+	flag			    INT8		    NOT NULL,
 
-	message			  VARCHAR(1023),
-
+	message			  VARCHAR(2047),
+  `reserved`    INT8,
   PRIMARY KEY (id),
   FOREIGN KEY (logger_id) REFERENCES logger_name(id),
   FOREIGN KEY (thread_id) REFERENCES thread_name(id),

@@ -38,7 +38,7 @@ public final class LogEventAux {
 
         if (_mdcSz > 0 &&  _ctxSz > 0) {
             int sz = _mdcSz + _ctxSz;
-            Map<String, String> ret = new HashMap(sz * 4 / 3 + 1);
+            Map<String, String> ret = new HashMap<>(sz * 4 / 3 + 1);
             ret.putAll(_mdc);
             ret.putAll(_ctx);
             return ret;
@@ -66,43 +66,11 @@ public final class LogEventAux {
         return callerST;
     }
 
-
-//    trace 8
-//    DEBUG level is converted from 7,
-// INFO is converted from 6,
-// WARN is converted from 4
-// and ERROR is converted from 3.
-
     public static
     byte level(ILoggingEvent event) {
         return  (byte)(event.getLevel().levelInt / Level.TRACE_INT);
     }
 
-
-
-    public static final short PROPERTIES_EXIST = 0x01;
-    public static final short EXCEPTION_EXISTS = 0x02;
-
-    public static byte flag(ILoggingEvent event) {
-        byte mask = 0;
-//
-//        int mdcPropSize = 0;
-//        if (event.getMDCPropertyMap() != null) {
-//            mdcPropSize = event.getMDCPropertyMap().keySet().size();
-//        }
-//        int contextPropSize = 0;
-//        if (event.getLoggerContextVO().getPropertyMap() != null) {
-//            contextPropSize = event.getLoggerContextVO().getPropertyMap().size();
-//        }
-//
-//        if (mdcPropSize > 0 || contextPropSize > 0) {
-//            mask = PROPERTIES_EXIST;
-//        }
-//        if (event.getThrowableProxy() != null) {
-//            mask |= EXCEPTION_EXISTS;
-//        }
-        return mask;
-    }
 
 
 }

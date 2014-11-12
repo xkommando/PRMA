@@ -7,7 +7,7 @@ import com.caibowen.gplume.common.collection.ImmutableArraySet;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.api.model.ExceptionVO;
-import com.caibowen.prma.spi.EventTranslator;
+import com.caibowen.prma.spi.EventAdaptor;
 import org.slf4j.Marker;
 
 import javax.annotation.Nonnull;
@@ -18,13 +18,16 @@ import java.util.*;
  * @author BowenCai
  * @since 5-11-2014.
  */
-public class EventAdapter implements EventTranslator<ILoggingEvent> {
+public class EventAdapter implements EventAdaptor<ILoggingEvent> {
 
     public static final int[] EMPTY_INTS = {};
 
-    public static final long getFlag(@Nullable Map prop, @Nullable Set<String> markers) {
-        int sz1 = prop != null ? prop.size() : 0;
-        int sz2 = markers != null ? markers.size() : 0;
+    public static final long getFlag(@Nullable Map prop, @Nullable Set<String> markers, List<ExceptionVO> exceptions) {
+        short sz11 = prop != null ? (short)prop.size() : 0;
+        short sz12 = markers != null ? (short)markers.size() : 0;
+
+        int sz1 = Bytes.ints.add(sz11, sz12);
+        int sz2 = prop != null ? prop.size() : 0;
 
         return Bytes.longs.add(sz1, sz2);
     }
@@ -32,19 +35,21 @@ public class EventAdapter implements EventTranslator<ILoggingEvent> {
     @Override
     public EventVO from(ILoggingEvent event) {
 
-        StackTraceElement caller =LogEventAux.callerST(event);
-        // TODO filter
+        StackTraceElement caller = LogEventAux.callerST(event);
+        // TODO caller filter
 
         Map prop = LogEventAux.extractProperties(event);
         Set<String> makers = extractMarkers(event);
-        Long flag = getFlag(prop, makers);
+        List<ExceptionVO> exs = extractExceptionVOs(event);
+        Long flag = getFlag(prop, makers, exs);
 
         return new EventVO(event.getTimeStamp(),
                 LogEventAux.level(event.getLevel()),
+                flag,
                 event.getLoggerName(),
                 event.getThreadName(),
                 caller,
-                event.getFormattedMessage(), flag,
+                event.getFormattedMessage(), null,
                 prop,
                 extractExceptionVOs(event),
                 makers);
@@ -63,12 +68,13 @@ public class EventAdapter implements EventTranslator<ILoggingEvent> {
             return Arrays.asList(toExceptVO(px, 0));
 
         ArrayList<ExceptionVO> vols = new ArrayList<ExceptionVO>(16);
-        int commenSt = px.getCommonFrames();
-        while (px != null) {
-            // TODO filter
+        vols.add(toExceptVO(px, 0)); // save first one.
+        int commenSt = _cause.getCommonFrames(); // note use commonSt from cause
+        while (_cause != null) {
+            // TODO exception filter
 
             vols.add(toExceptVO(px, commenSt));
-            px = px.getCause();
+            _cause = _cause.getCause();
         }
         return vols;
     }
@@ -79,10 +85,11 @@ public class EventAdapter implements EventTranslator<ILoggingEvent> {
         StackTraceElementProxy[] stps = px.getStackTraceElementProxyArray();
         ArrayList<StackTraceElement> sts = new ArrayList<>(stps.length - start);
         for (int i = 0; i < stps.length - start; i++) {
-            // TODO filter
+            // TODO stack trace filter
             sts.add(stps[i].getStackTraceElement());
         }
-        return new ExceptionVO(px.getClassName(), px.getMessage(), (StackTraceElement[])sts.toArray());
+        StackTraceElement[] arr = new StackTraceElement[sts.size()];
+        return new ExceptionVO(px.getClassName(), px.getMessage(), sts.toArray(arr));
     }
 
 
@@ -99,7 +106,7 @@ public class EventAdapter implements EventTranslator<ILoggingEvent> {
 
         Set<String> ret = new HashSet<>(8);
         while (iter.hasNext()) {
-            // TODO filter
+            // TODO marker filter
             ret.add(iter.next().getName());
         }
         // last one marker

@@ -64,7 +64,7 @@ DROP TABLE IF EXISTS `prma_log`.`stack_trace` ;
 CREATE TABLE IF NOT EXISTS `prma_log`.`stack_trace` (
   `id` BIGINT(20) NOT NULL,
   `file` VARCHAR(255) NOT NULL,
-  `class` VARCHAR(255) NOT NULL,
+  `class` VARCHAR(255) NULL,
   `function` VARCHAR(255) NOT NULL,
   `line` INT NOT NULL,
   PRIMARY KEY (`id`))
@@ -79,8 +79,8 @@ DROP TABLE IF EXISTS `prma_log`.`exception` ;
 CREATE TABLE IF NOT EXISTS `prma_log`.`exception` (
   `id` BIGINT(20) NOT NULL,
   `except_name` INT NOT NULL,
-  `except_msg` INT NOT NULL,
-  `stack_traces` TINYBLOB NOT NULL,
+  `except_msg` INT NULL,
+  `stack_traces` TINYBLOB NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_except_exp_name_idx` (`except_name` ASC),
   INDEX `fk_except_exp_msg_idx` (`except_msg` ASC))
@@ -98,9 +98,9 @@ CREATE TABLE IF NOT EXISTS `prma_log`.`event` (
   `level` TINYINT(4) NOT NULL,
   `logger_id` INT(11) NOT NULL,
   `thread_id` INT(11) NOT NULL,
-  `caller_sk_id` BIGINT(20) NOT NULL,
-  `flag` TINYINT(4) NOT NULL,
-  `message` VARCHAR(1023) NOT NULL,
+  `caller_sk_id` BIGINT(20) NULL,
+  `flag` BIGINT(20) NOT NULL,
+  `message` VARCHAR(2047) NOT NULL,
   `reserved` BIGINT(20) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_event_st_idx` (`caller_sk_id` ASC),

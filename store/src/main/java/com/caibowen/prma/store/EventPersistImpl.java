@@ -101,12 +101,13 @@ public class EventPersistImpl implements EventPersist {
         vo.timeCreated = event.timeCreated;
 
         StackTraceElement callerST = event.callerStackTrace;
-        final int _callerID = callerST.hashCode();
-        if (! stackTraceDAO.putIfAbsent(_callerID, callerST))
-            throw new RuntimeException("could not save stack trace "
-                    + callerST.toString());
-
-        vo.callerSkId = _callerID;
+        if (callerST != null) {
+            final int _callerID = callerST.hashCode();
+            if (!stackTraceDAO.putIfAbsent(_callerID, callerST))
+                throw new RuntimeException("could not save stack trace "
+                        + callerST.toString());
+            vo.callerSkId = _callerID;
+        }
 
         String _ln = event.getLoggerName();
         final int _loggerID = _ln.hashCode();
@@ -118,38 +119,13 @@ public class EventPersistImpl implements EventPersist {
         persist(threadDAO, _threadID, _tn);
         vo.threadId = _threadID;
 
-        vo.flag = flag(event);
+        vo.flag = event.flag;
         vo.level = (byte)event.level.levelInt;
         vo.message = event.message;
 
         return vo;
     }
 
-
-
-    public static final short PROPERTIES_EXIST = 0x01;
-    public static final short EXCEPTION_EXISTS = 0x02;
-
-    public static byte flag(EventVO event) {
-        byte mask = 0;
-//
-//        int mdcPropSize = 0;
-//        if (event.getMDCPropertyMap() != null) {
-//            mdcPropSize = event.getMDCPropertyMap().keySet().size();
-//        }
-//        int contextPropSize = 0;
-//        if (event.getLoggerContextVO().getPropertyMap() != null) {
-//            contextPropSize = event.getLoggerContextVO().getPropertyMap().size();
-//        }
-//
-//        if (mdcPropSize > 0 || contextPropSize > 0) {
-//            mask = PROPERTIES_EXIST;
-//        }
-//        if (event.getThrowableProxy() != null) {
-//            mask |= EXCEPTION_EXISTS;
-//        }
-        return mask;
-    }
 
     private static <V> void
     persist(Int4DAO<V> dao, int hash, V obj) {

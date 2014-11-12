@@ -23,7 +23,9 @@ public class EventVO implements Serializable {
     public String loggerName;
     public String threadName;
 
-    public StackTraceElement callerStackTrace;
+    @Nullable public StackTraceElement callerStackTrace;
+
+    public long flag;
 
     public String message;
 
@@ -40,9 +42,10 @@ public class EventVO implements Serializable {
 
     public EventVO() {}
 
-    public EventVO(long timeCreated, LogLevel level, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Long reserved, Map<String, Object> properties, List<ExceptionVO> exceptions, Set<String> markers) {
+    public EventVO(long timeCreated, LogLevel level, long flg, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Long reserved, Map<String, Object> properties, List<ExceptionVO> exceptions, Set<String> markers) {
         this.timeCreated = timeCreated;
         this.level = level;
+        this.flag = flg;
         this.loggerName = loggerName;
         this.threadName = threadName;
         this.callerStackTrace = callerStackTrace;
@@ -53,10 +56,11 @@ public class EventVO implements Serializable {
         this.markers = markers;
     }
 
-    public EventVO(long id, long timeCreated, LogLevel level, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Long reserved, Map<String, Object> properties, List<ExceptionVO> exceptions, Set<String> markers) {
+    public EventVO(long id, long timeCreated, LogLevel level, long flg, String loggerName, String threadName, StackTraceElement callerStackTrace, String message, Long reserved, Map<String, Object> properties, List<ExceptionVO> exceptions, Set<String> markers) {
         this.id = id;
         this.timeCreated = timeCreated;
         this.level = level;
+        this.flag = flg;
         this.loggerName = loggerName;
         this.threadName = threadName;
         this.callerStackTrace = callerStackTrace;
@@ -166,6 +170,7 @@ public class EventVO implements Serializable {
         if (id != eventVO.id) return false;
         if (timeCreated != eventVO.timeCreated) return false;
         if (level != eventVO.level) return false;
+        if (flag != eventVO.flag) return false;
         if (!threadName.equals(eventVO.threadName)) return false;
         if (!loggerName.equals(eventVO.loggerName)) return false;
         if (!message.equals(eventVO.message)) return false;
@@ -186,12 +191,31 @@ public class EventVO implements Serializable {
         result = 31 * result + level.hashCode();
         result = 31 * result + loggerName.hashCode();
         result = 31 * result + threadName.hashCode();
-        result = 31 * result + callerStackTrace.hashCode();
+        result = 31 * result + (callerStackTrace != null ? callerStackTrace.hashCode() : 0);
+        result = 31 * result + (int) (flag ^ (flag >>> 32));
         result = 31 * result + message.hashCode();
         result = 31 * result + (reserved != null ? reserved.hashCode() : 0);
         result = 31 * result + (properties != null ? properties.hashCode() : 0);
         result = 31 * result + (exceptions != null ? exceptions.hashCode() : 0);
         result = 31 * result + (markers != null ? markers.hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "com.caibowen.prma.api.model.EventVO{" +
+                "id=" + id +
+                ", timeCreated=" + timeCreated +
+                ", level=" + level +
+                ", loggerName='" + loggerName + '\'' +
+                ", threadName='" + threadName + '\'' +
+                ", callerStackTrace=" + callerStackTrace +
+                ", flag=" + flag +
+                ", message='" + message + '\'' +
+                ", reserved=" + reserved +
+                ", properties=" + properties +
+                ", exceptions=" + exceptions +
+                ", markers=" + markers +
+                '}';
     }
 }

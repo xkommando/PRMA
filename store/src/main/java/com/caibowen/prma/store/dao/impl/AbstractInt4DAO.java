@@ -28,7 +28,7 @@ public abstract class AbstractInt4DAO<V> extends JdbcSupport implements Int4DAO<
         final TreeMap<Integer, V> nV = new TreeMap<>();
         for (Map.Entry<Integer, V> e : map.entrySet())
             if (! hasKey(e.getKey()))
-                nV.putIfAbsent(e.getKey(), e.getValue());
+                nV.put(e.getKey(), e.getValue());
 
         return putAll(nV);
     }

@@ -232,7 +232,7 @@ public class TestDAO {
         for (int i = 0; i < 20; i++) {
             eventls.add(new EventVO(
                     System.currentTimeMillis(),
-                    LogLevel.ERROR,
+                    LogLevel.ERROR, 0L,
                     "logger name ??? haha " + i,
                     Thread.currentThread().getName(),
                     s,

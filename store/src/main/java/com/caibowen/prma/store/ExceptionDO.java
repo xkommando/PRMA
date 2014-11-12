@@ -1,5 +1,6 @@
 package com.caibowen.prma.store;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 import java.util.Arrays;
 
@@ -27,16 +28,16 @@ public class ExceptionDO implements Serializable {
     /**
      * hashCode of exception message
      */
-    public int exceptMsg;
+    @Nullable public Integer exceptMsg;
 
     /**
      * id array of stack trace
      */
-    public int[] stackTraces;
+    @Nullable public int[] stackTraces;
 
     public ExceptionDO() {}
 
-    public ExceptionDO(long id, int exceptName, int exceptMsg, int[] stackTraces) {
+    public ExceptionDO(long id, int exceptName, Integer exceptMsg, int[] stackTraces) {
         this.id = id;
         this.exceptName = exceptName;
         this.exceptMsg = exceptMsg;
@@ -59,11 +60,12 @@ public class ExceptionDO implements Serializable {
         this.exceptName = exceptName;
     }
 
-    public int getExceptMsg() {
+    @Nullable
+    public Integer getExceptMsg() {
         return exceptMsg;
     }
 
-    public void setExceptMsg(int exceptMsg) {
+    public void setExceptMsg(@Nullable Integer exceptMsg) {
         this.exceptMsg = exceptMsg;
     }
 
@@ -75,7 +77,6 @@ public class ExceptionDO implements Serializable {
         this.stackTraces = stackTraces;
     }
 
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,8 +85,9 @@ public class ExceptionDO implements Serializable {
         ExceptionDO that = (ExceptionDO) o;
 
         if (id != that.id) return false;
-        if (exceptMsg != that.exceptMsg) return false;
         if (exceptName != that.exceptName) return false;
+        if (exceptMsg != null ? !exceptMsg.equals(that.exceptMsg) : that.exceptMsg != null) return false;
+        if (!Arrays.equals(stackTraces, that.stackTraces)) return false;
 
         return true;
     }
@@ -94,18 +96,8 @@ public class ExceptionDO implements Serializable {
     public int hashCode() {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + exceptName;
-        result = 31 * result + exceptMsg;
+        result = 31 * result + (exceptMsg != null ? exceptMsg.hashCode() : 0);
         result = 31 * result + (stackTraces != null ? Arrays.hashCode(stackTraces) : 0);
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "ExceptionVO{" +
-                "id=" + id +
-                ", exceptName=" + exceptName +
-                ", exceptMsg=" + exceptMsg +
-                ", stackTraces=" + Arrays.toString(stackTraces) +
-                '}';
     }
 }

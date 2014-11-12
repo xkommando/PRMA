@@ -1,5 +1,6 @@
 package com.caibowen.prma.store;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
 
 /**
@@ -27,6 +28,7 @@ public class EventDO implements Serializable {
      */
     public byte level;
 
+    public long flag;
     /**
      * logger name id, usually the hashCode() of the name string
      */
@@ -40,15 +42,15 @@ public class EventDO implements Serializable {
     /**
      * caller stacktrace id
      */
-    public int callerSkId;
+    @Nullable public Integer callerSkId;
 
     /**
      * indicate properties, exception
      */
-    public byte flag;
+    @Nullable public Long reserved;
 
     /**
-     * formatted
+     * formatted message. length < 2047
      */
     public String message;
 
@@ -77,6 +79,14 @@ public class EventDO implements Serializable {
         this.level = level;
     }
 
+    public long getFlag() {
+        return flag;
+    }
+
+    public void setFlag(long flag) {
+        this.flag = flag;
+    }
+
     public int getLoggerId() {
         return loggerId;
     }
@@ -93,20 +103,22 @@ public class EventDO implements Serializable {
         this.threadId = threadId;
     }
 
-    public int getCallerSkId() {
+    @Nullable
+    public Integer getCallerSkId() {
         return callerSkId;
     }
 
-    public void setCallerSkId(int callerSkId) {
+    public void setCallerSkId(@Nullable Integer callerSkId) {
         this.callerSkId = callerSkId;
     }
 
-    public byte getFlag() {
-        return flag;
+    @Nullable
+    public Long getReserved() {
+        return reserved;
     }
 
-    public void setFlag(byte flag) {
-        this.flag = flag;
+    public void setReserved(@Nullable Long reserved) {
+        this.reserved = reserved;
     }
 
     public String getMessage() {
@@ -122,16 +134,17 @@ public class EventDO implements Serializable {
         if (this == o) return true;
         if (!(o instanceof EventDO)) return false;
 
-        EventDO po = (EventDO) o;
+        EventDO eventDO = (EventDO) o;
 
-        if (callerSkId != po.callerSkId) return false;
-        if (flag != po.flag) return false;
-        if (id != po.id) return false;
-        if (level != po.level) return false;
-        if (loggerId != po.loggerId) return false;
-        if (threadId != po.threadId) return false;
-        if (timeCreated != po.timeCreated) return false;
-        if (!message.equals(po.message)) return false;
+        if (flag != eventDO.flag) return false;
+        if (id != eventDO.id) return false;
+        if (level != eventDO.level) return false;
+        if (loggerId != eventDO.loggerId) return false;
+        if (threadId != eventDO.threadId) return false;
+        if (timeCreated != eventDO.timeCreated) return false;
+        if (callerSkId != null ? !callerSkId.equals(eventDO.callerSkId) : eventDO.callerSkId != null) return false;
+        if (!message.equals(eventDO.message)) return false;
+        if (reserved != null ? !reserved.equals(eventDO.reserved) : eventDO.reserved != null) return false;
 
         return true;
     }
@@ -141,24 +154,26 @@ public class EventDO implements Serializable {
         int result = (int) (id ^ (id >>> 32));
         result = 31 * result + (int) (timeCreated ^ (timeCreated >>> 32));
         result = 31 * result + (int) level;
+        result = 31 * result + (int) (flag ^ (flag >>> 32));
         result = 31 * result + loggerId;
         result = 31 * result + threadId;
-        result = 31 * result + callerSkId;
-        result = 31 * result + (int) flag;
+        result = 31 * result + (callerSkId != null ? callerSkId.hashCode() : 0);
+        result = 31 * result + (reserved != null ? reserved.hashCode() : 0);
         result = 31 * result + message.hashCode();
         return result;
     }
 
     @Override
     public String toString() {
-        return "EventPO{" +
+        return "com.caibowen.prma.store.EventDO{" +
                 "id=" + id +
                 ", timeCreated=" + timeCreated +
                 ", level=" + level +
+                ", flag=" + flag +
                 ", loggerId=" + loggerId +
                 ", threadId=" + threadId +
                 ", callerSkId=" + callerSkId +
-                ", flag=" + flag +
+                ", reserved=" + reserved +
                 ", message='" + message + '\'' +
                 '}';
     }

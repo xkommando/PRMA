@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 import java.util.List;
 
 /**
@@ -29,14 +30,24 @@ public class EventDAOImpl extends JdbcSupport implements EventDAO {
                 PreparedStatement ps = con.prepareStatement(
                 "INSERT INTO `event`(" +
                 "`time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`" +
-               ", `flag`, `message`)VALUES(?,?,?,?,?,?,?)", AUTO_GEN_ID);
+               ", `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)", AUTO_GEN_ID);
                 ps.setLong(1, po.timeCreated);
                 ps.setByte(2, po.level);
                 ps.setInt(3, po.loggerId);
                 ps.setInt(4, po.threadId);
-                ps.setInt(5, po.callerSkId);
-                ps.setByte(6, po.flag);
+                if (po.callerSkId != null)
+                    ps.setInt(5, po.callerSkId);
+                else
+                    ps.setNull(5, Types.INTEGER);
+
+                ps.setLong(6, po.flag);
                 ps.setString(7, po.message);
+
+                if (po.reserved != null)
+                    ps.setLong(8, po.reserved);
+                else
+                    ps.setNull(8, Types.BIGINT);
+
                 return ps;
             }
         }, AUTO_GEN_ID, RowMapping.LONG_ROW_MAPPING);
@@ -51,16 +62,26 @@ public class EventDAOImpl extends JdbcSupport implements EventDAO {
                 PreparedStatement ps = con.prepareStatement(
                         "INSERT INTO `event`(" +
                                 "`time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`" +
-                                ", `flag`, `message`)VALUES(?,?,?,?,?,?,?)", AUTO_GEN_ID);
+                                ", `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)", AUTO_GEN_ID);
 
                 for (EventDO po : ls) {
                     ps.setLong(1, po.timeCreated);
                     ps.setByte(2, po.level);
                     ps.setInt(3, po.loggerId);
                     ps.setInt(4, po.threadId);
-                    ps.setInt(5, po.callerSkId);
-                    ps.setByte(6, po.flag);
+                    if (po.callerSkId != null)
+                        ps.setInt(5, po.callerSkId);
+                    else
+                        ps.setNull(5, Types.INTEGER);
+
+                    ps.setLong(6, po.flag);
                     ps.setString(7, po.message);
+
+                    if (po.reserved != null)
+                        ps.setLong(8, po.reserved);
+                    else
+                        ps.setNull(8, Types.BIGINT);
+
                     ps.addBatch();
                 }
                 return ps;

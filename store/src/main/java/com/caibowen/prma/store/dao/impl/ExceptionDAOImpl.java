@@ -16,8 +16,8 @@ import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Types;
+import java.util.*;
 
 /**
  * @author BowenCai
@@ -38,17 +38,21 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                     + (null == obj ? "null" : obj.toString()) + " with id " + hash);
     }
 
-    public static final int[] EMPTY_INTS = {};
-
     @Override
     public boolean insertIfAbsent(final long eventId, final List<ExceptionVO> tpox) throws Exception {
-        ArrayList<ExceptionDO> dos = new ArrayList<>(tpox.size());
+        Set<ExceptionDO> dos = new TreeSet<ExceptionDO>(new Comparator<ExceptionDO>() {
+            @Override
+            public int compare(ExceptionDO o1, ExceptionDO o2) {
+                return (int)(o1.id - o2.id);
+            }
+        });
+
         for (ExceptionVO d : tpox) {
             if (! hasKey(d.id))
                 dos.add(getDO(d));
         }
         if (dos.size() > 0)
-            return insertAll(eventId, dos);
+            return insertAll(eventId, new ArrayList<>(dos));
         else
             return true;
     }
@@ -67,10 +71,17 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                 for (ExceptionDO vo : vols) {
                     ps.setLong(1, vo.id);
                     ps.setInt(2, vo.exceptName);
-                    ps.setInt(3, vo.exceptMsg);
 
-                    byte[] buf = Bytes.int2byte(vo.stackTraces);
-                    ps.setBytes(4, buf);
+                    if (vo.exceptMsg != null)
+                        ps.setInt(3, vo.exceptMsg);
+                    else
+                        ps.setNull(3, Types.INTEGER);
+
+                    if (vo.stackTraces != null && vo.stackTraces.length > 0) {
+                        byte[] buf = Bytes.int2byte(vo.stackTraces);
+                        ps.setBytes(4, buf);
+                    } else
+                        ps.setNull(4, Types.BINARY);
 
                     ps.addBatch();
                 }
@@ -90,7 +101,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                     ps.setLong(3, vols.get(i).id);
                     ps.addBatch();
                 }
-//                throw new NoSuchElementException("weird exception to inside jdbc operation");
+//                throw new NoSuchElementException("TEST: weird exception to inside jdbc operation");
                 return ps;
             }
         }, null, null);
@@ -100,6 +111,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
 
     ExceptionDO getDO(@Nonnull ExceptionVO tpox) {
         ExceptionDO vo = new ExceptionDO();
+        vo.id = tpox.id;
 
         String _thwName = tpox.getClass().getName();
         final int thwID = _thwName.hashCode();
@@ -107,12 +119,14 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         vo.exceptName = thwID;
 
         String _msg = tpox.exceptionMessage;
-        final int msgID = _msg.hashCode();
-        persist(exceptMsgDAO, msgID, _msg);
-        vo.exceptMsg = msgID;
+        if (_msg != null) {
+            final int msgID = _msg.hashCode();
+            persist(exceptMsgDAO, msgID, _msg);
+            vo.exceptMsg = msgID;
+        }
 
         StackTraceElement[] stps = tpox.stackTraces;
-        int[] buf;
+        int[] buf = null;
         if (stps != null && stps.length > 0) {
             buf = new int[stps.length];
             for (int i = 0; i < stps.length; i++) {
@@ -124,47 +138,8 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
 
                 buf[i] = id;
             }
-        } else
-            buf = EMPTY_INTS;
+        }
 
-        vo.id = tpox.id;
-        vo.stackTraces = buf;
-        return vo;
-    }
-
-    ExceptionDO getDO(@Nonnull Throwable tpox) {
-
-        ExceptionDO vo = new ExceptionDO();
-
-        String _thwName = tpox.getClass().getName();
-        final int thwID = _thwName.hashCode();
-        persist(exceptNameDAO, thwID, _thwName);
-        vo.exceptName = thwID;
-
-        String _msg = tpox.getMessage();
-        final int msgID = _msg.hashCode();
-        long expID =  (long)thwID << 32 | msgID & 0xFFFFFFFFL;
-        persist(exceptMsgDAO, msgID, _msg);
-        vo.exceptMsg = msgID;
-
-        StackTraceElement[] stps = tpox.getStackTrace();
-        int[] buf;
-        if (stps != null && stps.length > 0) {
-            buf = new int[stps.length];
-            for (int i = 0; i < stps.length; i++) {
-                StackTraceElement st = stps[i];
-                int id = st.hashCode();
-                if (!stackTraceDAO.putIfAbsent(id, st))
-                    throw new RuntimeException("could not save stack trace "
-                            + st.toString());
-
-                buf[i] = id;
-                expID = Hashing.hash128To64(expID, Hashing.twang_mix64((long) id));
-            }
-        } else
-            buf = EMPTY_INTS;
-
-        vo.id = expID;
         vo.stackTraces = buf;
         return vo;
     }
@@ -174,9 +149,8 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         return queryForObject(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
-                PreparedStatement ps = con.prepareStatement(
+                return con.prepareStatement(
                         "SELECT count(1) FROM `exception` WHERE id = " + hash);
-                return ps;
             }
         }, RowMapping.BOOLEAN_ROW_MAPPING);
     }
