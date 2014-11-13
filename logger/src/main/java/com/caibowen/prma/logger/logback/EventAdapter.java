@@ -22,15 +22,22 @@ public class EventAdapter implements EventAdaptor<ILoggingEvent> {
 
     public static final int[] EMPTY_INTS = {};
 
-    public static final long getFlag(@Nullable Map prop, @Nullable Set<String> markers, List<ExceptionVO> exceptions) {
-        short sz11 = prop != null ? (short)prop.size() : 0;
-        short sz12 = markers != null ? (short)markers.size() : 0;
+//    4294967296 >= exp
+//    65536   >= markers
+    public static final long getFlag(@Nullable Map prop,
+                                     @Nullable Set<String> markers,
+                                     List<ExceptionVO> exceptions) {
 
-        int sz1 = Bytes.ints.add(sz11, sz12);
-        int sz2 = prop != null ? prop.size() : 0;
+        int sz1 = exceptions != null ? exceptions.size() : 0;
+
+        short sz11 = markers != null ? (short)markers.size() : 0;
+        short sz12 = prop != null ? (short)prop.size() : 0;
+
+        int sz2 = Bytes.ints.add(sz11, sz12);
 
         return Bytes.longs.add(sz1, sz2);
     }
+
 
     @Override
     public EventVO from(ILoggingEvent event) {

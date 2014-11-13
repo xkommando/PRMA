@@ -169,6 +169,15 @@ public final class Event {
      */
     com.google.protobuf.ByteString
         getMarkersBytes(int index);
+
+    /**
+     * <code>required uint64 flag = 12;</code>
+     */
+    boolean hasFlag();
+    /**
+     * <code>required uint64 flag = 12;</code>
+     */
+    long getFlag();
   }
   /**
    * Protobuf type {@code com.caibowen.prma.api.proto.EventPO}
@@ -177,7 +186,7 @@ public final class Event {
       com.google.protobuf.GeneratedMessage implements
       // @@protoc_insertion_point(message_implements:com.caibowen.prma.api.proto.EventPO)
       EventPOOrBuilder {
-    // Use EventPO.newBuilder() from construct.
+    // Use EventPO.newBuilder() to construct.
     private EventPO(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
       this.unknownFields = builder.getUnknownFields();
@@ -298,6 +307,11 @@ public final class Event {
               markers_.add(bs);
               break;
             }
+            case 96: {
+              bitField0_ |= 0x00000100;
+              flag_ = input.readUInt64();
+              break;
+            }
           }
         }
       } catch (com.google.protobuf.InvalidProtocolBufferException e) {
@@ -380,7 +394,7 @@ public final class Event {
         com.google.protobuf.GeneratedMessage implements
         // @@protoc_insertion_point(message_implements:com.caibowen.prma.api.proto.EventPO.Property)
         PropertyOrBuilder {
-      // Use Property.newBuilder() from construct.
+      // Use Property.newBuilder() to construct.
       private Property(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
         super(builder);
         this.unknownFields = builder.getUnknownFields();
@@ -1226,6 +1240,21 @@ public final class Event {
       return markers_.getByteString(index);
     }
 
+    public static final int FLAG_FIELD_NUMBER = 12;
+    private long flag_;
+    /**
+     * <code>required uint64 flag = 12;</code>
+     */
+    public boolean hasFlag() {
+      return ((bitField0_ & 0x00000100) == 0x00000100);
+    }
+    /**
+     * <code>required uint64 flag = 12;</code>
+     */
+    public long getFlag() {
+      return flag_;
+    }
+
     private void initFields() {
       id_ = 0L;
       timeCreated_ = 0L;
@@ -1238,6 +1267,7 @@ public final class Event {
       properties_ = java.util.Collections.emptyList();
       exceptions_ = java.util.Collections.emptyList();
       markers_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+      flag_ = 0L;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -1270,6 +1300,10 @@ public final class Event {
         return false;
       }
       if (!hasCallerSt()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasFlag()) {
         memoizedIsInitialized = 0;
         return false;
       }
@@ -1329,6 +1363,9 @@ public final class Event {
       for (int i = 0; i < markers_.size(); i++) {
         output.writeBytes(11, markers_.getByteString(i));
       }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        output.writeUInt64(12, flag_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -1386,6 +1423,10 @@ public final class Event {
         }
         size += dataSize;
         size += 1 * getMarkersList().size();
+      }
+      if (((bitField0_ & 0x00000100) == 0x00000100)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeUInt64Size(12, flag_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSerializedSize = size;
@@ -1541,6 +1582,8 @@ public final class Event {
         }
         markers_ = com.google.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000400);
+        flag_ = 0L;
+        bitField0_ = (bitField0_ & ~0x00000800);
         return this;
       }
 
@@ -1628,6 +1671,10 @@ public final class Event {
           bitField0_ = (bitField0_ & ~0x00000400);
         }
         result.markers_ = markers_;
+        if (((from_bitField0_ & 0x00000800) == 0x00000800)) {
+          to_bitField0_ |= 0x00000100;
+        }
+        result.flag_ = flag_;
         result.bitField0_ = to_bitField0_;
         onBuilt();
         return result;
@@ -1736,6 +1783,9 @@ public final class Event {
           }
           onChanged();
         }
+        if (other.hasFlag()) {
+          setFlag(other.getFlag());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
@@ -1766,6 +1816,10 @@ public final class Event {
           return false;
         }
         if (!hasCallerSt()) {
+          
+          return false;
+        }
+        if (!hasFlag()) {
           
           return false;
         }
@@ -2852,6 +2906,38 @@ public final class Event {
         return this;
       }
 
+      private long flag_ ;
+      /**
+       * <code>required uint64 flag = 12;</code>
+       */
+      public boolean hasFlag() {
+        return ((bitField0_ & 0x00000800) == 0x00000800);
+      }
+      /**
+       * <code>required uint64 flag = 12;</code>
+       */
+      public long getFlag() {
+        return flag_;
+      }
+      /**
+       * <code>required uint64 flag = 12;</code>
+       */
+      public Builder setFlag(long value) {
+        bitField0_ |= 0x00000800;
+        flag_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required uint64 flag = 12;</code>
+       */
+      public Builder clearFlag() {
+        bitField0_ = (bitField0_ & ~0x00000800);
+        flag_ = 0L;
+        onChanged();
+        return this;
+      }
+
       // @@protoc_insertion_point(builder_scope:com.caibowen.prma.api.proto.EventPO)
     }
 
@@ -2883,7 +2969,7 @@ public final class Event {
   static {
     String[] descriptorData = {
       "\n\013Event.proto\022\033com.caibowen.prma.api.pro" +
-      "from\032\020StackTrace.proto\032\017Exception.proto\"\207\003" +
+      "to\032\020StackTrace.proto\032\017Exception.proto\"\225\003" +
       "\n\007EventPO\022\n\n\002id\030\001 \002(\004\022\024\n\014time_created\030\002 " +
       "\002(\004\022\r\n\005level\030\003 \002(\r\022\023\n\013logger_name\030\004 \002(\t\022" +
       "\023\n\013thread_name\030\005 \002(\t\022\017\n\007fmt_msg\030\006 \002(\t\022<\n" +
@@ -2892,8 +2978,9 @@ public final class Event {
       "\nproperties\030\t \003(\0132-.com.caibowen.prma.ap" +
       "i.proto.EventPO.Property\022<\n\nexceptions\030\n" +
       " \003(\0132(.com.caibowen.prma.api.proto.Excep",
-      "tionPO\022\017\n\007markers\030\013 \003(\t\032.\n\010Property\022\017\n\007m" +
-      "ap_key\030\001 \002(\t\022\021\n\tmap_value\030\002 \002(\014"
+      "tionPO\022\017\n\007markers\030\013 \003(\t\022\014\n\004flag\030\014 \002(\004\032.\n" +
+      "\010Property\022\017\n\007map_key\030\001 \002(\t\022\021\n\tmap_value\030" +
+      "\002 \002(\014"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -2914,7 +3001,7 @@ public final class Event {
     internal_static_com_caibowen_prma_api_proto_EventPO_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_com_caibowen_prma_api_proto_EventPO_descriptor,
-        new String[] { "Id", "TimeCreated", "Level", "LoggerName", "ThreadName", "FmtMsg", "CallerSt", "Reserved", "Properties", "Exceptions", "Markers", });
+        new String[] { "Id", "TimeCreated", "Level", "LoggerName", "ThreadName", "FmtMsg", "CallerSt", "Reserved", "Properties", "Exceptions", "Markers", "Flag", });
     internal_static_com_caibowen_prma_api_proto_EventPO_Property_descriptor =
       internal_static_com_caibowen_prma_api_proto_EventPO_descriptor.getNestedTypes().get(0);
     internal_static_com_caibowen_prma_api_proto_EventPO_Property_fieldAccessorTable = new

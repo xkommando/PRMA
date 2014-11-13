@@ -36,11 +36,16 @@ public class PartialStrFilter extends StrFilter {
             ignoreByFullMatch.put(buf, NA);
     }
 
+    /**
+     *
+     * @param e
+     * @return 1 if contains
+     */
     @Override
     protected int doAccept(String e) {
-        return ignoreByFullMatch.get(e) == null
-                && null == ignorePrefix.matchPrefix(e)
-                && null == ignoreSuffix.matchPrefix(e) ? 1 : -1;
+        return ignoreByFullMatch.get(e) != null
+                || null != ignorePrefix.matchPrefix(e)
+                || null != ignoreSuffix.matchPrefix(e) ? 1 : -1;
     }
 
     @Override

@@ -6,6 +6,8 @@ import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.gplume.misc.Hashing;
 import com.caibowen.prma.api.model.ExceptionVO;
+import com.caibowen.prma.core.filter.basic.PartialStrFilter;
+import com.caibowen.prma.core.filter.basic.StrFilter;
 import com.caibowen.prma.store.ExceptionDO;
 import com.caibowen.prma.store.dao.ExceptionDAO;
 import com.caibowen.prma.store.dao.Int4DAO;
@@ -25,9 +27,11 @@ import java.util.*;
  */
 public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
 
+    @Inject
+    StrFilter exceptionFilter; // actual -> partial string filter
+
     @Inject Int4DAO<String> exceptNameDAO;
     @Inject Int4DAO<String> exceptMsgDAO;
-
     @Inject StackTraceDAO stackTraceDAO;
 
     private static <V> void
@@ -48,9 +52,11 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         });
 
         for (ExceptionVO d : tpox) {
-            if (! hasKey(d.id))
+            if (! hasKey(d.id)
+                    && exceptionFilter.accept(d.exceptionName) != 1)
                 dos.add(getDO(d));
         }
+
         if (dos.size() > 0)
             return insertAll(eventId, new ArrayList<>(dos));
         else
@@ -58,6 +64,13 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     }
 
 
+    /**
+     *  not filtered!
+     *
+     * @param eventID
+     * @param vols
+     * @return
+     */
     public boolean insertAll(final long eventID, final List<ExceptionDO> vols) {
 
         batchInsert(new StatementCreator() {
@@ -69,6 +82,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                                 "VALUES (?,?,?,?)");
 
                 for (ExceptionDO vo : vols) {
+
                     ps.setLong(1, vo.id);
                     ps.setInt(2, vo.exceptName);
 
@@ -139,7 +153,6 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                 buf[i] = id;
             }
         }
-
         vo.stackTraces = buf;
         return vo;
     }
@@ -153,5 +166,22 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                         "SELECT count(1) FROM `exception` WHERE id = " + hash);
             }
         }, RowMapping.BOOLEAN_ROW_MAPPING);
+    }
+
+
+    public void setExceptionFilter(StrFilter exceptionFilter) {
+        this.exceptionFilter = exceptionFilter;
+    }
+
+    public void setExceptNameDAO(Int4DAO<String> exceptNameDAO) {
+        this.exceptNameDAO = exceptNameDAO;
+    }
+
+    public void setExceptMsgDAO(Int4DAO<String> exceptMsgDAO) {
+        this.exceptMsgDAO = exceptMsgDAO;
+    }
+
+    public void setStackTraceDAO(StackTraceDAO stackTraceDAO) {
+        this.stackTraceDAO = stackTraceDAO;
     }
 }

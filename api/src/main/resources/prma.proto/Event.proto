@@ -21,4 +21,5 @@ message EventPO {
     repeated ExceptionPO exceptions = 10;
 
     repeated string markers = 11;
+    required uint64 flag = 12;
 }
