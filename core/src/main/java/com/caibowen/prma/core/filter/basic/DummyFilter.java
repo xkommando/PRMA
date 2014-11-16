@@ -9,7 +9,7 @@ public class DummyFilter<V> implements Filter<V> {
 
     @Override
     public int accept(V v) {
-        return 1;
+        return -1;
     }
 
     @Override

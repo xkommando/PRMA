@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * @author BowenCai
@@ -42,8 +43,10 @@ public class StrDAOImple extends AbstractInt4DAO<String> implements Int4DAO<Stri
             @Nonnull
             @Override
             public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
-                return con.prepareStatement(
-                        "SELECT count(1) FROM " + tableName + " WHERE id = " + key);
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT count(1) FROM " + tableName + " WHERE id=?");
+                ps.setInt(1, key);
+                return ps;
             }
         }, RowMapping.BOOLEAN_ROW_MAPPING);
     }
@@ -69,8 +72,10 @@ public class StrDAOImple extends AbstractInt4DAO<String> implements Int4DAO<Stri
             @Nonnull
             @Override
             public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
-                return con.prepareStatement(
-                        "SELECT `value` FROM " + tableName + " WHERE id=" + key + " LIMIT 1");
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT `value` FROM " + tableName + " WHERE id=? LIMIT 1");
+                ps.setInt(1, key);
+                return ps;
             }
         }, RowMapping.STR_ROW_MAPPING);
     }

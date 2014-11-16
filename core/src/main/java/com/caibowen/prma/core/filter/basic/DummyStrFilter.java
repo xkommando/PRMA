@@ -22,7 +22,7 @@ public class DummyStrFilter extends StrFilter {
 
     @Override
     public int accept(String s) {
-        return 1;
+        return -1;
     }
 
     @Override

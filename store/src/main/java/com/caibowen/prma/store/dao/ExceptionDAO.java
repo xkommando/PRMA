@@ -15,4 +15,5 @@ public interface ExceptionDAO {
     boolean insertIfAbsent(long eventId, List<ExceptionVO> prop) throws Exception;
     boolean insertAll(long eventId, List<ExceptionDO> vols) throws Exception;
 
+    List<ExceptionVO> getByEvent(long eventId);
 }

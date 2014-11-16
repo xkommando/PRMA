@@ -3,10 +3,13 @@ package com.caibowen.prma.store.dao.impl;
 import com.caibowen.gplume.common.Pair;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
+import com.caibowen.prma.core.StringLoader;
+import com.caibowen.prma.store.dao.MarkerDAO;
 import com.caibowen.prma.store.dao.PropertyDAO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,76 +25,42 @@ import java.util.TreeMap;
 public class PropertyDAOImpl extends AbstractInt4DAO<Pair<String, String> > implements PropertyDAO {
 
 
+    @Inject
+    StringLoader sqls;
+
+
+    @Override
+    public Map<String, Object> getByEvent(final long eventId) {
+        List<Pair<String, String>> ls = queryForList(new StatementCreator() {
+            @Nonnull
+            @Override
+            public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(sqls.get("PropertyDAO.getByEvent"));
+                ps.setLong(1, eventId);
+                return ps;
+            }
+        }, PAIR_MAPPING);
+        TreeMap m = new TreeMap();
+        for (Pair<String, String> p : ls)
+            m.put(p.first, p.second);
+        return m;
+    }
+
     @Override
     public boolean hasKey(final int hash) {
         return queryForObject(new StatementCreator() {
             @Nonnull
             @Override
             public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
-                return con.prepareStatement(
-                        "SELECT count(1) FROM `property` WHERE id = " + hash);
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT count(1) FROM `property` WHERE id=?");
+                ps.setInt(1, hash);
+                return ps;
             }
         }, RowMapping.BOOLEAN_ROW_MAPPING);
     }
 
 
-    @Override
-    protected boolean doPut(final int key, final Pair<String, String> value) {
-        insert(new StatementCreator() {
-            @Nonnull
-            @Override
-            public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
-                PreparedStatement ps = con.prepareStatement(
-                        "INSERT IGNORE INTO `property`(`id`, `key`, `value`)VALUES (?,?,?)");
-                    ps.setInt(1, key);
-                    ps.setString(2, value.first);
-                    ps.setBytes(3, value.second.getBytes());
-                return ps;
-            }
-        }, null, null);
-
-        return true;
-    }
-
-    @Override
-    public boolean insertIfAbsent(final long eventId, final Map<String, String> prop) {
-        TreeMap<String, String> map = new TreeMap<>();
-        for (Map.Entry<String, String> e : prop.entrySet()) {
-            if (! hasKey(e.getKey().hashCode()))
-                map.put(e.getKey(), e.getValue());
-        }
-        return map.isEmpty() || insertAll(eventId, map);
-    }
-
-    @Override
-    public boolean insertAll(final long eventId, final Map<String, String> prop) {
-
-        putMap(prop);
-
-        batchInsert(new StatementCreator() {
-            @Nonnull
-            @Override
-            public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
-                PreparedStatement ps = con.prepareStatement(
-                        "INSERT INTO `j_event_prop`(`prop_id`, `event_id`)VALUES (?,?)");
-                for (Map.Entry<String, String> e : prop.entrySet()) {
-                    ps.setInt(1, e.getKey().hashCode());
-                    ps.setLong(2, eventId);
-                    ps.addBatch();
-                }
-                return ps;
-            }
-        }, null, null);
-
-        return true;
-    }
-
-    public static final RowMapping<Pair<String, String>> PAIR_MAPPING = new RowMapping<Pair<String, String>>() {
-        @Override
-        public Pair<String, String> extract(@Nonnull ResultSet rs) throws SQLException {
-            return new Pair<>(rs.getString(1), rs.getString(2));
-        }
-    };
 
     @Nullable
     @Override
@@ -109,19 +78,45 @@ public class PropertyDAOImpl extends AbstractInt4DAO<Pair<String, String> > impl
     }
 
 
-
     @Override
-    public boolean hasVal(@Nonnull Pair<String, String> val) {
-        throw new UnsupportedOperationException("not yet implemented");
+    protected boolean doPut(final int key, final Pair<String, String> value) {
+        insert(new StatementCreator() {
+            @Nonnull
+            @Override
+            public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        sqls.get("PropertyDAO.putMap"));
+                ps.setInt(1, key);
+                ps.setString(2, value.first);
+                ps.setBytes(3, value.second.getBytes());
+                return ps;
+            }
+        }, null, null);
+
+        return true;
     }
 
-    public boolean putMap(@Nonnull final Map<String, String> prop) {
+    @Override
+    public boolean insertIfAbsent(final long eventId, final Map<String, String> prop) {
+        TreeMap<String, String> map = new TreeMap<>();
+        for (Map.Entry<String, String> e : prop.entrySet()) {
+            if (! hasKey(e.getKey().hashCode()))
+                map.put(e.getKey(), e.getValue());
+        }
+
+        if (! map.isEmpty())
+            putMap(map);
+        putRelation(eventId, prop);
+        return true;
+    }
+
+    public void putMap(@Nonnull final Map<String, String> prop) {
         batchInsert(new StatementCreator() {
             @Nonnull
             @Override
             public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "INSERT IGNORE INTO `property`(`id`, `key`, `value`)VALUES (?,?,?)");
+                        sqls.get("PropertyDAO.putMap"));
                 for (Map.Entry<String, String> e : prop.entrySet()) {
                     ps.setInt(1, e.getKey().hashCode());
                     ps.setString(2, e.getKey());
@@ -131,7 +126,23 @@ public class PropertyDAOImpl extends AbstractInt4DAO<Pair<String, String> > impl
                 return ps;
             }
         }, null, null);
-        return true;
+    }
+
+    protected void putRelation(final long eventId, final Map<String, String> prop) {
+        batchInsert(new StatementCreator() {
+            @Nonnull
+            @Override
+            public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        sqls.get("PropertyDAO.putRelation"));
+                for (Map.Entry<String, String> e : prop.entrySet()) {
+                    ps.setInt(1, e.getKey().hashCode());
+                    ps.setLong(2, eventId);
+                    ps.addBatch();
+                }
+                return ps;
+            }
+        }, null, null);
     }
 
     public boolean putAll(@Nonnull final Map<Integer, Pair<String, String>> prop) {
@@ -140,7 +151,7 @@ public class PropertyDAOImpl extends AbstractInt4DAO<Pair<String, String> > impl
             @Override
             public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "INSERT IGNORE INTO `property`(`id`, `key`, `value`)VALUES (?,?,?)");
+                        sqls.get("PropertyDAO.putMap"));
                 for (Pair<String, String> e : prop.values()) {
                     ps.setInt(1, e.first.hashCode());
                     ps.setString(2, e.first);
@@ -151,6 +162,26 @@ public class PropertyDAOImpl extends AbstractInt4DAO<Pair<String, String> > impl
             }
         }, null, null);
         return true;
+    }
+
+
+    @Override
+    public boolean insertAll(final long eventId, final Map<String, String> prop) {
+        putMap(prop);
+        putRelation(eventId, prop);
+        return true;
+    }
+
+    public static final RowMapping<Pair<String, String>> PAIR_MAPPING = new RowMapping<Pair<String, String>>() {
+        @Override
+        public Pair<String, String> extract(@Nonnull ResultSet rs) throws SQLException {
+            return new Pair<>(rs.getString(1), rs.getString(2));
+        }
+    };
+
+    @Override
+    public boolean hasVal(@Nonnull Pair<String, String> val) {
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     @Override

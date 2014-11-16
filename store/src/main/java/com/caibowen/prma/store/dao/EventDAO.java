@@ -10,7 +10,7 @@ import java.util.List;
  * @author BowenCai
  * @since 22-10-2014.
  */
-public interface EventDAO extends TransactionSupport {
+public interface EventDAO {
 
     /**
      * insertIfAbsent from DB, return valid id
@@ -20,5 +20,7 @@ public interface EventDAO extends TransactionSupport {
     long insert(EventDO po);
 
     List<Long> batchInsert(List<EventDO> ls);
+
+//    EventDO get(long id);
 
 }

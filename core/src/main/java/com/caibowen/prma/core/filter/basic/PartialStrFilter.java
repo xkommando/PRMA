@@ -45,7 +45,7 @@ public class PartialStrFilter extends StrFilter {
     protected int doAccept(String e) {
         return ignoreByFullMatch.get(e) != null
                 || null != ignorePrefix.matchPrefix(e)
-                || null != ignoreSuffix.matchPrefix(e) ? 1 : -1;
+                || null != ignoreSuffix.matchSuffix(e) ? 1 : -1;
     }
 
     @Override

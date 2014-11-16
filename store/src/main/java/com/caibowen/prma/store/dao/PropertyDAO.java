@@ -13,4 +13,6 @@ public interface PropertyDAO extends Int4DAO<Pair<String, String>> {
     boolean insertIfAbsent(long eventId, Map<String, String> prop);
     boolean insertAll(long eventId, Map<String, String> prop);
     boolean hasKey(int hash);
+
+    Map<String, Object> getByEvent(long eventId);
 }

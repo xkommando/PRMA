@@ -1,5 +1,6 @@
 package com.caibowen.prma.store.dao.impl.cao;
 
+import com.caibowen.prma.spi.Int8CacheProvider;
 import com.caibowen.prma.store.dao.MarkerDAO;
 import com.caibowen.prma.store.dao.impl.MarkerDAOImpl;
 
@@ -17,6 +18,20 @@ public class MarkerCAO extends Int4LIRSCAO<String> implements MarkerDAO {
 
     @Inject MarkerDAO db;
 
+    @Inject
+    Int8CacheProvider eventCache;
+
+    @Override
+    public Set<String> getByEvent(long eventId) {
+        Set<String> ret = (Set<String>)eventCache.get(eventId);
+        if (ret == null) {
+            ret = db.getByEvent(eventId);
+            if (ret != null)
+                eventCache.put(eventId, ret);
+        }
+        return ret;
+    }
+
     @Override
     public boolean insertIfAbsent(long eventId, Set<String> markers) {
         Long eid = eventId;
@@ -32,9 +47,6 @@ public class MarkerCAO extends Int4LIRSCAO<String> implements MarkerDAO {
                 return true;
 
             boolean ret = db.insertAll(eventId, mks);
-            if (!ret)
-                for (String e2 : markers)
-                    cache.remove(e2.hashCode(), false);
             return ret;
         }
     }
@@ -42,9 +54,11 @@ public class MarkerCAO extends Int4LIRSCAO<String> implements MarkerDAO {
     @Override
     synchronized public boolean insertAll(long eventId, Set<String> markers) {
         boolean ret = db.insertAll(eventId, markers);
-        if (ret)
+        if (ret) {
+            eventCache.put(eventId, markers);
             for (String s : markers)
                 cache.put(s.hashCode(), s);
+        }
         return true;
     }
 }

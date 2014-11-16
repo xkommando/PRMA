@@ -18,7 +18,10 @@ import java.util.concurrent.ConcurrentHashMap;
  * read operation done in memory
  * write operation is buffered.
  * <p/>
- * for logger name, thread name, exception name
+ * for
+ * logger name,
+ * thread name,
+ * exception name
  *
  * @author BowenCai
  * @since 26-10-2014.

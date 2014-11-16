@@ -3,6 +3,7 @@
 
     <!--DataSource shall be added from this context BEFORE CENTURY-->
 
+
     <bean id="exceptNameDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
         <construct val="exception_name"/>
         <field name="dataSource" ref="dataSource"/>
@@ -20,30 +21,59 @@
         <field name="dataSource" ref="dataSource"/>
     </bean>
 
+
+    <bean id="sqlLoader" class="com.caibowen.prma.core.StringLoader" aftercall="start">
+        <field name="paths">
+            <list>
+                <val>classpath:query2_mysql.xml</val>
+            </list>
+        </field>
+    </bean>
+    <bean id="classNameFilter" class="com.caibowen.prma.core.filter.basic.PartialStrFilter" aftercall="start">
+        <field name="configPath" val="ignored_classes.txt"/>
+    </bean>
+    
     <bean id="markerDAO" class="com.caibowen.prma.store.dao.impl.MarkerDAOImpl">
         <field name="dataSource" ref="dataSource"/>
+        <field name="sqls" ref="sqlLoader"/>
     </bean>
 
     <bean id="stackTraceDAO" class="com.caibowen.prma.store.dao.impl.StackTraceDAOImpl">
         <field name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="eventDAO" class="com.caibowen.prma.store.dao.impl.EventDAOImpl">
-        <field name="dataSource" ref="dataSource"/>
-    </bean>
 
     <bean id="exceptionDAO" class="com.caibowen.prma.store.dao.impl.ExceptionDAOImpl">
         <field name="dataSource" ref="dataSource"/>
+        <field name="sqls" ref="sqlLoader"/>
         <field name="exceptNameDAO" ref="exceptNameDAO"/>
         <field name="exceptMsgDAO" ref="exceptMsgDAO"/>
         <field name="stackTraceDAO" ref="stackTraceDAO"/>
+        <field name="exceptionFilter" ref="classNameFilter" />
+        <field name="stackTraceFilter" ref="classNameFilter" />
     </bean>
 
     <bean id="propertyDAO" class="com.caibowen.prma.store.dao.impl.PropertyDAOImpl">
         <field name="dataSource" ref="dataSource"/>
+        <field name="sqls" ref="sqlLoader"/>
+    </bean>
+
+    <bean id="eventSQL" class="com.caibowen.prma.core.StringLoader" aftercall="start">
+        <field name="paths">
+            <list>
+                <val>classpath:query1_mysql.xml</val>
+            </list>
+        </field>
+    </bean>
+
+    <bean id="eventDAO" class="com.caibowen.prma.store.dao.impl.EventDAOImpl">
+        <field name="dataSource" ref="dataSource"/>
+        <field name="sqls" ref="eventSQL"/>
     </bean>
 
     <bean id="eventPersist" class="com.caibowen.prma.store.EventPersistImpl">
+        <field name="dataSource" ref="dataSource"/>
+        <field name="sqls" ref="eventSQL" />
         <field name="threadDAO" ref="threadDAO"/>
         <field name="loggerDAO" ref="loggerDAO"/>
         <field name="stackTraceDAO" ref="stackTraceDAO"/>

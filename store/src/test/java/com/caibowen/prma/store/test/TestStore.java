@@ -4,6 +4,7 @@ import com.caibowen.gplume.common.collection.ImmutableArraySet;
 import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
+import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.transaction.JdbcTransactionManager;
 import com.caibowen.gplume.jdbc.transaction.Transaction;
 import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
@@ -36,7 +37,7 @@ import java.util.concurrent.TimeUnit;
  * @author BowenCai
  * @since 25-10-2014.
  */
-public class TestDAO {
+public class TestStore {
 
     public DataSource connect() {
         HikariDataSource ds = new HikariDataSource();
@@ -59,7 +60,7 @@ public class TestDAO {
     Int4DAO<String> loggerDAO;
     Int4DAO<String> exceptMsgDAO;
     EventDAO eventDAO;
-
+    JdbcSupport jdbc;
     TransactionManager manager = new JdbcTransactionManager();
 
     ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 256, 60L, TimeUnit.SECONDS,
@@ -79,19 +80,6 @@ public class TestDAO {
         }
     });
 
-    @Test
-    public void s() throws Throwable {
-        Throwable _t = new RuntimeException("msg level 3",
-                new IOException("msg level 2",
-                        new FileNotFoundException("msg level 1")));
-        Throwable r = _t.getCause();
-        while (r != null) {
-            for (StackTraceElement st : r.getStackTrace())
-                System.out.println(st.getClassName());
-            r = r.getCause();
-        }
-        throw _t;
-    }
 
     @Before
     public void setup() {
@@ -111,7 +99,7 @@ public class TestDAO {
         loggerDAO = AppContext.beanAssembler.getBean("loggerDAO");
         exceptMsgDAO = AppContext.beanAssembler.getBean("exceptMsgDAO");
         eventDAO = AppContext.beanAssembler.getBean("eventDAO");
-
+        jdbc = new JdbcSupport(ds);
         manager.setDataSource(ds);
     }
 
@@ -175,14 +163,14 @@ public class TestDAO {
         tx2.setRollbackOnly(true);
         manager.commit(tx2);
         try {
-            eventDAO.execute(new TransactionCallback<Object>() {
+            jdbc.execute(new TransactionCallback<Object>() {
                 @Override
                 public Object withTransaction(@Nonnull Transaction tnx) throws Exception {
                     loggerDAO.put(s1.hashCode(), s1);
                     exceptMsgDAO.put(s1.hashCode(), s1);
                     tnx.setRollbackOnly(true);
                     // operation 2
-                    eventDAO.execute(new TransactionCallback<Object>() {
+                    jdbc.execute(new TransactionCallback<Object>() {
                         @Override
                         public Object withTransaction(@Nonnull Transaction tnx) throws Exception {
                             loggerDAO.put(s2.hashCode(), s2);
@@ -294,5 +282,20 @@ public class TestDAO {
         executor.awaitTermination(10, TimeUnit.SECONDS);
         long tt = System.currentTimeMillis();
         System.out.println(tt - t);
+    }
+
+
+    @Test
+    public void s() throws Throwable {
+        Throwable _t = new RuntimeException("msg level 3",
+                new IOException("msg level 2",
+                        new FileNotFoundException("msg level 1")));
+        Throwable r = _t.getCause();
+        while (r != null) {
+            for (StackTraceElement st : r.getStackTrace())
+                System.out.println(st.getClassName());
+            r = r.getCause();
+        }
+        throw _t;
     }
 }

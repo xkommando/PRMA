@@ -1,5 +1,8 @@
 package com.caibowen.prma.store.dao;
 
+import com.caibowen.prma.api.model.ExceptionVO;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -11,5 +14,6 @@ public interface MarkerDAO extends Int4DAO<String> {
 
     boolean insertIfAbsent(long eventId, Set<String> markers);
     boolean insertAll(long eventId, Set<String> markers);
-    boolean hasKey(int hash);
+
+    Set<String> getByEvent(long eventId);
 }

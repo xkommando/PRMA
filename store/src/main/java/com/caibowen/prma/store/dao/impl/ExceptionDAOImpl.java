@@ -6,6 +6,7 @@ import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.gplume.misc.Hashing;
 import com.caibowen.prma.api.model.ExceptionVO;
+import com.caibowen.prma.core.StringLoader;
 import com.caibowen.prma.core.filter.basic.PartialStrFilter;
 import com.caibowen.prma.core.filter.basic.StrFilter;
 import com.caibowen.prma.store.ExceptionDO;
@@ -15,10 +16,7 @@ import com.caibowen.prma.store.dao.StackTraceDAO;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Types;
+import java.sql.*;
 import java.util.*;
 
 /**
@@ -30,9 +28,49 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     @Inject
     StrFilter exceptionFilter; // actual -> partial string filter
 
+    @Inject
+    StrFilter stackTraceFilter; // class name based filtering
+
     @Inject Int4DAO<String> exceptNameDAO;
     @Inject Int4DAO<String> exceptMsgDAO;
     @Inject StackTraceDAO stackTraceDAO;
+
+    @Inject
+    StringLoader sqls;
+
+    @Override
+    public List<ExceptionVO> getByEvent(final long eventId) {
+        return queryForList(new StatementCreator() {
+            @Nonnull
+            @Override
+            public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        sqls.get("ExceptionDAO.getByEvent"));
+                ps.setLong(1, eventId);
+                return ps;
+            }
+        }, new RowMapping<ExceptionVO>() {
+            @Override
+            public ExceptionVO extract(@Nonnull ResultSet rs) throws SQLException {
+                ExceptionVO vo = new ExceptionVO();
+                vo.id = rs.getLong(1);
+                vo.exceptionName = exceptNameDAO.get(rs.getInt(2));
+                vo.exceptionMessage = exceptMsgDAO.get(rs.getInt(3));
+
+                byte[] bsts = rs.getBytes(4);
+                if (bsts != null && bsts.length > 0) {
+                    int[] stids = Bytes.bytes2ints(bsts);
+                    StackTraceElement[] sts = new StackTraceElement[stids.length];
+                    for (int i = 0; i < stids.length; ++i) {
+                        sts[i] = stackTraceDAO.get(stids[i]);
+                    }
+                    vo.stackTraces = sts;
+                }
+
+                return vo;
+            }
+        });
+    }
 
     private static <V> void
     persist(Int4DAO<V> dao, int hash, V obj) {
@@ -50,17 +88,24 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                 return (int)(o1.id - o2.id);
             }
         });
-
-        for (ExceptionVO d : tpox) {
-            if (! hasKey(d.id)
-                    && exceptionFilter.accept(d.exceptionName) != 1)
-                dos.add(getDO(d));
+        List vols = new LinkedList(tpox);
+        Iterator<ExceptionVO> iter = vols.iterator();
+        while (iter.hasNext()) {
+            ExceptionVO vo = iter.next();
+            if (exceptionFilter.accept(vo.exceptionName) == 1) {
+                iter.remove();
+                continue;
+            }
+            if (! hasKey(vo.id))
+                dos.add(getDO(vo));
         }
-
-        if (dos.size() > 0)
-            return insertAll(eventId, new ArrayList<>(dos));
-        else
-            return true;
+        putRelationVO(eventId, vols);
+        if (dos.size() > 0) {
+            vols.clear();
+            vols.addAll(dos);
+            putExcept(vols);
+        }
+        return true;
     }
 
 
@@ -72,27 +117,29 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
      * @return
      */
     public boolean insertAll(final long eventID, final List<ExceptionDO> vols) {
+        putExcept(vols);
+        putRelationDO(eventID, vols);
+        return true;
+    }
 
+    private void putExcept(final List<ExceptionDO> vols) {
         batchInsert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "INSERT INTO `exception`(`id`" +
-                                ",`except_name`,`except_msg`,`stack_traces`)" +
-                                "VALUES (?,?,?,?)");
+                        sqls.get("ExceptionDAO.putExcept"));
 
-                for (ExceptionDO vo : vols) {
+                for (ExceptionDO expDo : vols) {
+                    ps.setLong(1, expDo.id);
+                    ps.setInt(2, expDo.exceptName);
 
-                    ps.setLong(1, vo.id);
-                    ps.setInt(2, vo.exceptName);
-
-                    if (vo.exceptMsg != null)
-                        ps.setInt(3, vo.exceptMsg);
+                    if (expDo.exceptMsg != null)
+                        ps.setInt(3, expDo.exceptMsg);
                     else
                         ps.setNull(3, Types.INTEGER);
 
-                    if (vo.stackTraces != null && vo.stackTraces.length > 0) {
-                        byte[] buf = Bytes.int2byte(vo.stackTraces);
+                    if (expDo.stackTraces != null && expDo.stackTraces.length > 0) {
+                        byte[] buf = Bytes.ints2bytes(expDo.stackTraces);
                         ps.setBytes(4, buf);
                     } else
                         ps.setNull(4, Types.BINARY);
@@ -102,12 +149,14 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                 return ps;
             }
         }, null, null);
+    }
 
+    private void putRelationVO(final long eventID, final List<ExceptionVO> vols) {
         batchInsert(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "INSERT INTO `j_event_exception`(`seq`,`event_id`,`except_id`)VALUES(?,?,?)");
+                        sqls.get("ExceptionDAO.putRelation"));
 
                 for (int i = 0; i < vols.size(); i++) {
                     ps.setInt(1, i);
@@ -119,15 +168,30 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                 return ps;
             }
         }, null, null);
-
-        return true;
     }
+    private void putRelationDO(final long eventID, final List<ExceptionDO> vols) {
+        batchInsert(new StatementCreator() {
+            @Override
+            public PreparedStatement createStatement(Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        sqls.get("ExceptionDAO.putRelation"));
+                for (int i = 0; i < vols.size(); i++) {
+                    ps.setInt(1, i);
+                    ps.setLong(2, eventID);
+                    ps.setLong(3, vols.get(i).id);
+                    ps.addBatch();
+                }
+                return ps;
+            }
+        }, null, null);
+    }
+
 
     ExceptionDO getDO(@Nonnull ExceptionVO tpox) {
         ExceptionDO vo = new ExceptionDO();
         vo.id = tpox.id;
 
-        String _thwName = tpox.getClass().getName();
+        String _thwName = tpox.exceptionName;
         final int thwID = _thwName.hashCode();
         persist(exceptNameDAO, thwID, _thwName);
         vo.exceptName = thwID;
@@ -140,20 +204,31 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         }
 
         StackTraceElement[] stps = tpox.stackTraces;
-        int[] buf = null;
-        if (stps != null && stps.length > 0) {
-            buf = new int[stps.length];
-            for (int i = 0; i < stps.length; i++) {
-                StackTraceElement st = stps[i];
-                int id = st.hashCode();
-                if (!stackTraceDAO.putIfAbsent(id, st))
-                    throw new RuntimeException("could not save stack trace "
-                            + st.toString());
+        if (stps == null || stps.length == 0)
+            return vo;
 
-                buf[i] = id;
-            }
+        ArrayList<Integer> buf = new ArrayList<>(stps.length);
+        for (int i = 0; i < stps.length; i++) {
+            StackTraceElement st = stps[i];
+            if (stackTraceFilter.accept(st.getClassName()) == 1)
+                continue;
+
+            int id = st.hashCode();
+            if (!stackTraceDAO.putIfAbsent(id, st))
+                throw new RuntimeException("could not save stack trace "
+                        + st.toString());
+
+            buf.add(id);
         }
-        vo.stackTraces = buf;
+        if (buf.size() == 0)
+            return vo;
+
+        int[] ids = new int[buf.size()];
+        Iterator<Integer> it = buf.iterator();
+        int i = 0;
+        while (it.hasNext())
+            ids[i++] = it.next();
+        vo.stackTraces = ids;
         return vo;
     }
 
@@ -162,8 +237,10 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         return queryForObject(new StatementCreator() {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
-                return con.prepareStatement(
-                        "SELECT count(1) FROM `exception` WHERE id = " + hash);
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT count(1) FROM `exception` WHERE id =?");
+                ps.setLong(1, hash);
+                return ps;
             }
         }, RowMapping.BOOLEAN_ROW_MAPPING);
     }
@@ -183,5 +260,13 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
 
     public void setStackTraceDAO(StackTraceDAO stackTraceDAO) {
         this.stackTraceDAO = stackTraceDAO;
+    }
+
+    public StringLoader getSqls() {
+        return sqls;
+    }
+
+    public void setSqls(StringLoader sqls) {
+        this.sqls = sqls;
     }
 }

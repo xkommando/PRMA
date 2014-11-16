@@ -6,6 +6,7 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
+import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.transaction.JdbcTransactionManager;
 import com.caibowen.gplume.jdbc.transaction.TransactionManager;
 import com.caibowen.prma.api.model.EventVO;
@@ -17,8 +18,7 @@ import com.caibowen.prma.store.dao.Int4DAO;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 import javax.sql.DataSource;
 import java.io.FileNotFoundException;
@@ -58,7 +58,7 @@ public class ILogEventTest {
     Int4DAO<String> exceptMsgDAO;
     EventDAO eventDAO;
 
-    TransactionManager manager = new JdbcTransactionManager();
+    JdbcSupport jdbc;
 
     ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 256, 60L, TimeUnit.SECONDS,
             new SynchronousQueue<Runnable>(), new RejectedExecutionHandler() {
@@ -80,6 +80,10 @@ public class ILogEventTest {
 
     @Before
     public void setup() {
+        ds = connect();
+        AppContext.beanAssembler.addBean("dataSource", ds);
+        jdbc = new JdbcSupport(ds);
+
         ContextBooter bootstrap = new ContextBooter();
         bootstrap.setClassLoader(this.getClass().getClassLoader());
         // prepare
@@ -88,30 +92,54 @@ public class ILogEventTest {
         String manifestPath = "classpath:store_assemble.xml";
         bootstrap.setManifestPath(manifestPath);
 
-        ds = connect();
-        AppContext.beanAssembler.addBean("dataSource", ds);
 
         bootstrap.boot();
         eventP = AppContext.beanAssembler.getBean("eventPersist");
         loggerDAO = AppContext.beanAssembler.getBean("loggerDAO");
         exceptMsgDAO = AppContext.beanAssembler.getBean("exceptMsgDAO");
         eventDAO = AppContext.beanAssembler.getBean("eventDAO");
-
-        manager.setDataSource(ds);
     }
 
     Logger LOG = LoggerFactory.getLogger(ILogEventTest.class);
+
+
+    @Test
+    public void insert2() {
+        Throwable _fk = new RuntimeException("msg level 3",
+                new IOException("msg level 2",
+                        new FileNotFoundException("msg level 1")));
+
+        EventAdaptor<ILoggingEvent> translator = new EventAdapter();
+        LoggingEvent e = new LoggingEvent("fq name", (ch.qos.logback.classic.Logger)LOG,
+                Level.DEBUG, "hahahaha msg", _fk, null);
+        Marker mk1 = MarkerFactory.getMarker("marker 1");
+        Marker mk2 = MarkerFactory.getMarker("marker 2");
+        mk1.add(mk2);
+        e.setMarker(mk1);
+        String mdc1 = "test mdc 1";
+        MDC.put(mdc1, "hahaha");
+        MDC.put("test mdc 2", "hahaha222");
+        MDC.put("test mdc 3", "wowowo");
+
+        EventVO vvvo = translator.from(e);
+        System.err.println(eventP.persist(vvvo));
+
+        MDC.remove(mdc1);
+        e = new LoggingEvent("fq name", (ch.qos.logback.classic.Logger)LOG, Level.TRACE,
+                "hahahaha msg 2", null, null);
+
+        vvvo = translator.from(e);
+        eventP.persist(vvvo);
+
+    }
 
     @Test
     public void testadopt() {
         Throwable _fk = new RuntimeException("msg level 3",
                 new IOException("msg level 2",
                         new FileNotFoundException("msg level 1")));
-
         EventAdaptor<ILoggingEvent> translator = new EventAdapter();
-        ILoggingEvent e = new LoggingEvent("fq name", (ch.qos.logback.classic.Logger)LOG, Level.DEBUG, "hahahaha msg", _fk, null);
 
-        eventP.persist(translator.from(e));
 
         ArrayList<EventVO> vos = new ArrayList<>(16);
 
@@ -124,7 +152,7 @@ public class ILogEventTest {
                 new LoggingEvent("fq name", (ch.qos.logback.classic.Logger)LOG,
                         Level.DEBUG, "hahahaha msg", _ex, null)
         ));
-
+        LoggingEvent e;
         for (int i = 0; i < 10; i++) {
             e = new LoggingEvent("fq name",
                     (ch.qos.logback.classic.Logger)LOG,
@@ -133,8 +161,8 @@ public class ILogEventTest {
                     _fk, null);
             vos.add(translator.from(e));
         }
-
         eventP.batchPersist(vos);
+
     }
 
 }

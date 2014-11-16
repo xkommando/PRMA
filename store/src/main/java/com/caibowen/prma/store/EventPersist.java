@@ -2,6 +2,8 @@ package com.caibowen.prma.store;
 
 import com.caibowen.prma.api.model.EventVO;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -10,7 +12,12 @@ import java.util.List;
  */
 public interface EventPersist {
 
-    void persist(EventVO event);
+    long  persist(@Nonnull EventVO event);
 
-    void batchPersist(List<EventVO> ls);
+    void batchPersist(@Nonnull List<EventVO> ls);
+
+    @Nullable
+    EventVO get(long id);
+
+//    List<EventVO> searchByTime();
 }

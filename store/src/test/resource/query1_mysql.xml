@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+    <!--<entry key="EventPersist.get">![CDATA[-->
+        <!--SELECT EVT.time_created, EVT.level, EVT.flag, EVT.message, EVT.reserved,-->
+        <!--LOG_NM.value, THREAD_NM.value,-->
+        <!--CALLER.file, CALLER.class, CALLER.function, CALLER.line-->
+        <!--FROM `event` as EVT-->
+        <!--INNER JOIN `logger_name` as LOG_NM on EVT.logger_id = LOG_NM.id-->
+        <!--INNER JOIN `thread_name` as THREAD_NM on EVT.thread_id = THREAD_NM.id-->
+        <!--INNER JOIN `stack_trace` as CALLER on EVT.caller_sk_id = CALLER.id-->
+        <!--WHERE EVT.id=?-->
+        <!--]]</entry>-->
+    <comment>select fields of event only, referred value will be fetched from cache.</comment>
+    <entry key="EventPersist.get"><![CDATA[
+        SELECT time_created, level, flag, message, reserved,
+        logger_id, thread_id, caller_sk_id
+        FROM `event`
+        WHERE id=?
+        ]]></entry>
+
+    <entry key="EventDAO.insert"><![CDATA[
+        INSERT INTO `event`(
+        `time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`,
+        `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)
+        ]]></entry>
+
+
+</properties>

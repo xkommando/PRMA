@@ -4,10 +4,12 @@ import com.caibowen.gplume.common.Pair;
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
+import com.caibowen.prma.core.StringLoader;
 import com.caibowen.prma.store.dao.StackTraceDAO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,6 +24,9 @@ import java.util.Map;
  * @since 24-10-2014.
  */
 public class StackTraceDAOImpl extends AbstractInt4DAO<StackTraceElement> implements StackTraceDAO {
+
+    @Inject
+    StringLoader sqls;
 
     public static final RowMapping<StackTraceElement> ST_MAPPING = new RowMapping<StackTraceElement>() {
         @Override
@@ -49,8 +54,10 @@ public class StackTraceDAOImpl extends AbstractInt4DAO<StackTraceElement> implem
             @Nonnull
             @Override
             public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
-                return con.prepareStatement(
-                        "SELECT count(1) FROM `stack_trace` WHERE id = " + key);
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT count(1) FROM `stack_trace` WHERE id=?");
+                ps.setInt(1, key);
+                return ps;
             }
         }, RowMapping.INT_ROW_MAPPING);
     }
@@ -67,8 +74,10 @@ public class StackTraceDAOImpl extends AbstractInt4DAO<StackTraceElement> implem
             @Nonnull
             @Override
             public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
-                return con.prepareStatement(
-                        "SELECT `file`,`class`,`function`,`line` FROM `stack_trace` WHERE id=" + key);
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT `file`,`class`,`function`,`line` FROM `stack_trace` WHERE id=?");
+                ps.setInt(1, key);
+                return ps;
             }
         }, ST_MAPPING);
     }

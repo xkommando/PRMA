@@ -3,10 +3,12 @@ package com.caibowen.prma.store.dao.impl;
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
+import com.caibowen.prma.core.StringLoader;
 import com.caibowen.prma.store.EventDO;
 import com.caibowen.prma.store.dao.EventDAO;
 
 import javax.annotation.Nonnull;
+import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -21,6 +23,10 @@ public class EventDAOImpl extends JdbcSupport implements EventDAO {
 
     public static final String[] AUTO_GEN_ID = {"id"};
 
+    @Inject
+    StringLoader sqls;
+
+
     @Override
     public long insert(final EventDO po) {
 
@@ -28,9 +34,7 @@ public class EventDAOImpl extends JdbcSupport implements EventDAO {
             @Override
             public PreparedStatement createStatement(Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                "INSERT INTO `event`(" +
-                "`time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`" +
-               ", `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)", AUTO_GEN_ID);
+                sqls.get("EventDAO.insert"), AUTO_GEN_ID);
                 ps.setLong(1, po.timeCreated);
                 ps.setByte(2, po.level);
                 ps.setInt(3, po.loggerId);
@@ -60,9 +64,7 @@ public class EventDAOImpl extends JdbcSupport implements EventDAO {
             @Override
             public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
                 PreparedStatement ps = con.prepareStatement(
-                        "INSERT INTO `event`(" +
-                                "`time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`" +
-                                ", `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)", AUTO_GEN_ID);
+                        sqls.get("EventDAO.insert"), AUTO_GEN_ID);
 
                 for (EventDO po : ls) {
                     ps.setLong(1, po.timeCreated);
