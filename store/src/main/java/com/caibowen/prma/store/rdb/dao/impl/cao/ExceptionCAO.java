@@ -1,7 +1,7 @@
-package com.caibowen.prma.store.dao.impl.cao;
+package com.caibowen.prma.store.rdb.dao.impl.cao;
 
-import com.caibowen.prma.store.dao.ExceptionDAO;
-import com.caibowen.prma.store.dao.impl.ExceptionDAOImpl;
+import com.caibowen.prma.store.rdb.dao.ExceptionDAO;
+import com.caibowen.prma.store.rdb.dao.impl.ExceptionDAOImpl;
 
 import javax.inject.Inject;
 

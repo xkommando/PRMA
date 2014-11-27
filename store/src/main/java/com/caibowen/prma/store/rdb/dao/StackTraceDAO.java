@@ -1,4 +1,4 @@
-package com.caibowen.prma.store.dao;
+package com.caibowen.prma.store.rdb.dao;
 
 /**
  * @author BowenCai

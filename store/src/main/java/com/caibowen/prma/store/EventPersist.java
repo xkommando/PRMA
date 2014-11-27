@@ -16,8 +16,13 @@ public interface EventPersist {
 
     void batchPersist(@Nonnull List<EventVO> ls);
 
+    /**
+     *
+     * just for test
+     */
     @Nullable
     EventVO get(long id);
 
-//    List<EventVO> searchByTime();
+
+    List<EventVO> getWithException(long minTime, int limit);
 }

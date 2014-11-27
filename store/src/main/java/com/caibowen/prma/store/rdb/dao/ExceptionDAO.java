@@ -1,7 +1,7 @@
-package com.caibowen.prma.store.dao;
+package com.caibowen.prma.store.rdb.dao;
 
 import com.caibowen.prma.api.model.ExceptionVO;
-import com.caibowen.prma.store.ExceptionDO;
+import com.caibowen.prma.store.rdb.ExceptionDO;
 
 import java.util.List;
 

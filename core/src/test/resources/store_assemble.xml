@@ -3,47 +3,47 @@
 
     <!--DataSource shall be added from this context BEFORE CENTURY-->
 
-    <bean id="exceptNameDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+    <bean id="exceptNameDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImple">
         <construct val="exception_name"/>
         <field name="dataSource" ref="dataSource"/>
     </bean>
-    <bean id="exceptMsgDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+    <bean id="exceptMsgDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImple">
         <construct val="`exception_msg`"/>
         <field name="dataSource" ref="dataSource"/>
     </bean>
-    <bean id="loggerDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+    <bean id="loggerDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImple">
         <construct val="`logger_name`"/>
         <field name="dataSource" ref="dataSource"/>
     </bean>
-    <bean id="threadDAO" class="com.caibowen.prma.store.dao.impl.StrDAOImple">
+    <bean id="threadDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImple">
         <construct val="`thread_name`"/>
         <field name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="markerDAO" class="com.caibowen.prma.store.dao.impl.MarkerDAOImpl">
+    <bean id="markerDAO" class="com.caibowen.prma.store.rdb.dao.impl.MarkerDAOImpl">
         <field name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="stackTraceDAO" class="com.caibowen.prma.store.dao.impl.StackTraceDAOImpl">
+    <bean id="stackTraceDAO" class="com.caibowen.prma.store.rdb.dao.impl.StackTraceDAOImpl">
         <field name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="eventDAO" class="com.caibowen.prma.store.dao.impl.EventDAOImpl">
+    <bean id="eventDAO" class="com.caibowen.prma.store.rdb.dao.impl.EventDAOImpl">
         <field name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="exceptionDAO" class="com.caibowen.prma.store.dao.impl.ExceptionDAOImpl">
+    <bean id="exceptionDAO" class="com.caibowen.prma.store.rdb.dao.impl.ExceptionDAOImpl">
         <field name="dataSource" ref="dataSource"/>
         <field name="exceptNameDAO" ref="exceptNameDAO"/>
         <field name="exceptMsgDAO" ref="exceptMsgDAO"/>
         <field name="stackTraceDAO" ref="stackTraceDAO"/>
     </bean>
 
-    <bean id="propertyDAO" class="com.caibowen.prma.store.dao.impl.PropertyDAOImpl">
+    <bean id="propertyDAO" class="com.caibowen.prma.store.rdb.dao.impl.PropertyDAOImpl">
         <field name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="eventPersist" class="com.caibowen.prma.store.EventPersistImpl">
+    <bean id="eventPersist" class="com.caibowen.prma.store.rdb.EventPersistImpl">
         <field name="threadDAO" ref="threadDAO"/>
         <field name="loggerDAO" ref="loggerDAO"/>
         <field name="stackTraceDAO" ref="stackTraceDAO"/>

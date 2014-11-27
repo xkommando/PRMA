@@ -3,7 +3,7 @@
 
 <properties>
 
-    <!--<entry key="EventPersist.get">![CDATA[-->
+    <!--<entry key="EventPersist.at">![CDATA[-->
         <!--SELECT EVT.time_created, EVT.level, EVT.flag, EVT.message, EVT.reserved,-->
         <!--LOG_NM.value, THREAD_NM.value,-->
         <!--CALLER.file, CALLER.class, CALLER.function, CALLER.line-->

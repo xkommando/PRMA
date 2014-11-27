@@ -1,11 +1,10 @@
-package com.caibowen.prma.store.dao.impl;
+package com.caibowen.prma.store.rdb.dao.impl;
 
 import com.caibowen.gplume.common.Pair;
-import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.prma.core.StringLoader;
-import com.caibowen.prma.store.dao.StackTraceDAO;
+import com.caibowen.prma.store.rdb.dao.StackTraceDAO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

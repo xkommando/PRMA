@@ -1,4 +1,4 @@
-package com.caibowen.prma.store;
+package com.caibowen.prma.store.rdb;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -165,7 +165,7 @@ public class EventDO implements Serializable {
 
     @Override
     public String toString() {
-        return "com.caibowen.prma.store.EventDO{" +
+        return "com.caibowen.prma.store.rdb.EventDO{" +
                 "id=" + id +
                 ", timeCreated=" + timeCreated +
                 ", level=" + level +

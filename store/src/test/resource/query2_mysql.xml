@@ -34,10 +34,10 @@
 
 
     <entry key="ExceptionDAO.getByEvent"><![CDATA[
-        SELECT EXP.id, EXP.except_name, EXP.except_msg, EXP.stack_traces
+    SELECT EXP.id, EXP.except_name, EXP.except_msg, EXP.stack_traces
         FROM `exception` as EXP
         INNER JOIN `j_event_exception` as JEE on JEE.except_id = EXP.id
-        WHERE JEE.event_id=?
+        WHERE JEE.event_id=? ORDER BY JEE.seq ASC
     ]]></entry>
 
     <entry key="ExceptionDAO.putExcept"><![CDATA[

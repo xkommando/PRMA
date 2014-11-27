@@ -1,9 +1,9 @@
-package com.caibowen.prma.store.dao.impl.cao;
+package com.caibowen.prma.store.rdb.dao.impl.cao;
 
 import com.caibowen.gplume.annotation.ConstMethod;
 import com.caibowen.gplume.misc.Assert;
 import com.caibowen.prma.spi.Int4CacheProvider;
-import com.caibowen.prma.store.dao.Int4DAO;
+import com.caibowen.prma.store.rdb.dao.Int4DAO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

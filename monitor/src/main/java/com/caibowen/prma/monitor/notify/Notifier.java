@@ -8,5 +8,7 @@ import com.caibowen.prma.api.model.EventVO;
  */
 public interface Notifier {
 
+    void setName(String name);
+    String getName();
     boolean notify(EventVO vo);
 }

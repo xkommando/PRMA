@@ -1,18 +1,16 @@
-package com.caibowen.prma.store.dao.impl;
+package com.caibowen.prma.store.rdb.dao.impl;
 
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.gplume.misc.Bytes;
-import com.caibowen.gplume.misc.Hashing;
 import com.caibowen.prma.api.model.ExceptionVO;
 import com.caibowen.prma.core.StringLoader;
-import com.caibowen.prma.core.filter.basic.PartialStrFilter;
 import com.caibowen.prma.core.filter.basic.StrFilter;
-import com.caibowen.prma.store.ExceptionDO;
-import com.caibowen.prma.store.dao.ExceptionDAO;
-import com.caibowen.prma.store.dao.Int4DAO;
-import com.caibowen.prma.store.dao.StackTraceDAO;
+import com.caibowen.prma.store.rdb.ExceptionDO;
+import com.caibowen.prma.store.rdb.dao.ExceptionDAO;
+import com.caibowen.prma.store.rdb.dao.Int4DAO;
+import com.caibowen.prma.store.rdb.dao.StackTraceDAO;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -38,6 +36,28 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     @Inject
     StringLoader sqls;
 
+    RowMapping<ExceptionVO> VO_MAPPING = new RowMapping<ExceptionVO>() {
+
+        public ExceptionVO extract(@Nonnull ResultSet rs) throws SQLException {
+            ExceptionVO vo = new ExceptionVO();
+            vo.id = rs.getLong(1);
+            vo.exceptionName = exceptNameDAO.get(rs.getInt(2));
+            vo.exceptionMessage = exceptMsgDAO.get(rs.getInt(3));
+
+            byte[] bsts = rs.getBytes(4);
+            if (bsts != null && bsts.length > 0) {
+                int[] stids = Bytes.bytes2ints(bsts);
+                StackTraceElement[] sts = new StackTraceElement[stids.length];
+                for (int i = 0; i < stids.length; ++i) {
+                    sts[i] = stackTraceDAO.get(stids[i]);
+                }
+                vo.stackTraces = sts;
+            }
+            return vo;
+        }
+
+    };
+
     @Override
     public List<ExceptionVO> getByEvent(final long eventId) {
         return queryForList(new StatementCreator() {
@@ -49,27 +69,7 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
                 ps.setLong(1, eventId);
                 return ps;
             }
-        }, new RowMapping<ExceptionVO>() {
-            @Override
-            public ExceptionVO extract(@Nonnull ResultSet rs) throws SQLException {
-                ExceptionVO vo = new ExceptionVO();
-                vo.id = rs.getLong(1);
-                vo.exceptionName = exceptNameDAO.get(rs.getInt(2));
-                vo.exceptionMessage = exceptMsgDAO.get(rs.getInt(3));
-
-                byte[] bsts = rs.getBytes(4);
-                if (bsts != null && bsts.length > 0) {
-                    int[] stids = Bytes.bytes2ints(bsts);
-                    StackTraceElement[] sts = new StackTraceElement[stids.length];
-                    for (int i = 0; i < stids.length; ++i) {
-                        sts[i] = stackTraceDAO.get(stids[i]);
-                    }
-                    vo.stackTraces = sts;
-                }
-
-                return vo;
-            }
-        });
+        }, VO_MAPPING);
     }
 
     private static <V> void

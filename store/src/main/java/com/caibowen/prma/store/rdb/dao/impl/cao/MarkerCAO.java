@@ -1,14 +1,11 @@
-package com.caibowen.prma.store.dao.impl.cao;
+package com.caibowen.prma.store.rdb.dao.impl.cao;
 
 import com.caibowen.prma.spi.Int8CacheProvider;
-import com.caibowen.prma.store.dao.MarkerDAO;
-import com.caibowen.prma.store.dao.impl.MarkerDAOImpl;
+import com.caibowen.prma.store.rdb.dao.MarkerDAO;
 
 import javax.inject.Inject;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author BowenCai

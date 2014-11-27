@@ -1,11 +1,11 @@
-package com.caibowen.prma.store.dao.impl;
+package com.caibowen.prma.store.rdb.dao.impl;
 
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.prma.core.StringLoader;
-import com.caibowen.prma.store.EventDO;
-import com.caibowen.prma.store.dao.EventDAO;
+import com.caibowen.prma.store.rdb.dao.EventDAO;
+import com.caibowen.prma.store.rdb.EventDO;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -117,7 +117,7 @@ public class EventDAOImpl extends JdbcSupport implements EventDAO {
             except_msg   -> id
             stack_trace  -> ids
                                -> except id
-            loop get all       -> id array
+            loop at all       -> id array
 
                 event except
 

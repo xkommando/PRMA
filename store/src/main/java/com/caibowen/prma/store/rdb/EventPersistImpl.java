@@ -1,4 +1,4 @@
-package com.caibowen.prma.store;
+package com.caibowen.prma.store.rdb;
 
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
@@ -10,7 +10,9 @@ import com.caibowen.prma.api.LogLevel;
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.api.model.ExceptionVO;
 import com.caibowen.prma.core.StringLoader;
-import com.caibowen.prma.store.dao.*;
+import com.caibowen.prma.store.EventPersist;
+import com.caibowen.prma.store.rdb.dao.*;
+
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,10 +49,29 @@ public class EventPersistImpl extends JdbcSupport implements EventPersist {
 
     @Inject StringLoader sqls;
 
+    final RowMapping<EventVO> VO_MAPPING = new RowMapping<EventVO>() {
+        @Override
+        public EventVO extract(@Nonnull ResultSet rs) throws SQLException {
+            EventVO vo = new EventVO();
+            vo.id = rs.getLong(1);
+            vo.timeCreated = rs.getLong(2);
+            int idx = (int)rs.getByte(3);
+            vo.level = LogLevel.values()[4 - idx / 2];
+            vo.flag = rs.getLong(4);
+            vo.message = rs.getString(5);
+            Object _r = rs.getObject(6);
+            vo.reserved = _r == null ? null : (Long)_r;
+            // cached
+            vo.loggerName = loggerDAO.get(rs.getInt(7));
+            vo.threadName = threadDAO.get(rs.getInt(8));
+            vo.callerStackTrace = stackTraceDAO.get(rs.getInt(9));
+            return vo;
+        }
+    };
+
     @Nullable
     @Override
     public EventVO get(final long eventId) {
-        final int[] i3 = new int[3];
         final EventVO vo = queryForObject(new StatementCreator() {
             @Nonnull
             @Override
@@ -61,50 +82,47 @@ public class EventPersistImpl extends JdbcSupport implements EventPersist {
                 ps.setLong(1, eventId);
                 return ps;
             }
-        }, new RowMapping<EventVO>() {
-            @Override
-            public EventVO extract(@Nonnull ResultSet rs) throws SQLException {
-                EventVO vo = new EventVO();
-                vo.timeCreated = rs.getLong(1);
-                int idx = (int)rs.getByte(2);
-                vo.level = LogLevel.values()[4 - idx / 2];
-                vo.flag = rs.getLong(3);
-                vo.message = rs.getString(4);
-                vo.reserved = rs.getObject(5) == null ? null : rs.getLong(5);
-                i3[0] = rs.getInt(6);
-                i3[1] = rs.getInt(7);
-                i3[2] = rs.getInt(8);
-                return vo;
-            }
-        });
+        }, VO_MAPPING);
         if (vo == null)
-            return vo;
-
-        vo.id = eventId;
-        /**
-         * cached
-         */
-        vo.loggerName = loggerDAO.get(i3[0]);
-        vo.threadName = threadDAO.get(i3[1]);
-        vo.callerStackTrace = stackTraceDAO.get(i3[2]);
-
-        final long flag = vo.flag;
-        final int exceptCount = FlagABI.exceptionCount(flag);
-        final int markerCount = FlagABI.markerCount(flag);
-        final int propCount = FlagABI.propertyCount(flag);
-
-        if (exceptCount > 0)
-            vo.exceptions = exceptionDAO.getByEvent(eventId);
-
-        if (markerCount > 0)
-            vo.markers = markerDAO.getByEvent(eventId);
-        if (propCount > 0)
-            vo.properties = propertyDAO.getByEvent(eventId);
-
+            return null;
+        normalize(vo);
         return vo;
     }
 
+    @Override
+    public List<EventVO> getWithException(final long minTime, final int limit) {
+        List<EventVO> vos = queryForList(new StatementCreator() {
+            @Nonnull
+            @Override
+            public PreparedStatement createStatement(@Nonnull Connection con) throws SQLException {
+                PreparedStatement ps = con.prepareStatement(
+                        sqls.get("EventPersist.getWithException")
+                );
+                ps.setLong(1, minTime);
+                ps.setInt(2, limit);
+                return ps;
+            }
+        }, VO_MAPPING);
+        if (vos.isEmpty())
+            return vos;
 
+        for (EventVO vo : vos)
+            normalize(vo);
+
+        return vos;
+    }
+
+    // pushBack attached fields that is cached in other DAOs
+    protected void normalize(EventVO vo) {
+        final long eventId = vo.id;
+        final long flag = vo.flag;
+        if (FlagABI.exceptionCount(flag) > 0)
+            vo.exceptions = exceptionDAO.getByEvent(eventId);
+        if (FlagABI.markerCount(flag) > 0)
+            vo.markers = markerDAO.getByEvent(eventId);
+        if (FlagABI.propertyCount(flag) > 0)
+            vo.properties = propertyDAO.getByEvent(eventId);
+    }
 
     public long persist(final EventVO event) {
 

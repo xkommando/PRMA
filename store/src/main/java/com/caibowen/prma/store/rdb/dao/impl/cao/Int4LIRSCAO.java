@@ -1,8 +1,8 @@
-package com.caibowen.prma.store.dao.impl.cao;
+package com.caibowen.prma.store.rdb.dao.impl.cao;
 
 import com.caibowen.prma.spi.Int4CacheProvider;
 import com.caibowen.gplume.misc.Assert;
-import com.caibowen.prma.store.dao.Int4DAO;
+import com.caibowen.prma.store.rdb.dao.Int4DAO;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -10,8 +10,6 @@ import javax.inject.Inject;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * for

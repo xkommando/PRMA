@@ -1,9 +1,9 @@
-package com.caibowen.prma.store.dao.impl;
+package com.caibowen.prma.store.rdb.dao.impl;
 
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.prma.core.StringLoader;
-import com.caibowen.prma.store.dao.MarkerDAO;
+import com.caibowen.prma.store.rdb.dao.MarkerDAO;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;

@@ -1,4 +1,4 @@
-package com.caibowen.prma.store;
+package com.caibowen.prma.store.rdb;
 
 import javax.annotation.Nullable;
 import java.io.Serializable;

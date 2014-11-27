@@ -13,8 +13,8 @@ import com.caibowen.prma.api.LogLevel;
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.api.model.ExceptionVO;
 import com.caibowen.prma.store.EventPersist;
-import com.caibowen.prma.store.dao.EventDAO;
-import com.caibowen.prma.store.dao.Int4DAO;
+import com.caibowen.prma.store.rdb.dao.EventDAO;
+import com.caibowen.prma.store.rdb.dao.Int4DAO;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -192,9 +192,9 @@ public class TestStore {
     //        System.out.println(eventP);
 
 ////        eventP.persist(le);
-//        System.out.println(exceptMsgDAO.get("msg level 1".hashCode()));
+//        System.out.println(exceptMsgDAO.at("msg level 1".hashCode()));
 ////        to DB 356721094
-//        System.out.println(loggerDAO.get(356721094));
+//        System.out.println(loggerDAO.at(356721094));
 
 
     @Test

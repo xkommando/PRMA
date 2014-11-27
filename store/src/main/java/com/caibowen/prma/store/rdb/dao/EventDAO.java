@@ -1,7 +1,6 @@
-package com.caibowen.prma.store.dao;
+package com.caibowen.prma.store.rdb.dao;
 
-import com.caibowen.gplume.jdbc.TransactionSupport;
-import com.caibowen.prma.store.EventDO;
+import com.caibowen.prma.store.rdb.EventDO;
 
 import java.util.List;
 
@@ -21,6 +20,6 @@ public interface EventDAO {
 
     List<Long> batchInsert(List<EventDO> ls);
 
-//    EventDO get(long id);
+//    EventDO at(long id);
 
 }

@@ -1,7 +1,7 @@
-package com.caibowen.prma.store.dao.impl;
+package com.caibowen.prma.store.rdb.dao.impl;
 
 import com.caibowen.gplume.jdbc.JdbcSupport;
-import com.caibowen.prma.store.dao.Int4DAO;
+import com.caibowen.prma.store.rdb.dao.Int4DAO;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.TreeMap;
  * @author BowenCai
  * @since 10-11-2014.
  */
-public abstract class AbstractInt4DAO<V> extends JdbcSupport implements Int4DAO<V> {
+abstract class AbstractInt4DAO<V> extends JdbcSupport implements Int4DAO<V> {
 
     protected abstract boolean doPut(int key, V value);
 
