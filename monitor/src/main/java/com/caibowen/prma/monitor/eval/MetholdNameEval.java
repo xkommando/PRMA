@@ -9,7 +9,7 @@ import com.caibowen.prma.api.model.EventVO;
 public class MetholdNameEval implements Evaluator {
 
     @Override
-    public int eval(EventVO vo) {
-        return 0;
+    public String eval(EventVO vo) {
+        throw new UnsupportedOperationException();
     }
 }

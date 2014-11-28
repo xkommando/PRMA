@@ -37,9 +37,17 @@ public enum LogLevel {
 
     public final int levelInt;
     public final String levelStr;
-    LogLevel(int i, String s) {
+    private LogLevel(int i, String s) {
         this.levelInt = i;
         this.levelStr = s;
+    }
+
+    public static LogLevel from(String name) {
+        return valueOf(name.toUpperCase());
+    }
+
+    public static LogLevel from(int iv) {
+        return values()[4 - iv / 2];
     }
 
 }

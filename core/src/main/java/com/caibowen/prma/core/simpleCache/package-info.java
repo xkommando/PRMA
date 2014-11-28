@@ -11,4 +11,4 @@
  *
  *
  */
-package com.caibowen.prma.core.memcache;
+package com.caibowen.prma.core.simpleCache;

@@ -20,7 +20,7 @@ public class PartialStrFilter extends StrFilter {
     URIPrefixTrie<Object> ignorePrefix = new URIPrefixTrie<>();
 
     @Override
-    protected void handle(String buf) {
+    public void addMatch(String buf) {
         /**
          * skip # comment;
          */

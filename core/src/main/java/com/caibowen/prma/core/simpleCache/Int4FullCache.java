@@ -1,24 +1,28 @@
-package com.caibowen.prma.core.memcache;
+package com.caibowen.prma.core.simpleCache;
 
 import com.caibowen.prma.spi.Int4CacheProvider;
-import com.caibowen.prma.spi.SimpleCacheProvider;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 /**
  * @author BowenCai
  * @since 11-11-2014.
  */
-public class Int4LIRSCache implements Int4CacheProvider {
+public class Int4FullCache implements Int4CacheProvider {
 
-    private static final long serialVersionUID = -9048450068780282326L;
+    private static final long serialVersionUID = -3202125346057371631L;
 
-    private com.caibowen.gplume.cache.mem.Int4LIRSCache<Object> cache;
+    private ConcurrentHashMap<Integer, Object> cache;
+    public Int4FullCache() {
+        cache = new ConcurrentHashMap<>(128);
+    }
+
+    public Int4FullCache(int initSz) {
+        this.cache = new ConcurrentHashMap<>(initSz * 4 / 3 + 1);
+    }
 
     @Override
     public boolean contains(@Nonnull int key) {
@@ -33,7 +37,7 @@ public class Int4LIRSCache implements Int4CacheProvider {
     @Nonnull
     @Override
     public List<Integer> keys() {
-        throw new UnsupportedOperationException("cannot retrieve keys");
+        return new ArrayList<>(cache.keySet());
     }
 
     @Override
@@ -50,8 +54,7 @@ public class Int4LIRSCache implements Int4CacheProvider {
 
     @Override
     public void putAll(@Nonnull Map<Integer, Object> vals) {
-        for (Map.Entry<Integer, Object> e : vals.entrySet())
-            cache.put(e.getKey(), e.getValue());
+        cache.putAll(vals);
     }
 
     @Override
@@ -63,23 +66,20 @@ public class Int4LIRSCache implements Int4CacheProvider {
     @Override
     public Map<Integer, Object> getAll(@Nonnull Collection<Integer> keys) {
         HashMap ret = new HashMap(keys.size() * 4 / 3 + 2);
-        for (Integer k : keys) {
+        for (Object k : keys) {
             Object v = cache.get(k);
             if (v != null)
                 ret.put(k, v);
         }
         return ret;
     }
+
+
+
     @Nonnull
     @Override
     public Map<Integer, Object> toMap() {
-        HashMap ret = new HashMap(cache.size() * 4 / 3 + 2);
-        for (Integer k : cache.keySet()) {
-            Object v = cache.get(k);
-            if (v != null)
-                ret.put(k, v);
-        }
-        return ret;
+        return new HashMap<>(cache);
     }
 
     @Nullable
@@ -91,7 +91,7 @@ public class Int4LIRSCache implements Int4CacheProvider {
 
     @Override
     public void removeAll(@Nonnull Collection<Integer> keys) {
-        for (Integer k : keys)
+        for (Object k : keys)
             cache.remove(k);
     }
 
@@ -101,7 +101,7 @@ public class Int4LIRSCache implements Int4CacheProvider {
         return new FutureTask<>(new Callable<Boolean>() {
             @Override
             public Boolean call() throws Exception {
-                return Int4LIRSCache.this.cache.containsKey(key);
+                return Int4FullCache.this.cache.contains(key);
             }
         });
     }
@@ -114,7 +114,12 @@ public class Int4LIRSCache implements Int4CacheProvider {
     @Nonnull
     @Override
     public Future<List<Integer>> keysAsync() {
-        throw new UnsupportedOperationException("cannot retrieve keys");
+        return new FutureTask<>(new Callable<List<Integer>>() {
+            @Override
+            public List<Integer> call() throws Exception {
+                return new ArrayList<>(Int4FullCache.this.cache.keySet());
+            }
+        });
     }
 
     @Override
@@ -140,9 +145,7 @@ public class Int4LIRSCache implements Int4CacheProvider {
 
     @Override
     public void putAllAsync(@Nonnull Map<Integer, Object> vals) {
-        for (Map.Entry<Integer, Object> e : vals.entrySet()) {
-            cache.put(e.getKey(), e.getValue());
-        }
+        cache.putAll(vals);
     }
 
     @Nonnull
@@ -151,7 +154,7 @@ public class Int4LIRSCache implements Int4CacheProvider {
         return new FutureTask<>(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                return Int4LIRSCache.this.cache.get(key);
+                return Int4FullCache.this.cache.get(key);
             }
         });
     }
@@ -162,7 +165,7 @@ public class Int4LIRSCache implements Int4CacheProvider {
         return new FutureTask<>(new Callable<Map<Integer, Object>>() {
             @Override
             public Map<Integer, Object> call() throws Exception {
-                return Int4LIRSCache.this.getAll(keys);
+                return Int4FullCache.this.getAll(keys);
             }
         });
     }
@@ -184,7 +187,7 @@ public class Int4LIRSCache implements Int4CacheProvider {
         return new FutureTask<>(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
-                Object v = Int4LIRSCache.this.cache.remove(key);
+                Object v = Int4FullCache.this.cache.remove(key);
                 return returnVal ? v : null;
             }
         });

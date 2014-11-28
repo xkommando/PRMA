@@ -36,7 +36,7 @@ public class StrFilter extends AbstractFilter<String> {
 
     static Object NA = new Object();
 
-    protected void handle(String buf) {
+    public void addMatch(String buf) {
 
         /**
          * skip # comment;
@@ -49,6 +49,10 @@ public class StrFilter extends AbstractFilter<String> {
     }
 
     public void start() {
+        if (Str.Utils.isBlank(configPath)) {
+            started = true;
+            return;
+        }
         InputStreamSupport streamSupport = InputStreamSupport.DEFAULT_SUPPORT;
         streamSupport.withPath(configPath, new InputStreamCallback() {
             @Override
@@ -57,13 +61,12 @@ public class StrFilter extends AbstractFilter<String> {
                 String buf;
                 while (null != (buf = reader.readLine())) {
                     if (Str.Utils.notBlank(buf))
-                        handle(buf);
+                        addMatch(buf);
                 }
 
                 reader.close();
             }
         });
-        started = true;
     }
 
     @Override

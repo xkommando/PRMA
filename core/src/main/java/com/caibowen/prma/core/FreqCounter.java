@@ -1,4 +1,4 @@
-package com.caibowen.prma.core.filter.freq;
+package com.caibowen.prma.core;
 
 import com.caibowen.gplume.common.collection.primitive.Int4CircularList;
 
@@ -10,14 +10,20 @@ import java.util.concurrent.ArrayBlockingQueue;
  * @author BowenCai
  * @since 26/11/2014.
  */
-public class Counter {
+public class FreqCounter {
 
     public static final long OFFSET = System.currentTimeMillis();
     double period = 1;
 
-    Int4CircularList history = new Int4CircularList(128);
+    Int4CircularList history = new Int4CircularList(256);
 
-    public void add() {
+    public void count(int num) {
+        int now = (int)(System.currentTimeMillis() - OFFSET);
+        while (num-- > 0)
+            history.add(now);
+        cut(now);
+    }
+    public void count() {
         int now = (int)(System.currentTimeMillis() - OFFSET);
         history.add(now);
         cut(now);
@@ -41,6 +47,17 @@ public class Counter {
         int limit = now - (int)(1000 * period);
         while (!history.isEmpty() && history.front() < limit)
             history.popFront();
+    }
+
+    public void setBufferSize(int size) {
+        history.ensureCapacity(size);
+    }
+    public double getPeriod() {
+        return period;
+    }
+
+    public void setPeriod(double period) {
+        this.period = period;
     }
 
     @Override

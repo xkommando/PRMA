@@ -1,6 +1,9 @@
 package com.caibowen.prma.monitor.eval;
 
+import com.caibowen.gplume.annotation.Const;
 import com.caibowen.prma.api.model.EventVO;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author BowenCai
@@ -8,6 +11,8 @@ import com.caibowen.prma.api.model.EventVO;
  */
 public interface Evaluator {
 
+    public static final String ACCEPT = Evaluator.class.getName() + ".ACCEPT";
+    public static final String REJECT = Evaluator.class.getName() + ".REJECT";
     /**
      * TODO
      * 1. store cache
@@ -25,5 +30,5 @@ public interface Evaluator {
      * 3. socket logger
      * 4. distributed logging system demo
      */
-    int eval(EventVO vo);
+    String eval(@Nonnull @Const EventVO vo);
 }

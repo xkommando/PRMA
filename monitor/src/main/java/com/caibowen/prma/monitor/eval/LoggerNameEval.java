@@ -11,11 +11,19 @@ import javax.inject.Inject;
  */
 public class LoggerNameEval implements Evaluator {
 
-    @Inject StrFilter filter;
+    @Inject
+    protected StrFilter filter;
 
     @Override
-    public int eval(EventVO vo) {
-        return filter.accept(vo.getLoggerName());
+    public String eval(EventVO vo) {
+        return filter.accept(vo.loggerName) == 1 ? ACCEPT : REJECT;
     }
 
+    public StrFilter getFilter() {
+        return filter;
+    }
+
+    public void setFilter(StrFilter filter) {
+        this.filter = filter;
+    }
 }

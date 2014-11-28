@@ -1,33 +1,32 @@
 package com.caibowen.prma.core.test;
 
-import com.caibowen.prma.core.filter.freq.Counter;
+import com.caibowen.prma.core.FreqCounter;
 import org.junit.Test;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
-import static org.junit.Assert.*;
 
 public class CounterTest {
 
-
-
-    Counter counter = new Counter();
+    FreqCounter counter = new FreqCounter();
 
     @Test
     public void t1() throws Throwable {
+        counter.setPeriod(1.0);
+        counter.setBufferSize(1024);
+
         int i = 0;
-        while (i++ < 1000) {
-            counter.add();
+        while (i++ < 10000) {
+            counter.count(2);
+            Thread.sleep(1);
+        }
+        System.out.println(counter.freq());
+        Thread.sleep(500);
+        System.out.println(counter.freqToNow());
+
+        while (i-- > 0) {
+            counter.count();
             Thread.sleep(2);
         }
         System.out.println(counter.freq());
-        while (i-- > 0) {
-            counter.add();
-            Thread.sleep(4);
-        }
-        System.out.println(counter.freq());
-        Thread.sleep(2000);
+        Thread.sleep(1500);
         System.out.println(counter.freqToNow());
     }
 }

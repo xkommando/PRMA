@@ -1,5 +1,6 @@
 package com.caibowen.prma.store;
 
+import com.caibowen.gplume.annotation.Const;
 import com.caibowen.prma.api.model.EventVO;
 
 import javax.annotation.Nonnull;
@@ -12,9 +13,9 @@ import java.util.List;
  */
 public interface EventPersist {
 
-    long  persist(@Nonnull EventVO event);
+    long  persist(@Nonnull @Const EventVO event);
 
-    void batchPersist(@Nonnull List<EventVO> ls);
+    void batchPersist(@Nonnull @Const List<EventVO> ls);
 
     /**
      *
@@ -23,6 +24,6 @@ public interface EventPersist {
     @Nullable
     EventVO get(long id);
 
-
+    @Nonnull
     List<EventVO> getWithException(long minTime, int limit);
 }

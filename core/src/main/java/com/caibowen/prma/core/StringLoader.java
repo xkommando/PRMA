@@ -36,14 +36,14 @@ public class StringLoader implements LifeCycle {
 
         for (int i = 0; i < paths.size(); i++) {
             if (Str.Utils.isBlank(paths.get(i)))
-                throw new IllegalArgumentException("empty path index " + i);
+                throw new IllegalArgumentException("empty path at index " + i);
         }
 
         if (streamProvider == null)
             streamProvider = InputStreamProviderProxy.DEFAULT_PROXY;
 
-        final Properties _p = new Properties();
         map = new ConcurrentHashMap<>(256);
+        final Properties _p = new Properties();
         for (final String _path : paths) {
             new InputStreamSupport(streamProvider).withPath(_path, new InputStreamCallback() {
                 @Override
@@ -65,6 +65,8 @@ public class StringLoader implements LifeCycle {
         }
 
         started = true;
+        paths = null;
+        streamProvider = null;
     }
 
 
