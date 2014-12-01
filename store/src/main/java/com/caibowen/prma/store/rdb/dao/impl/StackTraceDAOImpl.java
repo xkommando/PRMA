@@ -3,7 +3,7 @@ package com.caibowen.prma.store.rdb.dao.impl;
 import com.caibowen.gplume.common.Pair;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
-import com.caibowen.prma.core.StringLoader;
+import com.caibowen.prma.core.StrLoader;
 import com.caibowen.prma.store.rdb.dao.StackTraceDAO;
 
 import javax.annotation.Nonnull;
@@ -25,7 +25,11 @@ import java.util.Map;
 public class StackTraceDAOImpl extends AbstractInt4DAO<StackTraceElement> implements StackTraceDAO {
 
     @Inject
-    StringLoader sqls;
+    final StrLoader sqls;
+
+    public StackTraceDAOImpl(StrLoader loader) {
+        this.sqls = loader;
+    }
 
     public static final RowMapping<StackTraceElement> ST_MAPPING = new RowMapping<StackTraceElement>() {
         @Override

@@ -15,7 +15,7 @@ public class FlagABITest {
         Set mkset = new TreeSet();
         Map prop = new HashMap(); prop.put("k1", "value1");
 
-        long flag = FlagABI.getFlag(prop, mkset, exceptLs);
+        long flag = FlagABI.build(prop, mkset, exceptLs);
         assertEquals(FlagABI.exceptionCount(flag), exceptLs.size());
         assertEquals(FlagABI.markerCount(flag), mkset.size());
         assertEquals(FlagABI.propertyCount(flag), prop.size());

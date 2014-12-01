@@ -1,0 +1,19 @@
+package com.caibowen.prma.monitor.eval
+
+import com.caibowen.prma.api.model.EventVO
+
+/**
+ * @author BowenCai
+ * @since  30/11/2014.
+ */
+class LevelEval(lowerBound: Int, upperBound: Int) extends Evaluator {
+
+  override def eval(vo : EventVO): String = {
+    val level = vo.level.levelInt
+    if (lowerBound <= level && level <= upperBound)
+      Evaluator.ACCEPT
+    else
+      Evaluator.REJECT
+  }
+
+}

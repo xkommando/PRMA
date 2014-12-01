@@ -1,13 +1,24 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 .idea/
+/classes
+/dist
+/out
+/SDK/*SDK
+/target
+/*.bat
+bin/
+build/
+
+# mpeltonen/sbt-idea plugin
+.idea_modules/
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
-bin/
-build/
-target/
+
+*.class
+
 *.jar
 *.war
 *.ear
@@ -24,13 +35,7 @@ target/
 *.ipr
 *.iws
 
-## Plugin-specific files:
 
-# IntelliJ
-out/
-
-# mpeltonen/sbt-idea plugin
-.idea_modules/
 
 # JIRA plugin
 atlassian-ide-plugin.xml

@@ -16,9 +16,9 @@ public final class FlagABI {
 
     //    4294967296 >= exp
 //    65536   >= markers
-    public static final long getFlag(@Nullable Map prop,
-                                     @Nullable Set<String> markers,
-                                     @Nullable List<ExceptionVO> exceptions) {
+    public static final long build(@Nullable Map prop,
+                                   @Nullable Set<String> markers,
+                                   @Nullable List<ExceptionVO> exceptions) {
 
         int sz1 = exceptions != null ? exceptions.size() : 0;
 

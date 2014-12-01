@@ -5,8 +5,8 @@ import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
 import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.prma.api.model.ExceptionVO;
-import com.caibowen.prma.core.StringLoader;
-import com.caibowen.prma.core.filter.basic.StrFilter;
+import com.caibowen.prma.core.StrLoader;
+import com.caibowen.prma.core.filter.StrFilter;
 import com.caibowen.prma.store.rdb.ExceptionDO;
 import com.caibowen.prma.store.rdb.dao.ExceptionDAO;
 import com.caibowen.prma.store.rdb.dao.Int4DAO;
@@ -24,7 +24,7 @@ import java.util.*;
 public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
 
     @Inject
-    StrFilter exceptionFilter; // actual -> partial string filter
+    StrFilter exceptionFilter; // actual: partial string filter
 
     @Inject
     StrFilter stackTraceFilter; // class name based filtering
@@ -34,7 +34,11 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
     @Inject StackTraceDAO stackTraceDAO;
 
     @Inject
-    StringLoader sqls;
+    final StrLoader sqls;
+
+    public ExceptionDAOImpl(StrLoader loader) {
+        this.sqls = loader;
+    }
 
     RowMapping<ExceptionVO> VO_MAPPING = new RowMapping<ExceptionVO>() {
 
@@ -99,7 +103,9 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
             if (! hasKey(vo.id))
                 dos.add(getDO(vo));
         }
+
         putRelationVO(eventId, vols);
+        // reuse list
         if (dos.size() > 0) {
             vols.clear();
             vols.addAll(dos);
@@ -262,11 +268,4 @@ public class ExceptionDAOImpl extends JdbcSupport implements ExceptionDAO {
         this.stackTraceDAO = stackTraceDAO;
     }
 
-    public StringLoader getSqls() {
-        return sqls;
-    }
-
-    public void setSqls(StringLoader sqls) {
-        this.sqls = sqls;
-    }
 }

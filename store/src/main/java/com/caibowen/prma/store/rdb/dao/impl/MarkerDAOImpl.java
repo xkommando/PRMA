@@ -2,7 +2,7 @@ package com.caibowen.prma.store.rdb.dao.impl;
 
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
-import com.caibowen.prma.core.StringLoader;
+import com.caibowen.prma.core.StrLoader;
 import com.caibowen.prma.store.rdb.dao.MarkerDAO;
 
 import javax.annotation.Nonnull;
@@ -17,15 +17,16 @@ import java.util.TreeSet;
  * @author BowenCai
  * @since 6-11-2014.
  */
-public class MarkerDAOImpl extends StrDAOImple implements MarkerDAO {
+public class MarkerDAOImpl extends StrDAOImpl implements MarkerDAO {
 
     private static final long serialVersionUID = 7519117476159010044L;
 
     @Inject
-    StringLoader sqls;
+    final StrLoader sqls;
 
-    public MarkerDAOImpl() {
+    public MarkerDAOImpl(StrLoader loader) {
         super("`marker_name`");
+        this.sqls = loader;
     }
 
     @Override

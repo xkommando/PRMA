@@ -1,6 +1,6 @@
 package com.caibowen.prma.store.rdb.dao.impl.cao;
 
-import com.caibowen.gplume.annotation.ConstMethod;
+import com.caibowen.gplume.annotation.Const;
 import com.caibowen.gplume.misc.Assert;
 import com.caibowen.prma.spi.Int4CacheProvider;
 import com.caibowen.prma.store.rdb.dao.Int4DAO;
@@ -79,7 +79,7 @@ public class Int4FullCAO<V> implements Int4DAO<V>, Serializable {
     /**
      * return new array list of values.
      */
-    @ConstMethod
+    @Const
     @Nonnull
     @Override
     public List<Integer> keys() {

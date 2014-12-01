@@ -3,8 +3,7 @@ package com.caibowen.prma.store.rdb.dao.impl;
 import com.caibowen.gplume.common.Pair;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
-import com.caibowen.prma.core.StringLoader;
-import com.caibowen.prma.store.rdb.dao.MarkerDAO;
+import com.caibowen.prma.core.StrLoader;
 import com.caibowen.prma.store.rdb.dao.PropertyDAO;
 
 import javax.annotation.Nonnull;
@@ -24,10 +23,12 @@ import java.util.TreeMap;
  */
 public class PropertyDAOImpl extends AbstractInt4DAO<Pair<String, String> > implements PropertyDAO {
 
-
     @Inject
-    StringLoader sqls;
+    final StrLoader sqls;
 
+    public PropertyDAOImpl(StrLoader loader) {
+        this.sqls = loader;
+    }
 
     @Override
     public Map<String, Object> getByEvent(final long eventId) {

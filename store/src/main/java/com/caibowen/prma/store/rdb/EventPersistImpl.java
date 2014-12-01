@@ -9,7 +9,7 @@ import com.caibowen.prma.api.FlagABI;
 import com.caibowen.prma.api.LogLevel;
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.api.model.ExceptionVO;
-import com.caibowen.prma.core.StringLoader;
+import com.caibowen.prma.core.StrLoader;
 import com.caibowen.prma.store.EventPersist;
 import com.caibowen.prma.store.rdb.dao.*;
 
@@ -47,7 +47,11 @@ public class EventPersistImpl extends JdbcSupport implements EventPersist {
 
     @Inject MarkerDAO markerDAO;
 
-    @Inject StringLoader sqls;
+    @Inject final StrLoader sqls;
+
+    public EventPersistImpl(StrLoader loader) {
+        this.sqls = loader;
+    }
 
     final RowMapping<EventVO> VO_MAPPING = new RowMapping<EventVO>() {
         @Override
@@ -282,11 +286,4 @@ public class EventPersistImpl extends JdbcSupport implements EventPersist {
         this.markerDAO = markerDAO;
     }
 
-    public StringLoader getSqls() {
-        return sqls;
-    }
-
-    public void setSqls(StringLoader sqls) {
-        this.sqls = sqls;
-    }
 }

@@ -4,11 +4,10 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import com.caibowen.gplume.common.collection.ImmutableArraySet;
-import com.caibowen.gplume.misc.Bytes;
 import com.caibowen.prma.api.FlagABI;
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.api.model.ExceptionVO;
-import com.caibowen.prma.core.filter.basic.StrFilter;
+import com.caibowen.prma.core.filter.StrFilter;
 import com.caibowen.prma.spi.EventAdaptor;
 import org.slf4j.Marker;
 
@@ -35,7 +34,7 @@ public class EventAdapter implements EventAdaptor<ILoggingEvent> {
         Map prop = LogEventAux.extractProperties(event);
         Set<String> makers = extractMarkers(event);
         List<ExceptionVO> exs = extractExceptionVOs(event);
-        Long flag = FlagABI.getFlag(prop, makers, exs);
+        Long flag = FlagABI.build(prop, makers, exs);
 
         return new EventVO(event.getTimeStamp(),
                 LogEventAux.level(event.getLevel()),

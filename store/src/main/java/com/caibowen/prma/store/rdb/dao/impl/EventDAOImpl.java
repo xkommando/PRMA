@@ -3,7 +3,7 @@ package com.caibowen.prma.store.rdb.dao.impl;
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.StatementCreator;
 import com.caibowen.gplume.jdbc.mapper.RowMapping;
-import com.caibowen.prma.core.StringLoader;
+import com.caibowen.prma.core.StrLoader;
 import com.caibowen.prma.store.rdb.dao.EventDAO;
 import com.caibowen.prma.store.rdb.EventDO;
 
@@ -24,8 +24,11 @@ public class EventDAOImpl extends JdbcSupport implements EventDAO {
     public static final String[] AUTO_GEN_ID = {"id"};
 
     @Inject
-    StringLoader sqls;
+    final StrLoader sqls;
 
+    public EventDAOImpl(StrLoader loader) {
+        this.sqls = loader;
+    }
 
     @Override
     public long insert(final EventDO po) {
