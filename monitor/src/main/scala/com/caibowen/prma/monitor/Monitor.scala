@@ -16,8 +16,8 @@ import scala.collection.mutable
 * @author BowenCai
 * @since  30/11/2014.
 */
-
-class Monitor(executor: Executor, evaluator: Evaluator) {
+@SerialVersionUID(7376528395328272879L)
+class Monitor(executor: Executor, evaluator: Evaluator) extends Serializable {
 
   private[this] val LOG = LoggerFactory.getLogger(classOf[Monitor])
 
@@ -31,7 +31,7 @@ class Monitor(executor: Executor, evaluator: Evaluator) {
   def setNotifiers(ns: java.util.List[Notifier]): Unit = {
     import scala.collection.JavaConversions.asScalaBuffer
     for (n <- ns)
-      notifiers += (n.getName -> n)
+      notifiers += (n.name -> n)
   }
 
   @Const
@@ -42,14 +42,13 @@ class Monitor(executor: Executor, evaluator: Evaluator) {
     } catch {
       case ex => this.LOG.error("Could not evaluate [" + vo + "] with evaluator [" + evaluator + "]", ex.asInstanceOf[AnyRef])
     }
-
     result match {
       case Evaluator.ACCEPT => {
         executor.execute(new Runnable {
           override def run(): Unit = {
             for ((name, noti) <- notifiers) {
               try {
-                noti.notify(vo)
+                noti.send(vo)
               }
               catch {
                 case e => {
@@ -69,16 +68,16 @@ class Monitor(executor: Executor, evaluator: Evaluator) {
           executor.execute(new Runnable {
             override def run(): Unit = {
               try {
-                noti.notify(vo)
+                noti.send(vo)
               } catch {
                 case ex =>
                   LOG.error("Could not notify ["
                     + vo + "] with notifier ["
-                    + noti.getName() + "]", ex.asInstanceOf[AnyRef]);
+                    + noti.name + "]", ex.asInstanceOf[AnyRef]);
               }
             }
           })
-        else LOG.warn("Could not find notifier named [" + result + "] for event[" + vo + "]");
+        else LOG.warn("Could not find notifier named [" + result + "] for event [" + vo + "]");
       }
     }
   }

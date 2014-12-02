@@ -17,6 +17,7 @@ class StrFilter(configPath: String) extends InputStreamSupport with Filter[Strin
   protected[this] val matchFull = new mutable.HashSet[String]
 
 
+  @inline
   protected def parse(ptn: String): Unit = {
     matchFull.add(ptn)
   }
@@ -49,16 +50,16 @@ class StrFilter(configPath: String) extends InputStreamSupport with Filter[Strin
     started = true
   }
 
+  @inline
   override def doAccept(str: String): Int = {
     if (matchFull.contains(str))
       1
     else
       -1
   }
+
   override def stop(): Unit = {
     matchFull.clear()
-//    matchPrefix.clear()
-//    matchSuffix.clear()
   }
 
 

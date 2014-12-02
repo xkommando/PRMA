@@ -1,0 +1,6 @@
+sun.reflect.NativeMethodAccessorImpl
+sun.reflect.DelegatingMethodAccessorImpl
+org.junit.internal*
+org.junit.runner*
+com.intellij*
+  #comment

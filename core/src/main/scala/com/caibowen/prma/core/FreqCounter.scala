@@ -8,7 +8,8 @@ import scala.beans.BeanProperty
  * @author BowenCai
  * @since  29/11/2014.
  */
-class FreqCounter{
+@SerialVersionUID(-1151573363320687158L)
+class FreqCounter extends Serializable {
 
   private [this] var OFFSET = System.currentTimeMillis()
   private [this] val history = new Int4CircularList(256)
@@ -17,19 +18,25 @@ class FreqCounter{
 
   def count(num : Int) : Unit = {
     val now : Int = (System.currentTimeMillis - OFFSET).toInt
-    for (i <- 1 to num) history.add(now)
-    cut(now)
+    this.synchronized {
+      for (i <- 1 to num) history.add(now)
+      cut(now)
+    }
   }
 
   def count() : Unit = {
     val now : Int = (System.currentTimeMillis - OFFSET).toInt
-    history.add(now)
-    cut(now)
+    this synchronized {
+      history.add(now)
+      cut(now)
+    }
   }
 
   def reset(): Unit = {
-    history.clear()
-    OFFSET = System.currentTimeMillis()
+    this synchronized {
+      history.clear()
+      OFFSET = System.currentTimeMillis()
+    }
   }
 
   def freq : Double = {
@@ -40,7 +47,9 @@ class FreqCounter{
 
   def freqToNow : Double = {
     val now : Int = (System.currentTimeMillis - OFFSET).toInt
-    cut(now)
+    this.synchronized {
+      cut(now)
+    }
     freq
   }
 

@@ -16,6 +16,7 @@ abstract class AbstractInt4DAO<V> extends JdbcSupport implements Int4DAO<V> {
     protected abstract boolean doPut(int key, V value);
 
     public boolean put(final int key, @Nonnull final V value) {
+
         return hasKey(key) ? update(key, value) : doPut(key, value);
     }
 
@@ -36,7 +37,6 @@ abstract class AbstractInt4DAO<V> extends JdbcSupport implements Int4DAO<V> {
     @Override
     public void start() {
     }
-
     @Override
     public void stop() {
     }
@@ -44,6 +44,17 @@ abstract class AbstractInt4DAO<V> extends JdbcSupport implements Int4DAO<V> {
     @Override
     public boolean isStarted() {
         return getDataSource() != null;
+    }
+
+    // scala trash
+    @Override
+    public boolean started() {
+        throw new UnsupportedOperationException("use isStarted");
+    }
+
+    @Override
+    public void started_$eq(boolean started) {
+        throw new UnsupportedOperationException();
     }
 
 }

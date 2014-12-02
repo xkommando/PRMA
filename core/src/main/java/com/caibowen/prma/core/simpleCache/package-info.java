@@ -5,7 +5,8 @@
 
 
 /**
- * provide in memory cache facilities
+ *
+ * provide in-memory cache facilities
  *
  * for single machine
  *

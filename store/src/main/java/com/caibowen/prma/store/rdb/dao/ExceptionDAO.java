@@ -3,7 +3,7 @@ package com.caibowen.prma.store.rdb.dao;
 import com.caibowen.prma.api.model.ExceptionVO;
 import com.caibowen.prma.store.rdb.ExceptionDO;
 
-import java.util.List;
+import scala.collection.immutable.List;
 
 /**
  * @author BowenCai
@@ -15,5 +15,5 @@ public interface ExceptionDAO {
     boolean insertIfAbsent(long eventId, List<ExceptionVO> prop) throws Exception;
     boolean insertAll(long eventId, List<ExceptionDO> vols) throws Exception;
 
-    List<ExceptionVO> getByEvent(long eventId);
+//    List<ExceptionVO> getByEvent(long eventId);
 }

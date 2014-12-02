@@ -8,8 +8,9 @@ import com.caibowen.prma.api.model.EventVO
  */
 class LevelEval(lowerBound: Int, upperBound: Int) extends Evaluator {
 
+  @inline
   override def eval(vo : EventVO): String = {
-    val level = vo.level.levelInt
+    val level = vo.level.id
     if (lowerBound <= level && level <= upperBound)
       Evaluator.ACCEPT
     else

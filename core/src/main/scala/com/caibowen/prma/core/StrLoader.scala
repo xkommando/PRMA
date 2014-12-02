@@ -3,8 +3,9 @@ package com.caibowen.prma.core
 import java.io.InputStream
 import java.util.Properties
 
-import com.caibowen.gplume.context.{InputStreamCallback, InputStreamProvider, InputStreamProviderProxy, InputStreamSupport}
+import com.caibowen.gplume.context.{InputStreamCallback, InputStreamProviderProxy, InputStreamSupport}
 import com.caibowen.gplume.misc.Str.Utils._
+
 import scala.collection.JavaConversions._
 
 /**
@@ -14,9 +15,8 @@ import scala.collection.JavaConversions._
 class StrLoader(private[this] val paths: java.util.List[String]) extends InputStreamSupport with LifeCycle{
 
   private[this] val map = new scala.collection.mutable.HashMap[String, String]
-  private[this] var started = false
 
-  def start(): Unit = {
+  override def start(): Unit = {
 
     if (paths == null || paths.size < 1)
       throw new IllegalArgumentException("Empty paths")
@@ -33,7 +33,7 @@ class StrLoader(private[this] val paths: java.util.List[String]) extends InputSt
           if (p.endsWith(".xml"))
             props.loadFromXML(stream)
           else props.load(stream)
-          for ((k, v) <- props if !map.put(k, v).isEmpty)
+          for ((k, v) <- props if map.put(k, v).isDefined)
             throw new IllegalArgumentException(s"Duplicated key[$k]value[$v]")
         }
       })
@@ -48,12 +48,9 @@ class StrLoader(private[this] val paths: java.util.List[String]) extends InputSt
   def put(k: String, v: String) = map.put(k, v)
   def remove(k:String) = map.remove(k)
 
-  def stop(): Unit = {
+  override def stop(): Unit = {
     map.clear()
     started = false
   }
 
-  def isStarted: Boolean = {
-    started
-  }
 }

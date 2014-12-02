@@ -20,9 +20,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scala.collection.JavaConversions;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
+import javax.tools.JavaCompiler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -197,42 +199,43 @@ public class TestStore {
 //        System.out.println(loggerDAO.at(356721094));
 
 
-    @Test
-    public void batchInsert() {
-        System.out.println("enter batch");
-
-        List<EventVO> eventls = new ArrayList<>(16);
-
-        Throwable[] _fk = new Throwable[]{new RuntimeException("msg level 3",
-                new IOException("msg level 2",
-                        new FileNotFoundException("msg level 1"))), new IOException("msg level 1")};
-
-        long t1 = System.currentTimeMillis();
-        StackTraceElement s = (new Throwable().getStackTrace()[0]);
-
-        final ArrayList<ExceptionVO> vols = new ArrayList<ExceptionVO>(16);
-
-        for (Throwable t : _fk)
-            vols.add(new ExceptionVO(t.getClass().getName(), t.getMessage(), t.getStackTrace()));
-
-        Set<String> mks = new ImmutableArraySet<>(new Object[]{"marker1", "marker2", "mk3"});
-
-        for (int i = 0; i < 20; i++) {
-            eventls.add(new EventVO(
-                    System.currentTimeMillis(),
-                    LogLevel.ERROR, 0L,
-                    "logger name ??? haha " + i,
-                    Thread.currentThread().getName(),
-                    s,
-                    "hahaha messsssage " + i,
-                    -1L,
-                    null, vols, mks));
-        }
-
-        eventP.batchPersist(eventls);
-        long tt = System.currentTimeMillis();
-        System.out.println("Time: " + (tt - t1));
-    }
+//    @Test
+//    public void batchInsert() {
+//        System.out.println("enter batch");
+//
+//        List<EventVO> eventls = new ArrayList<>(16);
+//
+//        Throwable[] _fk = new Throwable[]{new RuntimeException("msg level 3",
+//                new IOException("msg level 2",
+//                        new FileNotFoundException("msg level 1"))), new IOException("msg level 1")};
+//
+//        long t1 = System.currentTimeMillis();
+//        StackTraceElement s = (new Throwable().getStackTrace()[0]);
+//
+//        final ArrayList<ExceptionVO> vols = new ArrayList<ExceptionVO>(16);
+//
+//        for (Throwable t : _fk) {
+//            scala.collection.immutable.List ls;
+//            vols.add(new ExceptionVO(t.getClass().getName(), t.getMessage(), t.getStackTrace()));
+//        }
+//        Set<String> mks = new ImmutableArraySet<>(new Object[]{"marker1", "marker2", "mk3"});
+//
+//        for (int i = 0; i < 20; i++) {
+//            eventls.add(new EventVO(
+//                    System.currentTimeMillis(),
+//                    LogLevel.DEBUG(), 0L,
+//                    "logger name ??? haha " + i,
+//                    Thread.currentThread().getName(),
+//                    s,
+//                    "hahaha messsssage " + i,
+//                    -1L,
+//                    null, vols, mks));
+//        }
+//
+//        eventP.batchPersist(eventls);
+//        long tt = System.currentTimeMillis();
+//        System.out.println("Time: " + (tt - t1));
+//    }
 //    new FileNotFoundException("msg level 1")));
 
 //    LoggingEvent le = new LoggingEvent(
@@ -275,7 +278,7 @@ public class TestStore {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                batchInsert();
+//                batchInsert();
             }
         });
         executor.shutdown();

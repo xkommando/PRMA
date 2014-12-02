@@ -23,6 +23,7 @@ import java.util.TreeMap;
  */
 public class PropertyDAOImpl extends AbstractInt4DAO<Pair<String, String> > implements PropertyDAO {
 
+
     @Inject
     final StrLoader sqls;
 

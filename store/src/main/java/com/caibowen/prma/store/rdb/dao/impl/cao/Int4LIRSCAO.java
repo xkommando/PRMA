@@ -192,4 +192,10 @@ public class Int4LIRSCAO<V> implements Int4DAO<V> {
         }
         return ov;
     }
+
+    // scala trash
+    @Override
+    public boolean started() {throw new UnsupportedOperationException("use isStarted");}
+    @Override
+    public void started_$eq(boolean started) {throw new UnsupportedOperationException();}
 }

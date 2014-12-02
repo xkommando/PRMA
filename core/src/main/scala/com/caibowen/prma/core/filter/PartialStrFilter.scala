@@ -25,6 +25,8 @@ class PartialStrFilter(configPath: String) extends StrFilter(configPath) {
       matchFull.add(ptn)
 
   }
+
+  @inline
   override def doAccept(str: String): Int = {
     if (matchFull.contains(str)
       || matchPrefix.matchPrefix(str) != null

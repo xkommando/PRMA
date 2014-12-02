@@ -10,6 +10,7 @@ class DummyStrFilter extends StrFilter(null) {
 
   }
 
+  @inline
   override def doAccept(s: String): Int= {
     -1
   }

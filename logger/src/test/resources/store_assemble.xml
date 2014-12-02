@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<beans namespace="prma::internal::store">
+
+    <!--DataSource shall be added from this context BEFORE CENTURY-->
+
+    <bean id="exceptNameDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImpl">
+        <construct val="`exception_name`"/>
+        <prop name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="exceptMsgDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImpl">
+        <construct val="`exception_msg`"/>
+        <prop name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="loggerDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImpl">
+        <construct val="`logger_name`"/>
+        <prop name="dataSource" ref="dataSource"/>
+    </bean>
+    <bean id="threadDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImpl">
+        <construct val="`thread_name`"/>
+        <prop name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="sqlLoader" class="com.caibowen.prma.core.StrLoader" aftercall="start">
+        <construct name="paths">
+            <list>
+                <val>classpath:query2_mysql.xml</val>
+            </list>
+        </construct>
+    </bean>
+
+    <bean id="classNameFilter" class="com.caibowen.prma.core.filter.PartialStrFilter" aftercall="start">
+        <construct val="ignored_classes.txt"/>
+    </bean>
+
+    <bean id="markerDAO" class="com.caibowen.prma.store.rdb.dao.impl.MarkerDAOImpl">
+        <construct ref="sqlLoader"/>
+        <prop name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="stackTraceDAO" class="com.caibowen.prma.store.rdb.dao.impl.StackTraceDAOImpl">
+        <construct ref="sqlLoader"/>
+        <prop name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="exceptionDAO" class="com.caibowen.prma.store.rdb.dao.impl.ExceptionDAOImpl">
+        <construct ref="sqlLoader"/>
+        <prop name="dataSource" ref="dataSource"/>
+        <prop name="exceptNameDAO" ref="exceptNameDAO"/>
+        <prop name="exceptMsgDAO" ref="exceptMsgDAO"/>
+        <prop name="stackTraceDAO" ref="stackTraceDAO"/>
+        <prop name="exceptionFilter" ref="classNameFilter" />
+        <prop name="stackTraceFilter" ref="classNameFilter" />
+    </bean>
+
+    <bean id="propertyDAO" class="com.caibowen.prma.store.rdb.dao.impl.PropertyDAOImpl">
+        <construct ref="sqlLoader"/>
+        <prop name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="eventSQL" class="com.caibowen.prma.core.StrLoader" aftercall="start">
+        <construct name="paths">
+            <list>
+                <val>classpath:query1_mysql.xml</val>
+            </list>
+        </construct>
+    </bean>
+
+    <bean id="eventDAO" class="com.caibowen.prma.store.rdb.dao.impl.EventDAOImpl">
+        <construct ref="eventSQL"/>
+        <prop name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="eventPersist" class="com.caibowen.prma.store.rdb.EventPersistImpl">
+        <construct ref="eventSQL"/>
+        <prop name="dataSource" ref="dataSource"/>
+        <prop name="threadDAO" ref="threadDAO"/>
+        <prop name="loggerDAO" ref="loggerDAO"/>
+        <prop name="stackTraceDAO" ref="stackTraceDAO"/>
+        <prop name="propertyDAO" ref="propertyDAO"/>
+        <prop name="eventDAO" ref="eventDAO"/>
+        <prop name="exceptionDAO" ref="exceptionDAO"/>
+        <prop name="markerDAO" ref="markerDAO"/>
+    </bean>
+
+    <bean class="com.caibowen.prma.store.rdb.Test" aftercall="init">
+        <construct>
+            <ref>eventSQL</ref>
+            <ref>dataSource</ref>
+        </construct>
+        <prop name="b1" ref="eventSQL"/>
+    </bean>
+
+</beans>

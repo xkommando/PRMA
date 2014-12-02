@@ -30,14 +30,14 @@ public class TestQuery {
 
     @Test
     public void q1() {
-        System.err.println(JSON.toJSONString(eventP.get(363L), true));
+//        System.err.println(JSON.toJSONString(eventP.get(363L), true));
     }
 
     @Test
     public void q2() {
-        List<EventVO> ls = eventP.getWithException(0, 100);
-        for (EventVO o : ls)
-            System.err.println(JSON.toJSONString(o, true));
+//        List<EventVO> ls = eventP.getWithException(0, 100);
+//        for (EventVO o : ls)
+//            System.err.println(JSON.toJSONString(o, true));
     }
 
     public DataSource connect() {

@@ -7,9 +7,9 @@ import com.caibowen.gplume.context.AppContext;
 import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
 import com.caibowen.gplume.jdbc.JdbcSupport;
+import com.caibowen.prma.api.EventAdaptor;
 import com.caibowen.prma.api.model.EventVO;
-import com.caibowen.prma.logger.logback.EventAdapter;
-import com.caibowen.prma.spi.EventAdaptor;
+import com.caibowen.prma.logger.LogbackEventAdaptor;
 import com.caibowen.prma.store.EventPersist;
 import com.caibowen.prma.store.rdb.dao.EventDAO;
 import com.caibowen.prma.store.rdb.dao.Int4DAO;
@@ -49,6 +49,7 @@ public class ILogEventTest {
 
     static final Logger LOGGER = LoggerFactory.getLogger("console-logger");
 
+    EventAdaptor<ILoggingEvent> translator = new LogbackEventAdaptor();
     DataSource ds;
 
     EventPersist eventP;
@@ -107,7 +108,6 @@ public class ILogEventTest {
                 new IOException("msg level 2",
                         new FileNotFoundException("msg level 1")));
 
-        EventAdaptor<ILoggingEvent> translator = new EventAdapter();
         LoggingEvent e = new LoggingEvent("fq name", (ch.qos.logback.classic.Logger)LOG,
                 Level.DEBUG, "hahahaha msg", _fk, null);
         Marker mk1 = MarkerFactory.getMarker("marker 1");
@@ -136,8 +136,6 @@ public class ILogEventTest {
         Throwable _fk = new RuntimeException("msg level 3",
                 new IOException("msg level 2",
                         new FileNotFoundException("msg level 1")));
-        EventAdaptor<ILoggingEvent> translator = new EventAdapter();
-
 
         ArrayList<EventVO> vos = new ArrayList<>(16);
 

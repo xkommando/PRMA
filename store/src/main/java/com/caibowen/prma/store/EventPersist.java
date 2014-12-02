@@ -17,13 +17,13 @@ public interface EventPersist {
 
     void batchPersist(@Nonnull @Const List<EventVO> ls);
 
-    /**
-     *
-     * just for test
-     */
-    @Nullable
-    EventVO get(long id);
-
-    @Nonnull
-    List<EventVO> getWithException(long minTime, int limit);
+//    /**
+//     *
+//     * just for test
+//     */
+//    @Nullable
+//    EventVO get(long id);
+//
+//    @Nonnull
+//    List<EventVO> getWithException(long minTime, int limit);
 }

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+
+    <comment>select fields of event only, referred value will be fetched from cache.</comment>
+
+
+    <entry key="EventPersist.get"><![CDATA[
+    SELECT id, time_created, level, flag, message, reserved,
+        logger_id, thread_id, caller_sk_id
+        FROM `event`
+        WHERE id=?
+        ]]></entry>
+
+    <entry key="EventDAO.insert"><![CDATA[
+    INSERT INTO `event`(
+        `time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`,
+        `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)
+        ]]></entry>
+
+
+
+    <entry key="EventPersist.getWithException"><![CDATA[
+    SELECT id, time_created, level, flag, message, reserved,
+        logger_id, thread_id, caller_sk_id
+        FROM `event`
+        WHERE flag>4294967296 AND time_created>? LIMIT ?
+        ]]></entry>
+
+</properties>
