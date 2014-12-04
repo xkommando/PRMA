@@ -15,7 +15,5 @@ trait LifeCycle {
     started = false
   }
 
-  def isStarted: Boolean = {
-    started
-  }
+  def isStarted = started
 }

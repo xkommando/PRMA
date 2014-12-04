@@ -5,6 +5,9 @@
 
     <comment>select fields of event only, referred value will be fetched from cache.</comment>
 
+    <entry key="emp">
+        ${event.level.id > 5}
+    </entry>
 
     <entry key="EventPersist.get"><![CDATA[
     SELECT id, time_created, level, flag, message, reserved,

@@ -40,7 +40,7 @@ class Monitor(executor: Executor, evaluator: Evaluator) extends Serializable {
     try {
       result = evaluator.eval(vo)
     } catch {
-      case ex => this.LOG.error("Could not evaluate [" + vo + "] with evaluator [" + evaluator + "]", ex.asInstanceOf[AnyRef])
+      case ex => this.LOG.error(s"Could not evaluate [$vo] with evaluator [$evaluator]", ex)
     }
     result match {
       case Evaluator.ACCEPT => {
@@ -52,9 +52,7 @@ class Monitor(executor: Executor, evaluator: Evaluator) extends Serializable {
               }
               catch {
                 case e => {
-                  LOG.error("Could not notify ["
-                    + vo + "] with notifier ["
-                    + name + "]", e.asInstanceOf[AnyRef])
+                  LOG.error(s"Could not notify [$vo] with notifier [$name]", e)
                 }
               }
             }
@@ -71,13 +69,11 @@ class Monitor(executor: Executor, evaluator: Evaluator) extends Serializable {
                 noti.send(vo)
               } catch {
                 case ex =>
-                  LOG.error("Could not notify ["
-                    + vo + "] with notifier ["
-                    + noti.name + "]", ex.asInstanceOf[AnyRef]);
+                  LOG.error(s"Could not notify [$vo] with notifier [${noti.name}]", ex);
               }
             }
           })
-        else LOG.warn("Could not find notifier named [" + result + "] for event [" + vo + "]");
+        else LOG.warn(s"Could not find notifier named [$result] for event [$vo]");
       }
     }
   }

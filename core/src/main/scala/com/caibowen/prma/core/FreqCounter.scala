@@ -12,35 +12,35 @@ import scala.beans.BeanProperty
 class FreqCounter extends Serializable {
 
   private [this] var OFFSET = System.currentTimeMillis()
-  private [this] val history = new Int4CircularList(256)
+  private [this] val record = new Int4CircularList(256)
 
   @BeanProperty var period : Double = 1.0
 
   def count(num : Int) : Unit = {
     val now : Int = (System.currentTimeMillis - OFFSET).toInt
     this.synchronized {
-      for (i <- 1 to num) history.add(now)
-      cut(now)
+      for (i <- 1 to num) record add now
+      trimTo(now)
     }
   }
 
   def count() : Unit = {
     val now : Int = (System.currentTimeMillis - OFFSET).toInt
     this synchronized {
-      history.add(now)
-      cut(now)
+      record add now
+      trimTo(now)
     }
   }
 
   def reset(): Unit = {
     this synchronized {
-      history.clear()
-      OFFSET = System.currentTimeMillis()
+      record.clear()
+      OFFSET = System.currentTimeMillis
     }
   }
 
   def freq : Double = {
-    var count : Double = history.size.toDouble
+    var count = record.size.toDouble
     count = count / period
     count
   }
@@ -48,19 +48,19 @@ class FreqCounter extends Serializable {
   def freqToNow : Double = {
     val now : Int = (System.currentTimeMillis - OFFSET).toInt
     this.synchronized {
-      cut(now)
+      trimTo(now)
     }
     freq
   }
 
-  private def cut(now : Int) : Unit ={
+  private def trimTo(now : Int) : Unit ={
     val limit = now - (1000 * this.period).toInt
-    while (!history.isEmpty && history.front < limit)
-      history.popFront()
+    while (!record.isEmpty && record.front < limit)
+      record.popFront()
   }
 
   def setBufferSize(bufferSize: Int): Unit = {
-    history.ensureCapacity(bufferSize)
+    record.ensureCapacity(bufferSize)
   }
 
 }

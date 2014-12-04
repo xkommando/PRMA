@@ -12,4 +12,4 @@
  *
  *
  */
-package com.caibowen.prma.core.simpleCache;
+package com.caibowen.prma.store.mem.cache;

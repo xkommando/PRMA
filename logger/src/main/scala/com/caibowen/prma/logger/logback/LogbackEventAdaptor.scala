@@ -1,8 +1,7 @@
-package com.caibowen.prma.logger
+package com.caibowen.prma.logger.logback
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.{ILoggingEvent, IThrowableProxy}
-import com.caibowen.prma.api.LogLevel.LogLevel
 import com.caibowen.prma.api.model.{EventVO, ExceptionVO}
 import com.caibowen.prma.api.{EventAdaptor, LogLevel}
 
@@ -18,19 +17,6 @@ import scala.collection.mutable.{ArrayBuffer, TreeSet}
 object LogbackEventAdaptor {
 
   val NA_ST = new StackTraceElement("?", "?", "?", -1)
-
-  def callerST (event: ILoggingEvent): StackTraceElement = {
-    val _callerSTs: Array[StackTraceElement] = event.getCallerData
-    var callerST: StackTraceElement = null
-    if (_callerSTs != null && _callerSTs.length > 0) callerST = _callerSTs(0)
-    else callerST = NA_ST
-    callerST
-  }
-
-  def logLevel(event: ILoggingEvent): LogLevel = {
-    val idx = event.getLevel.levelInt / Level.TRACE_INT
-    LogLevel.from(idx)
-  }
 
   def markers(event: ILoggingEvent): Set[String] = {
     val mk = event.getMarker
@@ -87,14 +73,28 @@ object LogbackEventAdaptor {
       tb.put(k, v)
     tb.toMap
   }
-
 }
-
 class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
 
-  def from(event: ILoggingEvent): EventVO = {
-    val st = LogbackEventAdaptor.callerST(event)
-    val le = LogbackEventAdaptor.logLevel(event)
+  @inline
+  private def callerST = (event: ILoggingEvent) => {
+    val _callerSTs: Array[StackTraceElement] = event.getCallerData
+    var callerST: StackTraceElement = null
+    if (_callerSTs != null && _callerSTs.length > 0) callerST = _callerSTs(0)
+    else callerST = LogbackEventAdaptor.NA_ST
+    callerST
+  }
+
+  @inline
+  private def logLevel = (event: ILoggingEvent) => {
+    val idx = event.getLevel.levelInt / Level.TRACE_INT
+    LogLevel.from(idx)
+  }
+
+
+  override def from(event: ILoggingEvent): EventVO = {
+    val st = callerST(event)
+    val le = logLevel(event)
 
     new EventVO(event.getTimeStamp, le, event.getLoggerName, event.getThreadName,
         st, event.getFormattedMessage,-1,
@@ -103,7 +103,7 @@ class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
       LogbackEventAdaptor.markers(event))
   }
 
-  def to(vo: EventVO): ILoggingEvent = {
+  override def to(vo: EventVO): ILoggingEvent = {
     throw new UnsupportedOperationException
   }
 

@@ -9,7 +9,7 @@ import com.caibowen.gplume.context.ContextBooter;
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.prma.api.EventAdaptor;
 import com.caibowen.prma.api.model.EventVO;
-import com.caibowen.prma.logger.LogbackEventAdaptor;
+import com.caibowen.prma.logger.logback.LogbackEventAdaptor;
 import com.caibowen.prma.store.EventPersist;
 import com.caibowen.prma.store.rdb.dao.EventDAO;
 import com.caibowen.prma.store.rdb.dao.Int4DAO;
@@ -49,7 +49,7 @@ public class ILogEventTest {
 
     static final Logger LOGGER = LoggerFactory.getLogger("console-logger");
 
-    EventAdaptor<ILoggingEvent> translator = new LogbackEventAdaptor();
+    static EventAdaptor<ILoggingEvent> translator = new LogbackEventAdaptor();
     DataSource ds;
 
     EventPersist eventP;
@@ -158,7 +158,24 @@ public class ILogEventTest {
             vos.add(translator.from(e));
         }
         eventP.batchPersist(vos);
+java.util.logging.Logger log = java.util.logging.Logger.getLogger("jul test");
+        log.log(java.util.logging.Level.FINER, "hahaha", _ex);
 
     }
 
+    EventVO gen() {
+        Throwable _fk = new RuntimeException("msg level 3",
+                new IOException("msg level 2",
+                        new FileNotFoundException("msg level 1")));
+
+
+        return translator.from(
+                new LoggingEvent("fq name", (ch.qos.logback.classic.Logger)LOG,
+                        Level.DEBUG, "hahahaha msg", null, null));
+
+//        return translator.from(
+//                new LoggingEvent("fq name", (ch.qos.logback.classic.Logger)LOG,
+//                        Level.DEBUG, "hahahaha msg", _fk, null)
+//        )
+    }
 }

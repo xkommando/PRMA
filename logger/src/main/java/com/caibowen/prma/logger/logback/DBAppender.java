@@ -2,7 +2,7 @@ package com.caibowen.prma.logger.logback;
 
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.caibowen.prma.api.model.EventVO;
-import com.caibowen.prma.logger.LogbackEventAdaptor;
+import com.caibowen.prma.logger.logback.LogbackEventAdaptor;
 import com.caibowen.prma.store.rdb.EventPersistImpl;
 
 import javax.inject.Inject;

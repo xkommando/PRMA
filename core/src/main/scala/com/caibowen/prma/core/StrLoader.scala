@@ -12,7 +12,8 @@ import scala.collection.JavaConversions._
  * @author BowenCai
  * @since  01/12/2014.
  */
-class StrLoader(private[this] val paths: java.util.List[String]) extends InputStreamSupport with LifeCycle{
+@SerialVersionUID(-1515727644434333582L)
+class StrLoader(private[this] val paths: java.util.List[String]) extends InputStreamSupport with LifeCycle with Serializable {
 
   private[this] val map = new scala.collection.mutable.HashMap[String, String]
 
@@ -30,9 +31,9 @@ class StrLoader(private[this] val paths: java.util.List[String]) extends InputSt
     for(p <- paths) {
       withPath(p, new InputStreamCallback {
         override def doInStream(stream: InputStream): Unit = {
-          if (p.endsWith(".xml"))
-            props.loadFromXML(stream)
-          else props.load(stream)
+          if (p endsWith ".xml")
+            props loadFromXML stream
+          else props load stream
           for ((k, v) <- props if map.put(k, v).isDefined)
             throw new IllegalArgumentException(s"Duplicated key[$k]value[$v]")
         }

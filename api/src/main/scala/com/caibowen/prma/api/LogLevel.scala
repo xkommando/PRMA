@@ -6,11 +6,14 @@ package com.caibowen.prma.api
  */
 object LogLevel extends Enumeration {
   type LogLevel = Value
+  val OFF = Value(32, "OFF")
+  val FATAL = Value(16, "FATAL")
   val ERROR = Value(8, "ERROR")
   val WARN = Value(6, "WARN")
   val INFO = Value(4, "INFO")
   val DEBUG = Value(2, "DEBUG")
   val TRACE = Value(1, "TRACE")
+  val ALL = Value(0, "ALL")
 
   def from(name: Int): LogLevel = {
     super.apply(name)
