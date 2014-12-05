@@ -123,20 +123,26 @@ object EventVO {
 
   def buildFlag(prop: Map[_, _], markers: Set[String], exceptions: List[ExceptionVO]): Long = {
     val sz1: Int = if (exceptions != null) exceptions.size else 0
+
     val sz11: Short = if (markers != null) markers.size.toShort else 0
     val sz12: Short = if (prop != null) prop.size.toShort else 0
+
     val sz2: Int = add(sz11, sz12)
-    return add(sz1, sz2)
+
+    add(sz1, sz2)
   }
 
+  @inline
   def hasException(flag: Long): Boolean = {
     return flag > 4294967296L
   }
 
+  @inline
   def hasMarkers(flag: Long): Boolean = {
     return flag > 65536L
   }
 
+  @inline
   def hasProperty(flag: Long): Boolean = {
     throw new UnsupportedOperationException
   }

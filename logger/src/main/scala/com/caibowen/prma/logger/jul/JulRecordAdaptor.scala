@@ -29,19 +29,6 @@ class JulRecordAdaptor extends EventAdaptor[LogRecord] {
   override def to(vo: EventVO): LogRecord = throw new NotImplementedError()
 }
 object JulRecordAdaptor {
-
-  private[jul] val levelMap = Map[Int, LogLevel](
-    Int.MinValue -> LogLevel.ALL,
-    300 -> LogLevel.TRACE,
-    400 -> LogLevel.DEBUG,
-    500 -> LogLevel.DEBUG,
-    700 -> LogLevel.INFO,
-    800 -> LogLevel.INFO,
-    900 -> LogLevel.WARN,
-    1000 -> LogLevel.ERROR,
-    Int.MaxValue -> LogLevel.OFF)
-
-
   // static int findNumberOfCommonFrames(StackTraceElement[] steArray,
   //     StackTraceElementProxy[] parentSTEPArray) {
   //   if (parentSTEPArray == null || steArray == null) {
@@ -67,7 +54,16 @@ object JulRecordAdaptor {
 
   @inline
   def commonFrames(t1: Throwable, t2: Throwable): Int ={
-    throw new NotImplementedError()
+    val s1 = t1.getStackTrace
+    val s2 = t2.getStackTrace
+    if (s1 == null || s2 == null)
+      0
+    else {
+      var count = 0
+      for ((i, j) <- (s1 zip s2).reverse if i.equals(j))
+        count += 1
+      count
+    }
   }
 
   @inline
@@ -96,7 +92,16 @@ object JulRecordAdaptor {
     } while (cause != null)
     buf.toList
   }
-
+  private[jul] val levelMap = Map[Int, LogLevel](
+    Int.MinValue -> LogLevel.ALL,
+    300 -> LogLevel.TRACE,
+    400 -> LogLevel.DEBUG,
+    500 -> LogLevel.DEBUG,
+    700 -> LogLevel.INFO,
+    800 -> LogLevel.INFO,
+    900 -> LogLevel.WARN,
+    1000 -> LogLevel.ERROR,
+    Int.MaxValue -> LogLevel.OFF)
 }
 /*
  OFF = new Level("OFF",Integer.MAX_VALUE, defaultBundle); OFF 32

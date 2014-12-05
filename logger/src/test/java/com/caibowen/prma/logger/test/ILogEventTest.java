@@ -4,15 +4,15 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import com.caibowen.gplume.context.AppContext;
-import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
+import com.caibowen.gplume.resource.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.prma.api.EventAdaptor;
 import com.caibowen.prma.api.model.EventVO;
 import com.caibowen.prma.logger.logback.LogbackEventAdaptor;
-import com.caibowen.prma.store.EventPersist;
+import com.caibowen.prma.store.EventStore;
 import com.caibowen.prma.store.rdb.dao.EventDAO;
-import com.caibowen.prma.store.rdb.dao.Int4DAO;
+import com.caibowen.prma.store.rdb.dao.KVStore;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,9 +52,9 @@ public class ILogEventTest {
     static EventAdaptor<ILoggingEvent> translator = new LogbackEventAdaptor();
     DataSource ds;
 
-    EventPersist eventP;
-    Int4DAO<String> loggerDAO;
-    Int4DAO<String> exceptMsgDAO;
+    EventStore eventP;
+    KVStore<String> loggerDAO;
+    KVStore<String> exceptMsgDAO;
     EventDAO eventDAO;
 
     JdbcSupport jdbc;

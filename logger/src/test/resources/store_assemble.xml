@@ -3,19 +3,19 @@
 
     <!--DataSource shall be added from this context BEFORE CENTURY-->
 
-    <bean id="exceptNameDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImpl">
+    <bean id="exceptNameDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrStore">
         <construct val="`exception_name`"/>
         <prop name="dataSource" ref="dataSource"/>
     </bean>
-    <bean id="exceptMsgDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImpl">
+    <bean id="exceptMsgDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrStore">
         <construct val="`exception_msg`"/>
         <prop name="dataSource" ref="dataSource"/>
     </bean>
-    <bean id="loggerDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImpl">
+    <bean id="loggerDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrStore">
         <construct val="`logger_name`"/>
         <prop name="dataSource" ref="dataSource"/>
     </bean>
-    <bean id="threadDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrDAOImpl">
+    <bean id="threadDAO" class="com.caibowen.prma.store.rdb.dao.impl.StrStore">
         <construct val="`thread_name`"/>
         <prop name="dataSource" ref="dataSource"/>
     </bean>

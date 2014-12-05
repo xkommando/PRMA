@@ -1,35 +1,26 @@
 package com.caibowen.prma.store.test;
 
-import com.caibowen.gplume.common.collection.ImmutableArraySet;
 import com.caibowen.gplume.context.AppContext;
-import com.caibowen.gplume.context.ClassLoaderInputStreamProvider;
+import com.caibowen.gplume.resource.ClassLoaderInputStreamProvider;
 import com.caibowen.gplume.context.ContextBooter;
 import com.caibowen.gplume.jdbc.JdbcSupport;
 import com.caibowen.gplume.jdbc.transaction.JdbcTransactionManager;
 import com.caibowen.gplume.jdbc.transaction.Transaction;
 import com.caibowen.gplume.jdbc.transaction.TransactionCallback;
 import com.caibowen.gplume.jdbc.transaction.TransactionManager;
-import com.caibowen.prma.api.LogLevel;
-import com.caibowen.prma.api.model.EventVO;
-import com.caibowen.prma.api.model.ExceptionVO;
-import com.caibowen.prma.store.EventPersist;
+import com.caibowen.prma.store.EventStore;
 import com.caibowen.prma.store.rdb.dao.EventDAO;
-import com.caibowen.prma.store.rdb.dao.Int4DAO;
+import com.caibowen.prma.store.rdb.dao.KVStore;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import scala.collection.JavaConversions;
 
 import javax.annotation.Nonnull;
 import javax.sql.DataSource;
-import javax.tools.JavaCompiler;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -58,9 +49,9 @@ public class TestStore {
 
     DataSource ds;
 
-    EventPersist eventP;
-    Int4DAO<String> loggerDAO;
-    Int4DAO<String> exceptMsgDAO;
+    EventStore eventP;
+    KVStore<String> loggerDAO;
+    KVStore<String> exceptMsgDAO;
     EventDAO eventDAO;
     JdbcSupport jdbc;
     TransactionManager manager = new JdbcTransactionManager();

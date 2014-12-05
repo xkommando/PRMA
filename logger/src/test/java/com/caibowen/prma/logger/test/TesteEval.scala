@@ -2,7 +2,7 @@ package com.caibowen.prma.logger.test
 
 import java.util
 
-import com.caibowen.gplume.context.ClassLoaderInputStreamProvider
+import com.caibowen.gplume.resource.ClassLoaderInputStreamProvider
 import com.caibowen.prma.core.StrLoader
 
 /**

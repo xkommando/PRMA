@@ -2,13 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.caibowen.prma</groupId>
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
     <version>0.1</version>
-
 
     <name>Program Run-time Monitoring and Analysing</name>
     <url>https://github.com/xkommando/PRMA</url>
@@ -42,9 +42,8 @@
 
     <properties>
         <prma-version>0.1</prma-version>
-        <jdk-version>1.7</jdk-version>
-        <jvm-target>1.7</jvm-target>
-        <gplume-version>2.3</gplume-version>
+        <java-version>1.7</java-version>
+        <gp-scala-version>1.0</gp-scala-version>
         <junit-version>4.9</junit-version>
         <slf4j-version>1.7.7</slf4j-version>
         <logback-version>1.1.2</logback-version>
@@ -57,8 +56,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>${jdk-version}</source>
-                    <target>${jvm-target}</target>
+                    <source>${java-version}</source>
+                    <target>${java-version}</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
@@ -84,7 +83,7 @@
                     <failFast>true</failFast>
                     <rules>
                         <requireJavaVersion>
-                            <version>1.6.0</version>
+                            <version>${java-version}</version>
                         </requireJavaVersion>
                         <requireUpperBoundDeps>
                             <uniqueVersions>true</uniqueVersions>
