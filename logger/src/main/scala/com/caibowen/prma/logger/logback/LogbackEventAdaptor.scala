@@ -14,11 +14,41 @@ import scala.collection.mutable.{ArrayBuffer, TreeSet}
  * @author BowenCai
  * @since  02/12/2014.
  */
-object LogbackEventAdaptor {
+class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
 
-  val NA_ST = new StackTraceElement("?", "?", "?", -1)
+  @inline
+  private def callerST = (event: ILoggingEvent) => {
+    val _callerSTs: Array[StackTraceElement] = event.getCallerData
+    var callerST: StackTraceElement = null
+    if (_callerSTs != null && _callerSTs.length > 0) callerST = _callerSTs(0)
+    else callerST = LogbackEventAdaptor.NA_ST
+    callerST
+  }
 
-  def markers(event: ILoggingEvent): Set[String] = {
+  @inline
+  private def logLevel = (event: ILoggingEvent) => {
+    val idx = event.getLevel.levelInt / Level.TRACE_INT
+    LogLevel.from(idx)
+  }
+
+
+  override def from(event: ILoggingEvent): EventVO = {
+    val st = callerST(event)
+    val le = logLevel(event)
+
+    new EventVO(event.getTimeStamp, le, event.getLoggerName, event.getThreadName,
+        st, event.getFormattedMessage,-1,
+      getProperties(event),
+      getExcepts(event),
+      getMarkers(event))
+  }
+
+  override def to(vo: EventVO): ILoggingEvent = {
+    throw new UnsupportedOperationException
+  }
+
+
+  def getMarkers(event: ILoggingEvent): Set[String] = {
     val mk = event.getMarker
     if (mk == null)
       return null
@@ -30,7 +60,7 @@ object LogbackEventAdaptor {
     mks.toSet
   }
 
-  def excepts(event: ILoggingEvent): List[ExceptionVO] = {
+  def getExcepts(event: ILoggingEvent): List[ExceptionVO] = {
     val px = event.getThrowableProxy
     if (px == null)
       return null
@@ -57,7 +87,7 @@ object LogbackEventAdaptor {
     buf.toList
   }
 
-  def properties(event: ILoggingEvent): Map[String, String] = {
+  def getProperties(event: ILoggingEvent): Map[String, String] = {
     import scala.collection.JavaConversions.mapAsScalaMap
     val mmdc = event.getMDCPropertyMap
     val smdc = mmdc.size()
@@ -73,38 +103,9 @@ object LogbackEventAdaptor {
       tb.put(k, v)
     tb.toMap
   }
+
 }
-class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
+object LogbackEventAdaptor {
 
-  @inline
-  private def callerST = (event: ILoggingEvent) => {
-    val _callerSTs: Array[StackTraceElement] = event.getCallerData
-    var callerST: StackTraceElement = null
-    if (_callerSTs != null && _callerSTs.length > 0) callerST = _callerSTs(0)
-    else callerST = LogbackEventAdaptor.NA_ST
-    callerST
-  }
-
-  @inline
-  private def logLevel = (event: ILoggingEvent) => {
-    val idx = event.getLevel.levelInt / Level.TRACE_INT
-    LogLevel.from(idx)
-  }
-
-
-  override def from(event: ILoggingEvent): EventVO = {
-    val st = callerST(event)
-    val le = logLevel(event)
-
-    new EventVO(event.getTimeStamp, le, event.getLoggerName, event.getThreadName,
-        st, event.getFormattedMessage,-1,
-      LogbackEventAdaptor.properties(event),
-      LogbackEventAdaptor.excepts(event),
-      LogbackEventAdaptor.markers(event))
-  }
-
-  override def to(vo: EventVO): ILoggingEvent = {
-    throw new UnsupportedOperationException
-  }
-
+  val NA_ST = new StackTraceElement("?", "?", "?", -1)
 }

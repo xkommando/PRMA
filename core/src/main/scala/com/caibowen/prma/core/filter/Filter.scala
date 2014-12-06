@@ -22,22 +22,4 @@ trait Filter[T] extends LifeCycle {
     } else -1
 
   }
-//
-//  protected[this] var started = false
-//
-//  @inline
-//  def start(): Unit = {
-//    started = true
-//  }
-//
-//  @inline
-//  def stop(): Unit = {
-//    started = false
-//  }
-//
-//  @inline
-//  def isStarted: Boolean = {
-//    started
-//  }
-
 }

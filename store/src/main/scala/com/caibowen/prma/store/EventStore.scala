@@ -10,7 +10,7 @@ import com.caibowen.prma.api.model.EventVO
  */
 trait EventStore {
 
-  def persist(@Nonnull event: EventVO): Long
+  def put(@Nonnull event: EventVO): Long
 
 //  def batchPersist(@Nonnull ls: List[EventVO])
 }

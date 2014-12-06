@@ -2,16 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
     <parent>
-        <groupId>com.caibowen.prma</groupId>
         <artifactId>parent</artifactId>
+        <groupId>com.caibowen.prma</groupId>
         <version>0.1</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.caibowen.prma</groupId>
     <artifactId>store</artifactId>
 
     <dependencies>
@@ -24,45 +21,6 @@
             <groupId>com.caibowen.prma</groupId>
             <artifactId>core</artifactId>
             <version>${prma-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.caibowen.gplumeframework</groupId>
-            <artifactId>gplume-scala</artifactId>
-            <version>${gp-scala-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${slf4j-version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit-version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.33</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.zaxxer</groupId>
-            <artifactId>HikariCP-java6</artifactId>
-            <version>2.1.0</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.alibaba</groupId>
-            <artifactId>fastjson</artifactId>
-            <version>1.1.15</version>
-            <scope>test</scope>
         </dependency>
 
     </dependencies>

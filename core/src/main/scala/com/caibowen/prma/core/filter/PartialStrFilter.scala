@@ -6,7 +6,7 @@ import com.caibowen.gplume.misc.Str.Utils._
  * @author BowenCai
  * @since  01/12/2014.
  */
-class PartialStrFilter(configPath: String) extends StrFilter(configPath) {
+class PartialStrFilter(private[this] val configPath: String) extends StrFilter(configPath) {
 
   private[this] val NA = new AnyRef
   protected[this] val matchPrefix = new URIPrefixTrie[AnyRef]
