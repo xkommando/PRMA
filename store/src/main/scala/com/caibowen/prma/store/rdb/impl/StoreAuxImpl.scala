@@ -1,11 +1,11 @@
 package com.caibowen.prma.store.rdb.impl
 
-import java.sql.{Connection, PreparedStatement, SQLException, Types}
-import javax.annotation.Nonnull
+import java.sql.{Connection, PreparedStatement, Types}
 
 import com.caibowen.gplume.jdbc.mapper.RowMapping
-import com.caibowen.gplume.jdbc.{JdbcException, JdbcSupport, StatementCreator}
+import com.caibowen.gplume.jdbc.{JdbcException, JdbcSupport}
 import com.caibowen.gplume.misc.Bytes
+import com.caibowen.gplume.scala.conversion.CommonConversions._
 import com.caibowen.prma.api.model.ExceptionVO
 import com.caibowen.prma.core.StrLoader
 import com.caibowen.prma.store.rdb.{EventStoreAux, KVStore}
@@ -39,8 +39,7 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
     newStack.sizeHint(32)
 
     // insert exception
-    batchInsert(new StatementCreator {
-      override def createStatement(con: Connection): PreparedStatement = {
+    batchInsert((con: Connection) => {
         val ps = con.prepareStatement(sqls.get("ExceptionDAO.putExcept"))
         for (exp <- nexps) {
           ps.setLong(1, exp.id)
@@ -63,15 +62,13 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
           ps.addBatch
         }
         ps
-      }
-    }, null, null)
+      }, null, null)
 
     // insert new stack
     stackStore.putIfAbsent(newStack.result().map(t=>t.hashCode()->t))
 
     // insert relations
-    batchInsert(new StatementCreator {
-      override def createStatement(con: Connection): PreparedStatement = {
+    batchInsert((con: Connection) => {
         val ps = con.prepareStatement(sqls.get("ExceptionDAO.putRelation"))
         var i = 0
         for (vo <- exceps) {
@@ -82,17 +79,14 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
           i += 1
         }
         ps
-      }
-    }, null,null)
-
+      },null,null)
   }
 
 
   def putProperties(eventId: Long, props: Map[String, String]): Unit = {
     val newPs = props.filterKeys(!hasProperty(_))
 
-    batchInsert(new StatementCreator {
-      override def createStatement(con: Connection): PreparedStatement = {
+    batchInsert((con: Connection) => {
         val ps = con.prepareStatement(sqls.get("PropertyDAO.putMap"))
         for ((k,v) <- newPs) {
           ps.setInt(1, k.hashCode);
@@ -100,12 +94,10 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
           ps.setBytes(3, v.getBytes);
           ps.addBatch();
         }
-        return ps;
-      }
-    }, null, null)
+        ps;
+      }, null, null)
 
-    batchInsert(new StatementCreator {
-      override def createStatement(con: Connection): PreparedStatement = {
+    batchInsert((con: Connection) => {
         val ps = con.prepareStatement(
           sqls.get("PropertyDAO.putRelation"))
         for ((k, v) <- props) {
@@ -114,16 +106,13 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
           ps.addBatch();
         }
         ps
-      }
-    }, null, null)
+      }, null, null)
   }
 
 
   def putMarkers(eventId: Long, mks: Set[String]) {
     val newMk = mks.filter(!hasMarker(_))
-    batchInsert( new StatementCreator {
-      @throws(classOf[SQLException])
-      def createStatement(con: Connection): PreparedStatement = {
+    batchInsert((con: Connection) => {
         val ps: PreparedStatement = con.prepareStatement(sqls.get("MarkerDAO.putMarker"))
         for (e <- newMk) {
           ps.setInt(1, e.hashCode)
@@ -131,12 +120,9 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
           ps.addBatch
         }
         ps
-      }
-    }, null, null)
-    batchInsert( new StatementCreator {
-      @Nonnull
-      @throws(classOf[SQLException])
-      def createStatement(con: Connection): PreparedStatement = {
+      },null, null)
+
+    batchInsert((con: Connection) => {
         val ps: PreparedStatement = con.prepareStatement(sqls.get("MarkerDAO.putRelation"))
         for (e <- mks) {
           ps.setInt(1, e.hashCode)
@@ -144,43 +130,28 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
           ps.addBatch
         }
         ps
-      }
-    }, null, null)
+      }, null, null)
   }
 
-
-
-
-
-  def hasException(vo: ExceptionVO): Boolean = {
-    queryForObject(new StatementCreator() {
-      override def createStatement(con: Connection): PreparedStatement = {
+  def hasException(vo: ExceptionVO): Boolean =
+    queryForObject((con: Connection) => {
         val ps = con.prepareStatement("SELECT count(1) FROM `exception` WHERE id =?")
         ps.setLong(1, vo.id)
         ps
-      }
-    }, RowMapping.BOOLEAN_ROW_MAPPING)
-  }
+      }, RowMapping.BOOLEAN_ROW_MAPPING)
 
-  def hasProperty(key: String): Boolean = {
-    queryForObject(new StatementCreator() {
-      @Nonnull
-      override def createStatement(@Nonnull con: Connection): PreparedStatement = {
+  def hasProperty(key: String): Boolean =
+    queryForObject((con: Connection) => {
         val ps = con.prepareStatement("SELECT count(1) FROM `property` WHERE id=?")
         ps.setInt(1, key.hashCode)
         ps
-      }
-    }, RowMapping.BOOLEAN_ROW_MAPPING)
-  }
+      }, RowMapping.BOOLEAN_ROW_MAPPING)
 
-  def hasMarker(key: String): Boolean = {
-    queryForObject(new StatementCreator() {
-      @Nonnull
-      override def createStatement(@Nonnull con: Connection): PreparedStatement = {
+  def hasMarker(key: String): Boolean =
+    queryForObject((con: Connection) => {
         val ps = con.prepareStatement("SELECT count(1) FROM `marker_name` WHERE id=?")
         ps.setInt(1, key.hashCode)
         ps
-      }
-    }, RowMapping.BOOLEAN_ROW_MAPPING)
-  }
+      }, RowMapping.BOOLEAN_ROW_MAPPING)
+
 }

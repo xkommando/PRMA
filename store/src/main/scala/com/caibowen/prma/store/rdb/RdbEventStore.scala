@@ -5,7 +5,7 @@ import javax.annotation.Nonnull
 
 import com.caibowen.gplume.jdbc.mapper.RowMapping
 import com.caibowen.gplume.jdbc.transaction.{Transaction, TransactionCallback}
-import com.caibowen.gplume.jdbc.{JdbcException, JdbcSupport, StatementCreator}
+import com.caibowen.gplume.jdbc.{JdbcSupport, StatementCreator}
 import com.caibowen.prma.api.model.EventVO
 import com.caibowen.prma.core.StrLoader
 import com.caibowen.prma.store.EventStore
@@ -44,9 +44,7 @@ class RdbEventStore(private[this] val sqls: StrLoader) extends JdbcSupport with 
   }
 
   @inline
-  protected def putStr(store: KVStore[Int, String], str: String) =
-    if (!store.put(str.hashCode, str))
-      throw new JdbcException(s"could not save[$str] with[$store]")
+  protected def putStr(store: KVStore[Int, String], str: String) = store.put(str.hashCode, str)
 
   protected def putEvent(event: EventVO): Long = {
 
@@ -54,14 +52,13 @@ class RdbEventStore(private[this] val sqls: StrLoader) extends JdbcSupport with 
     putStr(threadStore, event.threadName)
 
     val st = event.callerStackTrace
-    if (!stackStore.put(st.hashCode(), st))
-      throw new JdbcException(s"Could not insert stacktrace[$st] ")
+    stackStore.put(st.hashCode(), st)
 
     insert(new StatementCreator {
       @throws(classOf[SQLException])
       def createStatement(con: Connection): PreparedStatement = {
         val ps: PreparedStatement =
-          con.prepareStatement(sqls.get("EventDAO.insert"),
+          con.prepareStatement(sqls.get("EventStore.insert"),
             RdbEventStore.AUTO_GEN_ID)
 
         ps.setLong(1, event.timeCreated)

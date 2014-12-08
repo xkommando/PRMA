@@ -1,15 +1,13 @@
 package com.caibowen.prma.monitor
 
-import java.util.concurrent.{CopyOnWriteArrayList, Executor}
+import java.util.concurrent.Executor
 
-import com.caibowen.gplume.annotation.{NoExcept, Const}
+import com.caibowen.gplume.annotation.Const
 import com.caibowen.prma.api.model.EventVO
-import com.caibowen.prma.core.StrLoader
 import com.caibowen.prma.monitor.eval.Evaluator
 import com.caibowen.prma.monitor.notify.Notifier
 import org.slf4j.LoggerFactory
 
-import scala.beans.BeanProperty
 import scala.collection.mutable
 
 /**

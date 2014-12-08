@@ -91,19 +91,19 @@ class EventVO(@BeanProperty val id: Long,
     case _ => false
   }
 
-  override def toString: String = s"""com.caibowen.prma.api.model.EventVO{" +
-    id=$id
-    , timeCreated=$timeCreated
-    , level=$level
-    , loggerName='$loggerName
-    , threadName='$threadName
-    , callerStackTrace=$callerStackTrace
-    , flag=$flag
-    , message='$message
-    , reserved=$reserved
-    , properties=$properties
-    , exceptions=$exceptions
-    , markers=$markers
+  override def toString: String = s""""com.caibowen.prma.api.model.EventVO":{" +
+    "id"=$id
+    , "timeCreated"=$timeCreated
+    , "level"="${level.toString}"
+    , "loggerName"="$loggerName"
+    , "threadName"="$threadName"
+    , "callerStackTrace"="$callerStackTrace"
+    , "flag"=$flag
+    , "message="$message"
+    , "reserved"=$reserved
+    , "properties"=$properties
+    , "exceptions"=$exceptions
+    , "markers"=$markers
     }"""
 
   def exceptionCount: Int = {

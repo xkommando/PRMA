@@ -70,13 +70,21 @@ object ExceptionVO {
                   exceptionMessage: String,
                   stackTraces: List[StackTraceElement]): Long = {
 
+    //      MurmurHash
+
     var expID: Long = exceptionName.hashCode.toLong
-    if (exceptionMessage != null) expID |= exceptionMessage.hashCode & 0xFFFFFFFFL
+    if (exceptionMessage != null) {
+//    (v << n) | (v >>> (64 - n))
+      val msgHash = exceptionMessage.hashCode
+      expID = ((expID << msgHash) | (expID >>> (64 - msgHash)))
+    }
+
     if (stackTraces == null || stackTraces.length == 0) return expID
+
     val kMul: Long = 0x9ddfea08eb382d69L
     for (st <- stackTraces) {
-      val _s: Long = st.hashCode
-      var _a: Long = ((expID) ^ _s) * kMul
+      val _s = st.hashCode.toLong
+      var _a = (((expID) ^ _s) * kMul).toLong
       _a ^= _a >> 47
       expID = (_s ^ _a) * kMul
       expID ^= expID >> 47

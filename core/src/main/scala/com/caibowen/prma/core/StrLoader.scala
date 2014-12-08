@@ -3,8 +3,8 @@ package com.caibowen.prma.core
 import java.io.InputStream
 import java.util.Properties
 
-import com.caibowen.gplume.resource.{InputStreamCallback, InputStreamProviderProxy, InputStreamSupport}
 import com.caibowen.gplume.misc.Str.Utils._
+import com.caibowen.gplume.resource.{InputStreamCallback, InputStreamProviderProxy, InputStreamSupport}
 
 import scala.collection.JavaConversions._
 

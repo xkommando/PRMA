@@ -5,30 +5,28 @@
 
     <comment>select fields of event only, referred value will be fetched from cache.</comment>
 
-    <entry key="emp">
-        ${event.level.id > 5}
-    </entry>
+    <!--<entry key="EventPersist.get"><![CDATA[-->
+    <!--SELECT id, time_created, level, flag, message, reserved,-->
+        <!--logger_id, thread_id, caller_sk_id-->
+        <!--FROM `event`-->
+        <!--WHERE id=?-->
+        <!--]]>-->
+    <!--</entry>-->
 
-    <entry key="EventPersist.get"><![CDATA[
-    SELECT id, time_created, level, flag, message, reserved,
-        logger_id, thread_id, caller_sk_id
-        FROM `event`
-        WHERE id=?
-        ]]></entry>
-
-    <entry key="EventDAO.insert"><![CDATA[
+    <entry key="EventStore.insert"><![CDATA[
     INSERT INTO `event`(
         `time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`,
         `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)
-        ]]></entry>
+        ]]>
+    </entry>
 
 
-
-    <entry key="EventPersist.getWithException"><![CDATA[
+    <entry key="EventStore.getWithException"><![CDATA[
     SELECT id, time_created, level, flag, message, reserved,
         logger_id, thread_id, caller_sk_id
         FROM `event`
         WHERE flag>4294967296 AND time_created>? LIMIT ?
-        ]]></entry>
+        ]]>
+    </entry>
 
 </properties>

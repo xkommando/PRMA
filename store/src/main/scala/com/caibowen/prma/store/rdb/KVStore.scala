@@ -24,26 +24,26 @@ trait KVStore[K,V] extends Serializable {
   protected
   def doPut(key: K, @Nonnull value: V): Boolean
 
-  def put(key: K, @Nonnull value: V): Boolean = {
+  def put(key: K, @Nonnull value: V): Boolean =
     if(hasKey(key))
       update(key, value)
     else
       doPut(key, value)
-  }
 
-  def putIfAbsent(key: K, @Nonnull value: V): Boolean = {
+
+  def putIfAbsent(key: K, @Nonnull value: V): Boolean =
     if (hasKey(key))
       false
     else
       doPut(key, value)
-  }
-  def putIfAbsent(@Nonnull ls: List[(K, V)]): Unit = {
-    putAll(ls.filter(tp=> !hasKey(tp._1)))
-  }
 
-  def putIfAbsent(@Nonnull values: Map[K, V]): Unit = {
+  def putIfAbsent(@Nonnull ls: List[(K, V)]): Unit =
+    putAll(ls.filter(tp=> !hasKey(tp._1)))
+
+
+  def putIfAbsent(@Nonnull values: Map[K, V]): Unit =
     putAll(values.filterKeys(!hasKey(_)))
-  }
+
 
   def putAll(@Nonnull ls: List[(K,V)])
   def putAll(@Nonnull map: Map[K, V])

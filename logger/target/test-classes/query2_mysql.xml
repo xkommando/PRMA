@@ -3,11 +3,11 @@
 
 <properties>
 
-    <entry key="MarkerDAO.getByEvent"><![CDATA[
-        SELECT MK.`value` FROM `marker_name` as MK
-        INNER JOIN j_event_marker as JEM on JEM.marker_id = MK.id
-        WHERE JEM.event_id=?
-    ]]></entry>
+    <!--<entry key="MarkerDAO.getByEvent"><![CDATA[-->
+        <!--SELECT MK.`value` FROM `marker_name` as MK-->
+        <!--INNER JOIN j_event_marker as JEM on JEM.marker_id = MK.id-->
+        <!--WHERE JEM.event_id=?-->
+    <!--]]></entry>-->
 
     <entry key="MarkerDAO.putMarker"><![CDATA[
         INSERT INTO `marker_name`(`id`, `value`)VALUES(?,?)
@@ -18,28 +18,27 @@
     ]]></entry>
 
 
+    <!--<entry key="PropertyDAO.getByEvent"><![CDATA[-->
+        <!--SELECT PROP.`key`, PROP.`value` FROM `property` as PROP-->
+        <!--INNER JOIN j_event_prop as JEP on JEP.prop_id = PROP.id-->
+        <!--WHERE JEP.event_id=?-->
+    <!--]]></entry>-->
 
-    <entry key="PropertyDAO.getByEvent"><![CDATA[
-        SELECT PROP.`key`, PROP.`value` FROM `property` as PROP
-        INNER JOIN j_event_prop as JEP on JEP.prop_id = PROP.id
-        WHERE JEP.event_id=?
-    ]]></entry>
     <entry key="PropertyDAO.putMap"><![CDATA[
         INSERT IGNORE INTO `property`(`id`, `key`, `value`)VALUES (?,?,?)
     ]]></entry>
+
     <entry key="PropertyDAO.putRelation"><![CDATA[
         INSERT INTO `j_event_prop`(`prop_id`, `event_id`)VALUES (?,?)
     ]]></entry>
 
 
-
-
-    <entry key="ExceptionDAO.getByEvent"><![CDATA[
-    SELECT EXP.id, EXP.except_name, EXP.except_msg, EXP.stack_traces
-        FROM `exception` as EXP
-        INNER JOIN `j_event_exception` as JEE on JEE.except_id = EXP.id
-        WHERE JEE.event_id=? ORDER BY JEE.seq ASC
-    ]]></entry>
+    <!--<entry key="ExceptionDAO.getByEvent"><![CDATA[-->
+    <!--SELECT EXP.id, EXP.except_name, EXP.except_msg, EXP.stack_traces-->
+        <!--FROM `exception` as EXP-->
+        <!--INNER JOIN `j_event_exception` as JEE on JEE.except_id = EXP.id-->
+        <!--WHERE JEE.event_id=? ORDER BY JEE.seq ASC-->
+    <!--]]></entry>-->
 
     <entry key="ExceptionDAO.putExcept"><![CDATA[
         INSERT INTO `exception`(`id`,`except_name`,`except_msg`,`stack_traces`)

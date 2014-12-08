@@ -1,43 +1,26 @@
 package com.caibowen.prma.logger.test
 
 import java.io.{FileNotFoundException, IOException}
-import javax.sql.DataSource
 
 import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.spi.ILoggingEvent
 import ch.qos.logback.classic.spi.LoggingEvent
 import com.alibaba.fastjson.JSON
-import com.caibowen.gplume.context.{ContextBooter, AppContext}
-import com.caibowen.gplume.jdbc.JdbcSupport
-import com.caibowen.gplume.resource.ClassLoaderInputStreamProvider
-import com.caibowen.prma.api.model.EventVO
 import com.caibowen.prma.logger.logback.LogbackEventAdaptor
-import com.caibowen.prma.store.EventStore
-import com.zaxxer.hikari.HikariDataSource
-import org.junit.{Before, Test}
+import org.junit.Test
 import org.slf4j._
 
 /**
  * @author BowenCai
  * @since  06/12/2014.
  */
-class LogBackTest {
-  private[this] var LOG: Logger = LoggerFactory.getLogger(classOf[LogBackTest])
+class LogBackTest extends DBContext {
 
+  val LOG: Logger = LoggerFactory.getLogger(classOf[LogBackTest])
   val adopter = new LogbackEventAdaptor
 
-  val ds = connect
-
-  val jdbc = new JdbcSupport
-
-  val manifestPath: String = "classpath:store_assemble.xml"
-
-
-  var eventStore: EventStore = _
   @Test
   def adopt: Unit = {
     val exp = new RuntimeException("msg level 3", new IOException("msg level 2", new FileNotFoundException("msg level 1")))
-
 
     val mk1 = MarkerFactory.getMarker("marker 1")
     val mk2 = MarkerFactory.getMarker("marker 2")
@@ -63,39 +46,6 @@ class LogBackTest {
     println("done")
   }
 
-  def connect: DataSource = {
-    val ds  = new HikariDataSource
-    ds.setAutoCommit(true)
-    ds.setMinimumIdle(2)
-    ds.setMaximumPoolSize(32)
-    ds.setDriverClassName("com.mysql.jdbc.Driver")
-    ds.setUsername("bitranger")
-    ds.setPassword("123456")
-    ds.setJdbcUrl("jdbc:mysql://localhost:3306/prma_log")
-//    ds.getParentLogger.setLevel(java.util.logging.Level.WARNING)
-    return ds
-  }
-
-
-  @Before
-  def setUp: Unit = {
-    jdbc setDataSource ds
-    jdbc setTraceSQL false
-
-    AppContext.beanAssembler.addBean("dataSource", ds)
-
-
-    val bootstrap = new ContextBooter
-    bootstrap.setClassLoader(this.getClass.getClassLoader)
-    // prepare
-    bootstrap.setStreamProvider(new ClassLoaderInputStreamProvider(this.getClass.getClassLoader))
-
-    bootstrap.setManifestPath(manifestPath)
-
-    bootstrap.boot
-
-    eventStore = AppContext.beanAssembler.getBean("eventStore")
-  }
 
 
 }

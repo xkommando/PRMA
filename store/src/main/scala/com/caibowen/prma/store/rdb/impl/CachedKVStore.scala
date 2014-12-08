@@ -2,6 +2,7 @@ package com.caibowen.prma.store.rdb.impl
 
 import javax.annotation.{Nonnull, Nullable}
 
+import com.caibowen.gplume.jdbc.JdbcException
 import com.caibowen.prma.api.SimpleCache
 import com.caibowen.prma.core.LifeCycle
 import com.caibowen.prma.store.rdb.KVStore
@@ -34,8 +35,9 @@ class CachedKVStore[K,V]private[this](val db: KVStore[K,V], val cache: SimpleCac
 
   protected
   def doPut(key: K, @Nonnull value: V): Boolean = {
-    cache put(key, value)
-    db put(key, value)
+    val ok = db put(key, value)
+    if (ok) cache put(key, value)
+    ok
   }
 
   def putAll(@Nonnull ls: List[(K,V)]): Unit = {
@@ -58,8 +60,11 @@ class CachedKVStore[K,V]private[this](val db: KVStore[K,V], val cache: SimpleCac
   @Nullable
   def doRemove(key: K): Boolean = {
     val ok = db doRemove(key)
-    if (ok)
+    if (ok) {
       cache.remove(key, false)
-    ok
+      ok
+    }
+    else
+      throw new JdbcException(s"Could not remove key[$key]")
   }
 }

@@ -1,11 +1,11 @@
 package com.caibowen.prma.logger.jul
 
-import java.util.logging.LogRecord
+import java.util.logging.{LogRecord=> JulLogRecord}
 
-import com.caibowen.prma.api.LogLevel
 import com.caibowen.prma.api.LogLevel.LogLevel
-import com.caibowen.prma.api.{LogLevel, EventAdaptor}
-import com.caibowen.prma.api.model.{ExceptionVO, EventVO}
+import com.caibowen.prma.api.model.{EventVO, ExceptionVO}
+import com.caibowen.prma.api.{EventAdaptor, LogLevel}
+import com.caibowen.prma.logger.logback.LogbackEventAdaptor
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -14,43 +14,68 @@ import scala.collection.mutable.ArrayBuffer
  * @since  04/12/2014.
  */
 
-class JulRecordAdaptor extends EventAdaptor[LogRecord] {
+class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormatter) extends EventAdaptor[JulLogRecord] {
 
-  override def from(ev: LogRecord): EventVO = {
+  override def from(ev: JulLogRecord): EventVO = {
     val le = JulRecordAdaptor.levelMap(ev.getLevel.intValue())
-    val st = new StackTraceElement(ev.getSourceClassName, ev.getSourceMethodName, ev.getSourceClassName, -1)
+
+    val st = JulRecordAdaptor.getCallerST(ev)
+    val msg = formatter.fmt(ev)
+    val loggerName = if (ev.getLoggerName == null) "" else ev.getLoggerName
+
     return new EventVO(ev.getMillis, le,
-      ev.getLoggerName, ev.getThreadID.toString, st,
-      ev.getMessage, -1,
+      loggerName, ev.getThreadID.toString, st,
+      msg,
+      -1,
       null,
-      JulRecordAdaptor.toExcepts(ev),
+      getExcepts(ev),
       null)
   }
-  override def to(vo: EventVO): LogRecord = throw new NotImplementedError()
+  override def to(vo: EventVO): JulLogRecord = throw new NotImplementedError()
+
+
+  def getExcepts(ev: JulLogRecord): List[ExceptionVO] = {
+
+    @inline
+    val toVO = (th: Throwable, start: Int) => {
+      val stps = th.getStackTrace
+      new ExceptionVO(th.getClass.getName,
+        th.getMessage,
+        stps.take(stps.length - start).toList)
+    }
+
+    val _t = ev.getThrown
+    if (_t == null)
+      return null
+
+    var cause = _t.getCause
+    if (cause == null)
+      return List(toVO(_t, 0))
+
+    val buf = new ArrayBuffer[ExceptionVO](16)
+    buf += toVO(_t, 0)
+    val cs = JulRecordAdaptor.commonFrames(_t, cause)
+    do {
+      buf += toVO(cause, cs)
+      cause = cause.getCause
+    } while (cause != null)
+    buf.toList
+  }
+
 }
 object JulRecordAdaptor {
-  // static int findNumberOfCommonFrames(StackTraceElement[] steArray,
-  //     StackTraceElementProxy[] parentSTEPArray) {
-  //   if (parentSTEPArray == null || steArray == null) {
-  //     return 0;
-  //   }
 
-  //   int steIndex = steArray.length - 1;
-  //   int parentIndex = parentSTEPArray.length - 1;
-  //   int count = 0;
-  //   while (steIndex >= 0 && parentIndex >= 0) {
-  //     StackTraceElement ste = steArray[steIndex];
-  //     StackTraceElement otherSte = parentSTEPArray[parentIndex].ste;
-  //     if (ste.equals(otherSte)) {
-  //       count++;
-  //     } else {
-  //       break;
-  //     }
-  //     steIndex--;
-  //     parentIndex--;
-  //   }
-  //   return count;
-  // }
+  def getCallerST(record: JulLogRecord): StackTraceElement = {
+    if (record.getSourceClassName != null)
+      new StackTraceElement(record.getSourceClassName, record.getSourceMethodName, record.getSourceClassName, -1)
+    else {
+      val sts = new Throwable().getStackTrace
+      if (sts != null && sts.length > 2)
+        sts(2)
+      else LogbackEventAdaptor.NA_ST
+    }
+
+  }
 
   @inline
   def commonFrames(t1: Throwable, t2: Throwable): Int ={
@@ -66,32 +91,6 @@ object JulRecordAdaptor {
     }
   }
 
-  @inline
-  def toVO(th: Throwable, start: Int) = {
-    val stps = th.getStackTrace
-    new ExceptionVO(th.getClass.getName,
-      th.getMessage,
-      stps.take(stps.length - start).toList)
-  }
-
-  def toExcepts(ev: LogRecord): List[ExceptionVO] = {
-    val _t = ev.getThrown
-    if (_t == null)
-      return null
-
-    var cause = _t.getCause
-    if (cause == null)
-      return List(toVO(_t, 0))
-
-    val buf = new ArrayBuffer[ExceptionVO](16)
-    buf += toVO(_t, 0)
-    val cs = commonFrames(_t, cause)
-    do {
-      buf += toVO(cause, cs)
-      cause = cause.getCause
-    } while (cause != null)
-    buf.toList
-  }
   private[jul] val levelMap = Map[Int, LogLevel](
     Int.MinValue -> LogLevel.ALL,
     300 -> LogLevel.TRACE,

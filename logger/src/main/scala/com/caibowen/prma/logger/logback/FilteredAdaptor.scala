@@ -1,6 +1,6 @@
 package com.caibowen.prma.logger.logback
 
-import ch.qos.logback.classic.spi.{StackTraceElementProxy, IThrowableProxy, ILoggingEvent}
+import ch.qos.logback.classic.spi.{ILoggingEvent, IThrowableProxy, StackTraceElementProxy}
 import com.caibowen.prma.api.model.ExceptionVO
 import com.caibowen.prma.core.filter.StrFilter
 
@@ -29,20 +29,21 @@ class FilteredAdaptor private[this](val classFilter: StrFilter, val  stackTraceF
         .filter(takeStackTrace)
         .map(_.getStackTraceElement)
         .toList
-      new ExceptionVO(px.getClassName, px.getMessage, sts)
+      new ExceptionVO(px.getClassName, px.getMessage,
+        if (sts.length == 0) null else sts)
     }
 
-    var _cause = px.getCause
-    if (_cause == null || !takeClass(_cause.getClassName))
+    var cause = px.getCause
+    if (cause == null || !takeClass(cause.getClassName))
       return List(toExceptVO(px, 0))
 
     val buf = new ArrayBuffer[ExceptionVO](16)
     buf += toExceptVO(px, 0)
-    val cs = _cause.getCommonFrames
+    val cs = cause.getCommonFrames
     do {
-      buf += toExceptVO(_cause, cs)
-      _cause = _cause.getCause
-    } while (_cause != null && takeClass(_cause.getClassName))
+      buf += toExceptVO(cause, cs)
+      cause = cause.getCause
+    } while (cause != null && takeClass(cause.getClassName))
 
     buf.toList
   }

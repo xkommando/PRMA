@@ -2,9 +2,8 @@ package com.caibowen.prma.core.filter
 
 import java.io.{BufferedReader, InputStream, InputStreamReader}
 
-import com.caibowen.gplume.resource.{InputStreamCallback, InputStreamProviderProxy, InputStreamSupport}
-import com.caibowen.gplume.misc.Str.Utils
 import com.caibowen.gplume.misc.Str.Utils._
+import com.caibowen.gplume.resource.{InputStreamCallback, InputStreamProviderProxy, InputStreamSupport}
 
 import scala.collection.mutable
 

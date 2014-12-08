@@ -27,11 +27,11 @@
     </licenses>
 
     <modules>
-        <module>API</module>
-        <module>Core</module>
-        <module>Monitor</module>
-        <module>Store</module>
-        <module>Logger</module>
+        <module>api</module>
+        <module>core</module>
+        <module>monitor</module>
+        <module>store</module>
+        <module>logger</module>
     </modules>
 
 
@@ -47,11 +47,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>com.caibowen.gplumeframework</groupId>
-            <artifactId>gplume-scala</artifactId>
-            <version>${gp-scala-version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

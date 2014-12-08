@@ -2,7 +2,7 @@ package com.caibowen.prma.store.rdb.impl
 
 import com.caibowen.prma.api.SimpleCache
 import com.caibowen.prma.api.model.ExceptionVO
-import com.caibowen.prma.core.{StrLoader, LifeCycle}
+import com.caibowen.prma.core.{LifeCycle, StrLoader}
 
 import scala.beans.BeanProperty
 
@@ -23,8 +23,6 @@ class CachedAux private[this](val sqls: StrLoader)
   override def start(): Unit = {
 
   }
-
-
 
   override def hasException(vo: ExceptionVO): Boolean = {
     if (exceptCache.get(vo.id).isDefined)
@@ -54,7 +52,7 @@ class CachedAux private[this](val sqls: StrLoader)
     if (markerCache.get(key.hashCode).isDefined)
       true
     else {
-      if (super.hasProperty(key)){
+      if (super.hasMarker(key)){
         exceptCache.put(key.hashCode, NA)
         true
       }
