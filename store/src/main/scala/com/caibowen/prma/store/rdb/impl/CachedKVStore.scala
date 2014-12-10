@@ -2,7 +2,6 @@ package com.caibowen.prma.store.rdb.impl
 
 import javax.annotation.{Nonnull, Nullable}
 
-import com.caibowen.gplume.jdbc.JdbcException
 import com.caibowen.prma.api.SimpleCache
 import com.caibowen.prma.core.LifeCycle
 import com.caibowen.prma.store.rdb.KVStore
@@ -60,11 +59,9 @@ class CachedKVStore[K,V]private[this](val db: KVStore[K,V], val cache: SimpleCac
   @Nullable
   def doRemove(key: K): Boolean = {
     val ok = db doRemove(key)
-    if (ok) {
+    if (ok)
       cache.remove(key, false)
-      ok
-    }
-    else
-      throw new JdbcException(s"Could not remove key[$key]")
+    ok
+
   }
 }

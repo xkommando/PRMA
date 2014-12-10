@@ -1,6 +1,7 @@
 package com.caibowen.prma.logger.jul
 
-import java.util.logging.{LogRecord=> JulLogRecord}
+import java.util.logging.{LogRecord => JulLogRecord}
+import javax.annotation.{Nonnull, Nullable}
 
 import com.caibowen.prma.api.LogLevel.LogLevel
 import com.caibowen.prma.api.model.{EventVO, ExceptionVO}
@@ -22,7 +23,6 @@ class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormat
     val st = JulRecordAdaptor.getCallerST(ev)
     val msg = formatter.fmt(ev)
     val loggerName = if (ev.getLoggerName == null) "" else ev.getLoggerName
-
     return new EventVO(ev.getMillis, le,
       loggerName, ev.getThreadID.toString, st,
       msg,
@@ -33,7 +33,7 @@ class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormat
   }
   override def to(vo: EventVO): JulLogRecord = throw new NotImplementedError()
 
-
+  @Nullable
   def getExcepts(ev: JulLogRecord): List[ExceptionVO] = {
 
     @inline
@@ -65,6 +65,7 @@ class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormat
 }
 object JulRecordAdaptor {
 
+  @Nonnull
   def getCallerST(record: JulLogRecord): StackTraceElement = {
     if (record.getSourceClassName != null)
       new StackTraceElement(record.getSourceClassName, record.getSourceMethodName, record.getSourceClassName, -1)

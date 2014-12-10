@@ -16,11 +16,13 @@ class InMemCache[K,V] extends SimpleCache[K,V] {
 
   def clear(): Unit = mem.clear()
 
-  def keys(): Set[K] = mem.keys.asInstanceOf[Set[K]]
+  def keys: Set[K] = mem.keys.asInstanceOf[Set[K]]
 
-  def put(key: K, value: V): Unit = {mem.put(key, value)}
+  def count = mem.size
 
-  def putIfAbsent(key: K, value: V): Unit = {mem.putIfAbsent(key, value)}
+  def put(key: K, value: V): Unit = mem put (key, value)
+
+  def putIfAbsent(key: K, value: V): Unit = mem putIfAbsent(key, value)
 
   def putAll(map: Map[K, V]): Unit = mem ++= map// vals.foreach((e:(K,V))=>mem.put(e._1, e._2))
 

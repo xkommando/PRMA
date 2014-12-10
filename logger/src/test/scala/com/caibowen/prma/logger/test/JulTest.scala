@@ -11,14 +11,14 @@ import org.junit.Test
  * @author BowenCai
  * @since  08/12/2014.
  */
-class JulTest {
+class JulTest extends DBContext {
   val LOG = JulLogger.getLogger(classOf[JulTest].getName)
   val adaptor = new JulRecordAdaptor
 
   Console.setOut(System.err)
 
   @Test
-  def layout = {
+  def layout(): Unit = {
     val params = new Array[AnyRef](3)
     params(0) = 111.asInstanceOf[AnyRef]
     params(1) = 222.asInstanceOf[AnyRef]
@@ -32,12 +32,14 @@ class JulTest {
     val exp = new RuntimeException("msg level 3", new IOException("msg level 2", new FileNotFoundException("msg level 1")))
 
     val record = new JulLogRecord(JulLevel.FINE, "{0}msg{1} haha {2}")
-//    record.setParameters(params)
-//    record.setThrown(exp)
+    record.setParameters(params)
+    record.setThrown(exp)
 
     val vo = adaptor.from(record)
     println(vo)
-//    println("-----------------------")
+    println("-----------------------")
+//    val id = eventStore.put(vo)
+//    println(id)
 //    println(JSON.toJSONString(vo.asInstanceOf[AnyRef], true))
 //    println(java.text.MessageFormat.format("{0}msg{1} haha {2}", 1.asInstanceOf[AnyRef], 2.asInstanceOf[AnyRef], new Date()))
   }

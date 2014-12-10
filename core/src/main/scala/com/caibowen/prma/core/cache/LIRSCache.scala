@@ -17,11 +17,15 @@ class LIRSCache[K,V] extends SimpleCache[K,V]{
 
   def clear(): Unit = mem.clear()
 
-  def keys(): Set[K] = throw new NotImplementedError()
+  // keys are not stored
+  def keys: Set[K] = throw new NotImplementedError()
+
+  def count = mem.size()
 
   def put(key: K, value: V): Unit = {mem.put(key.hashCode(), value)}
 
   def putIfAbsent(key: K, value: V): Unit = {
+    mem.keySet()
     if (!contains(key))
       mem.put(key.hashCode(), value)
   }

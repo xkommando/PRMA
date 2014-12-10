@@ -2,7 +2,8 @@ package com.caibowen.prma.store.rdb
 
 import java.sql.{Connection, PreparedStatement, SQLException, Types}
 import javax.annotation.Nonnull
-
+import javax.sql.DataSource
+import akka.actor.Props
 import com.caibowen.gplume.jdbc.mapper.RowMapping
 import com.caibowen.gplume.jdbc.transaction.{Transaction, TransactionCallback}
 import com.caibowen.gplume.jdbc.{JdbcSupport, StatementCreator}
@@ -10,19 +11,16 @@ import com.caibowen.prma.api.model.EventVO
 import com.caibowen.prma.core.StrLoader
 import com.caibowen.prma.store.EventStore
 
-import scala.beans.BeanProperty
-
 /**
  * @author BowenCai
  * @since  05/12/2014.
  */
-class RdbEventStore(private[this] val sqls: StrLoader) extends JdbcSupport with EventStore {
-
-  @BeanProperty var eventAux: EventStoreAux = _
-
-  @BeanProperty var loggerNameStore: KVStore[Int, String] = _
-  @BeanProperty var threadStore: KVStore[Int, String] = _
-  @BeanProperty var stackStore: KVStore[Int,StackTraceElement] = _
+class RdbEventStore private[this] (val dataSource: DataSource,
+                                    val sqls: StrLoader,
+                                   val eventAux: EventStoreAux,
+                                   val loggerNameStore: KVStore[Int, String],
+                                   val threadStore: KVStore[Int, String],
+                                   val stackStore: KVStore[Int,StackTraceElement]) extends JdbcSupport(dataSource) with EventStore {
 
   override def put(@Nonnull event: EventVO): Long = {
     execute(new TransactionCallback[Long] {
@@ -81,4 +79,12 @@ class RdbEventStore(private[this] val sqls: StrLoader) extends JdbcSupport with 
 }
 object RdbEventStore{
   val AUTO_GEN_ID: Array[String] = Array("id")
+  def prop(dataSource: DataSource,
+           sqls: StrLoader,
+           eventAux: EventStoreAux,
+           loggerNameStore: KVStore[Int, String],
+           threadStore: KVStore[Int, String],
+           stackStore: KVStore[Int,StackTraceElement])
+
+  = Props(classOf[RdbEventStore],dataSource, sqls, eventAux, loggerNameStore, threadStore, stackStore)
 }

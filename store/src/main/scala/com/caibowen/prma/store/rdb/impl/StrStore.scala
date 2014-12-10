@@ -55,6 +55,7 @@ class StrStore(private[this] val tableName: String) extends JdbcSupport with KVS
   }
 
   override def putAll(@Nonnull ls: List[(Int, String)]): Unit =
+    if (ls.length > 0)
     batchInsert((con: Connection) => {
       val ps = con.prepareStatement("INSERT INTO " + tableName + "(`id`, `value`)VALUES(?,?)")
       for (e <- ls) {
@@ -66,6 +67,7 @@ class StrStore(private[this] val tableName: String) extends JdbcSupport with KVS
     }, null, null)
 
   override def putAll(@Nonnull map: Map[Int, String]): Unit =
+    if (map.size > 0)
     batchInsert((con: Connection) => {
       val ps = con.prepareStatement("INSERT INTO " + tableName + "(`id`, `value`)VALUES(?,?)")
       for ((key, value) <- map) {

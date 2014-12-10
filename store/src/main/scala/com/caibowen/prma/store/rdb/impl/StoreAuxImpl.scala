@@ -28,6 +28,10 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
       throw new JdbcException(s"could not save[$str] with[$store]")
 
 
+  // cached sql ref
+  final val _putExcept = sqls.get("ExceptionDAO.putExcept")
+  final val _putExceptR = sqls.get("ExceptionDAO.putRelation")
+
   def putExceptions(eventId: Long, exceps: List[ExceptionVO]): Unit = {
     val nexps = exceps.filter(!hasException(_))
 
@@ -40,7 +44,7 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
 
     // insert exception
     batchInsert((con: Connection) => {
-        val ps = con.prepareStatement(sqls.get("ExceptionDAO.putExcept"))
+        val ps = con.prepareStatement(_putExcept)
         for (exp <- nexps) {
           ps.setLong(1, exp.id)
           ps.setInt(2, exp.exceptionName.hashCode)
@@ -69,7 +73,7 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
 
     // insert relations
     batchInsert((con: Connection) => {
-        val ps = con.prepareStatement(sqls.get("ExceptionDAO.putRelation"))
+        val ps = con.prepareStatement(_putExceptR)
         var i = 0
         for (vo <- exceps) {
           ps.setInt(1, i)
@@ -82,12 +86,13 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
       },null,null)
   }
 
-
+  final val _putProp = sqls.get("PropertyDAO.putMap")
+  final val _putPropR = sqls.get("PropertyDAO.putRelation")
   def putProperties(eventId: Long, props: Map[String, String]): Unit = {
     val newPs = props.filterKeys(!hasProperty(_))
 
     batchInsert((con: Connection) => {
-        val ps = con.prepareStatement(sqls.get("PropertyDAO.putMap"))
+        val ps = con.prepareStatement(_putProp)
         for ((k,v) <- newPs) {
           ps.setInt(1, k.hashCode);
           ps.setString(2, k);
@@ -98,8 +103,7 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
       }, null, null)
 
     batchInsert((con: Connection) => {
-        val ps = con.prepareStatement(
-          sqls.get("PropertyDAO.putRelation"))
+        val ps = con.prepareStatement(_putPropR)
         for ((k, v) <- props) {
           ps.setInt(1, k.hashCode);
           ps.setLong(2, eventId);
@@ -110,10 +114,12 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
   }
 
 
+  final val _putMk = sqls.get("MarkerDAO.putMarker")
+  final val _putMKR = sqls.get("MarkerDAO.putRelation")
   def putMarkers(eventId: Long, mks: Set[String]) {
     val newMk = mks.filter(!hasMarker(_))
     batchInsert((con: Connection) => {
-        val ps: PreparedStatement = con.prepareStatement(sqls.get("MarkerDAO.putMarker"))
+        val ps: PreparedStatement = con.prepareStatement(_putMk)
         for (e <- newMk) {
           ps.setInt(1, e.hashCode)
           ps.setString(2, e)
@@ -123,7 +129,7 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
       },null, null)
 
     batchInsert((con: Connection) => {
-        val ps: PreparedStatement = con.prepareStatement(sqls.get("MarkerDAO.putRelation"))
+        val ps: PreparedStatement = con.prepareStatement(_putMKR)
         for (e <- mks) {
           ps.setInt(1, e.hashCode)
           ps.setLong(2, eventId)

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <beans namespace="prma::internal::store">
 
+    <!--for test only-->
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <prop name="driverClassName" val="com.mysql.jdbc.Driver"/>
+        <prop name="username" val="bitranger" />
+        <prop name="password" val="123456"/>
+        <prop name="jdbcUrl" val="jdbc:mysql://localhost:3306/prma_log" />
+        <prop name="autoCommit" val="false" />
+
+        <prop name="minimumIdle" val="2"/>
+        <prop name="maximumPoolSize" val="16"/>
+    </bean>
+
     <!--DataSource shall be added from this context BEFORE CENTURY-->
+
+
     <bean id="sqlLoader" class="com.caibowen.prma.core.StrLoader" aftercall="start">
         <construct name="paths">
             <list>
@@ -13,7 +27,6 @@
     <!--<bean id="classNameFilter" class="com.caibowen.prma.core.filter.PartialStrFilter" aftercall="start">-->
         <!--<construct val="ignored_classes.txt"/>-->
     <!--</bean>-->
-
 
     <bean id="exceptNameStore" class="com.caibowen.prma.store.rdb.impl.StrStore">
         <construct val="`exception_name`"/>
@@ -57,8 +70,8 @@
         <prop name="dataSource" ref="dataSource"/>
     </bean>
 
-    <bean id="eventStore" class="com.caibowen.prma.store.rdb.RdbEventStore">
-        <construct ref="eventSQL"/>
+    <bean id="eventStore" class="com.caibowen.prma.store.rdb.StoreBuilder">
+        <prop name="sqls" ref="eventSQL"/>
         <prop name="dataSource" ref="dataSource"/>
         <prop name="eventAux" ref="eventStoreAux"/>
         <prop name="loggerNameStore" ref="loggerNameStore"/>

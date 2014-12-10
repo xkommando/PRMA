@@ -5,8 +5,12 @@ import javax.annotation.{Nonnull, Nullable}
 import com.caibowen.gplume.jdbc.JdbcException
 
 /**
- * level, loggerName, threadName, message
- * callerStackTrace
+ * K/V store for:
+ * level, loggerName, threadName -> event
+ * except message -> exception
+ *
+ *
+ * stackTrace -> event, exception
  *
  *
  * @author BowenCai
@@ -37,6 +41,10 @@ trait KVStore[K,V] extends Serializable {
     else
       doPut(key, value)
 
+  /**
+   * for list comprehension
+   * @param ls
+   */
   def putIfAbsent(@Nonnull ls: List[(K, V)]): Unit =
     putAll(ls.filter(tp=> !hasKey(tp._1)))
 
@@ -45,6 +53,10 @@ trait KVStore[K,V] extends Serializable {
     putAll(values.filterKeys(!hasKey(_)))
 
 
+  /**
+   * for list comprehension
+   * @param ls
+   */
   def putAll(@Nonnull ls: List[(K,V)])
   def putAll(@Nonnull map: Map[K, V])
 

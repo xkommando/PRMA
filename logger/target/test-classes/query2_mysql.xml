@@ -13,6 +13,11 @@
         INSERT INTO `marker_name`(`id`, `value`)VALUES(?,?)
     ]]></entry>
 
+    <entry key="MarkerDAO.getMarkerIDs"><![CDATA[
+        SELECT `id` FROM `marker_name` LIMIT ?
+    ]]></entry>
+
+
     <entry key="MarkerDAO.putRelation"><![CDATA[
     INSERT INTO `j_event_marker`(`marker_id`, `event_id`)VALUES(?,?)
     ]]></entry>
@@ -32,6 +37,9 @@
         INSERT INTO `j_event_prop`(`prop_id`, `event_id`)VALUES (?,?)
     ]]></entry>
 
+    <entry key="PropertyDAO.getPropertyIDs"><![CDATA[
+        SELECT `id` FROM `property` LIMIT ?
+    ]]></entry>
 
     <!--<entry key="ExceptionDAO.getByEvent"><![CDATA[-->
     <!--SELECT EXP.id, EXP.except_name, EXP.except_msg, EXP.stack_traces-->
@@ -49,6 +57,8 @@
         INSERT INTO `j_event_exception`(`seq`,`event_id`,`except_id`)VALUES(?,?,?)
     ]]></entry>
 
-
+    <entry key="ExceptionDAO.getExceptIDs"><![CDATA[
+        SELECT `id` FROM `exception` LIMIT ?
+    ]]></entry>
 
 </properties>

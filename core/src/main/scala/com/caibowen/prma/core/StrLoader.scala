@@ -2,11 +2,9 @@ package com.caibowen.prma.core
 
 import java.io.InputStream
 import java.util.Properties
-
+import scala.collection.JavaConversions._
 import com.caibowen.gplume.misc.Str.Utils._
 import com.caibowen.gplume.resource.{InputStreamCallback, InputStreamProviderProxy, InputStreamSupport}
-
-import scala.collection.JavaConversions._
 
 /**
  * @author BowenCai

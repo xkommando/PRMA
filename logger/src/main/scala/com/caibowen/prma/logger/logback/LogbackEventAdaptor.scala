@@ -5,6 +5,7 @@ import ch.qos.logback.classic.spi.{ILoggingEvent, IThrowableProxy}
 import com.caibowen.prma.api.model.{EventVO, ExceptionVO}
 import com.caibowen.prma.api.{EventAdaptor, LogLevel}
 
+import scala.collection.JavaConversions._
 import scala.collection.immutable._
 import scala.collection.mutable
 import scala.collection.mutable.{ArrayBuffer, TreeSet}
@@ -73,7 +74,6 @@ class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
   }
 
   def getProperties(event: ILoggingEvent): Map[String, String] = {
-    import scala.collection.JavaConversions.mapAsScalaMap
     val mmdc = event.getMDCPropertyMap
     val smdc = mmdc.size()
     val mcp = event.getLoggerContextVO.getPropertyMap

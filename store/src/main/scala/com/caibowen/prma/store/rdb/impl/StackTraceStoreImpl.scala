@@ -62,7 +62,8 @@ class StackTraceStore(private[this] val loader: StrLoader) extends JdbcSupport w
   }
 
   override def putAll(@Nonnull map: Map[Int, StackTraceElement]): Unit =
-    batchInsert((con: Connection) => {
+    if (map.size > 0)
+      batchInsert((con: Connection) => {
       val ps = con.prepareStatement("INSERT INTO `stack_trace`(`id`,`file`,`class`,`function`,`line`)VALUES(?,?,?,?)")
       for ((k, v) <- map) {
         ps.setLong(1, k)
@@ -76,7 +77,8 @@ class StackTraceStore(private[this] val loader: StrLoader) extends JdbcSupport w
     }, null, null)
 
   override def putAll(@Nonnull ls: List[(Int, StackTraceElement)]): Unit =
-    batchInsert((con: Connection) => {
+    if (ls.length > 0)
+      batchInsert((con: Connection) => {
       val ps = con.prepareStatement("INSERT INTO `stack_trace`(`id`,`file`,`class`,`function`,`line`)VALUES(?,?,?,?,?)")
       for (pair <- ls) {
         ps.setLong(1, pair._1)

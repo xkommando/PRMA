@@ -6,13 +6,17 @@ import scala.concurrent.Future
  * @author BowenCai
  * @since  05/12/2014.
  */
-trait SimpleCache[K,V] {
+trait SimpleCache[K,V]{
 
   def contains(key: K): Boolean
 
   def clear(): Unit
 
-  def keys(): Set[K]
+  /**
+   * keys currently available
+   * @return
+   */
+  def keys: Set[K]
 
   /**
    * put value.
@@ -23,21 +27,21 @@ trait SimpleCache[K,V] {
   def put(key: K, value: V): Unit
 
   /**
-   * put only if this key is not contained
+   * put only if this key does not exist
    * @param key
    * @param value
    */
   def putIfAbsent(key: K, value: V): Unit
 
   /**
-   * put value.
+   * put all values.
    * behavior undefined if there is old value
    * @param vals
    */
   def putAll(vals: Map[K, V]): Unit
 
   /**
-   * update, return old value if required
+   * update, return old value if requested
    * behavior undefined if there is no old value
    *
    * @param key
@@ -83,6 +87,13 @@ trait SimpleCache[K,V] {
    * @return a map view
    */
   def toMap(): Map[K, V]
+
+  /**
+   * approximate number of cache entries
+   * @return
+   */
+  def count: Int
+
 
   /**
    * @param key
