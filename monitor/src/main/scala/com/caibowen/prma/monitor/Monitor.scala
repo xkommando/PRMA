@@ -2,11 +2,13 @@ package com.caibowen.prma.monitor
 
 import java.util.{List => JList, Map => JMap}
 
-import akka.actor.Actor
+import akka.actor.{Actor,Props}
 import com.caibowen.prma.api.model.EventVO
 import com.caibowen.prma.monitor.eval.Evaluator
 import com.caibowen.prma.monitor.notify.Notifier
 import org.slf4j.LoggerFactory
+
+import scala.util.{Failure, Success, Try}
 
 /**
 * @author BowenCai
@@ -26,22 +28,22 @@ class Monitor(val evaluator: Evaluator, val notifierMap: Map[String, Notifier]) 
 
   def receive = {
     case vo: EventVO => {
-      var result: String = null
-      try {
-        result = evaluator.eval(vo)
-      } catch {
-        case e: Throwable => this.LOG.error(s"Could not evaluate [$vo] with evaluator [$evaluator]", e)
-      }
-      result match {
-        case Evaluator.ACCEPT => allNotifiers.foreach(_ send vo)
-        case name: String => {
-          val notifier = notifierMap(result)
-          if (notifier != null)
-            notifier send vo
-          else LOG.warn(s"Could not find notifier named [$result] for event [$vo]");
+      Try(evaluator.eval(vo)) match {
+        case Success(name) => name match {
+          case Evaluator.ACCEPT => allNotifiers.foreach(_ send vo)
+          case name: String => {
+            val notifier = notifierMap(name)
+            if (notifier != null)
+              notifier send vo
+            else LOG.warn(s"Could not find notifier named [$name] on event [$vo]")
+          }
+          case null => LOG.error(s"evaluator [$evaluator] returns null on event [$vo]")
         }
+
+        case Failure(e) => this.LOG.error(s"Could not evaluate [$vo] with evaluator [$evaluator]", e)
       }
     }
+
     case x => unhandled(x)
   }
 

@@ -49,11 +49,15 @@
     <!--]]></entry>-->
 
     <entry key="ExceptionDAO.putExcept"><![CDATA[
-        INSERT INTO `exception`(`id`,`except_name`,`except_msg`,`stack_traces`)
-        VALUES (?,?,?,?)
+        INSERT INTO `exception`(`id`,`name`,`msg`)
+        VALUES (?,?,?)
     ]]></entry>
 
-    <entry key="ExceptionDAO.putRelation"><![CDATA[
+    <entry key="ExceptionDAO.putStackTraceExceptRelation"><![CDATA[
+        INSERT INTO `j_exception_stacktrace`(`seq`,`stacktrace_id`,`except_id`)VALUES(?,?,?)
+    ]]></entry>
+
+    <entry key="ExceptionDAO.putEventExceptRelation"><![CDATA[
         INSERT INTO `j_event_exception`(`seq`,`event_id`,`except_id`)VALUES(?,?,?)
     ]]></entry>
 

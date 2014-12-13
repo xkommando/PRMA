@@ -8,8 +8,8 @@ import scala.beans.BeanProperty
  */
 @SerialVersionUID(8087093751948611040L)
 class ExceptionVO(@BeanProperty val id: Long,
-                  @BeanProperty val exceptionName: String,
-                  @BeanProperty val exceptionMessage: Option[String],
+                  @BeanProperty val name: String,
+                  @BeanProperty val message: Option[String],
                   @BeanProperty val stackTraces: Option[List[StackTraceElement]]) extends Serializable {
 
   def this(eN: String, eMsg: String, sts: List[StackTraceElement]) {
@@ -22,20 +22,20 @@ class ExceptionVO(@BeanProperty val id: Long,
 
   override def hashCode(): Int = {
     var result =  (id ^ (id >>> 32)).toInt
-    result = 31 * result + exceptionName.hashCode
-    result = if (exceptionMessage.isEmpty)
+    result = 31 * result + name.hashCode
+    result = if (message.isEmpty)
               31 * result
-            else 31 * result + exceptionMessage.hashCode
+            else 31 * result + message.hashCode
     result = if (stackTraces.isEmpty)
               31 * result
             else 31 * result + stackTraces.hashCode
-    result;
+    result
   }
 
   override def toString: String = s"""com.caibowen.prma.api.model.ExceptionVO{" +
                     id=$id
-                    , exceptionName=$exceptionName
-                    , exceptionMessage=$exceptionMessage
+                    , exceptionName=$name
+                    , exceptionMessage=$message
                     , stackTraces=$stackTraces
                     }"""
 
@@ -48,12 +48,12 @@ class ExceptionVO(@BeanProperty val id: Long,
 
     if (id != that.id) return false
 
-    if (!exceptionName.equals(that.exceptionName)) return false
+    if (!name.equals(that.name)) return false
 
-    if (exceptionMessage.isEmpty) {
-      if (that.exceptionMessage.isDefined) return false
+    if (message.isEmpty) {
+      if (that.message.isDefined) return false
     } else {
-      if (!exceptionMessage.get.equals(that.exceptionMessage.get)) return false
+      if (!message.get.equals(that.message.get)) return false
     }
 
     if (stackTraces.isEmpty) {
@@ -61,7 +61,6 @@ class ExceptionVO(@BeanProperty val id: Long,
     } else {
       if (!stackTraces.get.equals(that.stackTraces.get)) return false
     }
-
     true
   }
 }
@@ -71,25 +70,12 @@ object ExceptionVO {
                   stackTraces: List[StackTraceElement]): Long = {
 
     //      MurmurHash
-
     var expID: Long = exceptionName.hashCode.toLong
     if (exceptionMessage != null) {
 //    (v << n) | (v >>> (64 - n))
       val msgHash = exceptionMessage.hashCode
       expID = ((expID << msgHash) | (expID >>> (64 - msgHash)))
     }
-
-    if (stackTraces == null || stackTraces.length == 0) return expID
-
-    val kMul: Long = 0x9ddfea08eb382d69L
-    for (st <- stackTraces) {
-      val _s = st.hashCode.toLong
-      var _a = (((expID) ^ _s) * kMul).toLong
-      _a ^= _a >> 47
-      expID = (_s ^ _a) * kMul
-      expID ^= expID >> 47
-      expID *= kMul
-    }
-    return expID
+    expID
   }
 }

@@ -28,10 +28,6 @@
         <!--<construct val="ignored_classes.txt"/>-->
     <!--</bean>-->
 
-    <bean id="exceptNameStore" class="com.caibowen.prma.store.rdb.impl.StrStore">
-        <construct val="`exception_name`"/>
-        <prop name="dataSource" ref="dataSource"/>
-    </bean>
     <bean id="exceptMsgStore" class="com.caibowen.prma.store.rdb.impl.StrStore">
         <construct val="`exception_msg`"/>
         <prop name="dataSource" ref="dataSource"/>
@@ -42,11 +38,9 @@
         <prop name="dataSource" ref="dataSource"/>
     </bean>
 
-
     <bean id="eventStoreAux" class="com.caibowen.prma.store.rdb.impl.StoreAuxImpl">
         <construct ref="sqlLoader"/>
         <prop name="dataSource" ref="dataSource"/>
-        <prop name="exceptNameStore" ref="exceptNameStore"/>
         <prop name="exceptMsgStore" ref="exceptMsgStore"/>
         <prop name="stackStore" ref="stackTraceStore"/>
     </bean>

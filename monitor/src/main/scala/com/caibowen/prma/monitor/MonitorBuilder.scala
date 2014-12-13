@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.{List => JList, Map => JMap}
 
 import akka.actor.{ActorRef, ActorRefFactory}
+import com.caibowen.gplume.context.bean.InitializingBean
 import com.caibowen.gplume.scala.conversion.StrConversions.ApplyConversion
 import com.caibowen.prma.core.ActorBuilder
 import com.caibowen.prma.monitor.eval.Evaluator
@@ -15,12 +16,12 @@ import scala.collection.JavaConversions
 /*
 Example:
 
-    <bean class="com.myapp.MyMonitor">
+    <bean class="com.caibowen.prma.monitor.MonitorBuilder">
         <prop name="evaluator" ref="eval"/>
         <prop name="notifiers">
             <list>
                 <ref>notifier1</ref>
-                <bean class="myMonifier"/>
+                <bean class="myNonifier"/>
             </list>
         </prop>
     </bean>
@@ -36,7 +37,7 @@ Example:
 object MonitorBuilder{
   private val anonymousCount = new AtomicInteger(0)
   def newName =
-    "PRMA.Monitor-" + anonymousCount.incrementAndGet().toString
+    "PRMA.Monitor_" + anonymousCount.incrementAndGet().toString
 }
 
 class MonitorBuilder extends ActorBuilder {

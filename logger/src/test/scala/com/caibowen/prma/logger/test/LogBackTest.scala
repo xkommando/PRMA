@@ -43,16 +43,13 @@ class LogBackTest extends DBContext {
 
     val vo = adopter.from(lbEvent)
     Console.setOut(System.err)
+    //    Console.withOut(System.err){}
 
     println(s"prop ${vo.propertyCount} mk ${vo.markerCount} exp ${vo.exceptionCount} \r\n vo $vo \r\n----\r\n")
     println(JSON.toJSONString(vo.asInstanceOf[AnyRef], true))
-
+    
     eventStore ! vo
-    val actSys = AppContext.beanAssembler.getBean(ActorBuilder.actorSystemBeanID).asInstanceOf[ActorSystem]
 
-    actSys.shutdown()
-    actSys.awaitTermination(Duration.apply(30, TimeUnit.SECONDS))
-    println("done")
   }
 
 

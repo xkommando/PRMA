@@ -12,6 +12,7 @@ import org.junit.Test
  * @since  08/12/2014.
  */
 class JulTest extends DBContext {
+
   val LOG = JulLogger.getLogger(classOf[JulTest].getName)
   val adaptor = new JulRecordAdaptor
 
@@ -38,8 +39,9 @@ class JulTest extends DBContext {
     val vo = adaptor.from(record)
     println(vo)
     println("-----------------------")
-//    val id = eventStore.put(vo)
-//    println(id)
+    eventStore ! vo
+
+
 //    println(JSON.toJSONString(vo.asInstanceOf[AnyRef], true))
 //    println(java.text.MessageFormat.format("{0}msg{1} haha {2}", 1.asInstanceOf[AnyRef], 2.asInstanceOf[AnyRef], new Date()))
   }

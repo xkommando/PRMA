@@ -18,7 +18,6 @@ import scala.beans.BeanProperty
  */
 class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with EventStoreAux {
 
-  @BeanProperty var exceptNameStore: KVStore[Int, String] = _
   @BeanProperty var exceptMsgStore: KVStore[Int, String] = _
   @BeanProperty var stackStore: KVStore[Int,StackTraceElement] = _
 
@@ -30,14 +29,16 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
 
   // cached sql ref
   final val _putExcept = sqls.get("ExceptionDAO.putExcept")
-  final val _putExceptR = sqls.get("ExceptionDAO.putRelation")
+  final val _putExceptR = sqls.get("ExceptionDAO.putEventExceptRelation")
+  final val _putExceptStackR = sqls.get("ExceptionDAO.putStackTraceExceptRelation")
 
   def putExceptions(eventId: Long, exceps: List[ExceptionVO]): Unit = {
     val nexps = exceps.filter(!hasException(_))
 
-    exceptNameStore.putIfAbsent(nexps.map(t=>t.exceptionName.hashCode -> t.exceptionName))
-    exceptMsgStore.putIfAbsent(nexps.filter(_.exceptionMessage.isDefined)
-                        .map(t=>t.exceptionMessage.get.hashCode -> t.exceptionMessage.get))
+    val msgs = nexps.filter(_.message.isDefined)
+      .map(t=>t.message.get.hashCode -> t.message.get)
+
+    exceptMsgStore.putIfAbsent(msgs)
 
     val newStack = List.newBuilder[StackTraceElement]
     newStack.sizeHint(32)
@@ -47,31 +48,42 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
         val ps = con.prepareStatement(_putExcept)
         for (exp <- nexps) {
           ps.setLong(1, exp.id)
-          ps.setInt(2, exp.exceptionName.hashCode)
+          ps.setString(2, exp.name)
 
-          if (exp.exceptionMessage.isDefined)
-            ps.setInt(3, exp.exceptionMessage.get.hashCode)
+          if (exp.message.isDefined)
+            ps.setInt(3, exp.message.get.hashCode)
           else ps.setNull(3, Types.INTEGER)
 
-          if (exp.stackTraces.isDefined) {
-            val ls = exp.stackTraces.get
-            newStack ++= ls
-
-            val arr = ls.map(_.hashCode()).toArray
-            val buf: Array[Byte] = Bytes.ints2bytes(arr)
-            ps.setBytes(4, buf)
-          }
-          else ps.setNull(4, Types.BINARY)
+          if (exp.stackTraces.isDefined)
+            newStack ++= exp.stackTraces.get
 
           ps.addBatch
         }
         ps
       }, null, null)
 
-    // insert new stack
+    // insert new stack traces
     stackStore.putIfAbsent(newStack.result().map(t=>t.hashCode()->t))
 
-    // insert relations
+    // insert relations with stack traces
+    batchInsert((con: Connection) => {
+      val ps = con.prepareStatement(_putExceptStackR)
+      for (exp <- nexps if exp.stackTraces.isDefined) {
+        val traces = exp.stackTraces.get
+        var i = 0
+        for (straceElem <- traces) {
+          ps.setInt(1, i)
+          ps.setInt(2, straceElem.hashCode())
+          ps.setLong(3, exp.id)
+          ps.addBatch()
+          i += 1
+        }
+      }
+      ps
+    }, null, null)
+
+
+    // insert relations with Event
     batchInsert((con: Connection) => {
         val ps = con.prepareStatement(_putExceptR)
         var i = 0

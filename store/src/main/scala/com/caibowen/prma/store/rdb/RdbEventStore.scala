@@ -44,6 +44,7 @@ class RdbEventStore private[this] (val dataSource: DataSource,
   @inline
   protected def putStr(store: KVStore[Int, String], str: String) = store.put(str.hashCode, str)
 
+  final val _putEvent = sqls.get("EventStore.insert")
   protected def putEvent(event: EventVO): Long = {
 
     putStr(loggerNameStore, event.loggerName)
@@ -56,8 +57,7 @@ class RdbEventStore private[this] (val dataSource: DataSource,
       @throws(classOf[SQLException])
       def createStatement(con: Connection): PreparedStatement = {
         val ps: PreparedStatement =
-          con.prepareStatement(sqls.get("EventStore.insert"),
-            RdbEventStore.AUTO_GEN_ID)
+          con.prepareStatement(_putEvent, RdbEventStore.AUTO_GEN_ID)
 
         ps.setLong(1, event.timeCreated)
         ps.setByte(2, event.level.id.toByte)
@@ -73,9 +73,6 @@ class RdbEventStore private[this] (val dataSource: DataSource,
     }, RdbEventStore.AUTO_GEN_ID, RowMapping.LONG_ROW_MAPPING);
   }
 
-//  override def batchPersist(@Nonnull ls: List[EventVO]) = {
-//
-//  }
 }
 object RdbEventStore{
   val AUTO_GEN_ID: Array[String] = Array("id")

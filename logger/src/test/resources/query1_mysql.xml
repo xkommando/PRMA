@@ -15,7 +15,7 @@
 
     <entry key="EventStore.insert"><![CDATA[
     INSERT INTO `event`(
-        `time_created`, `level`, `logger_id`, `thread_id`, `caller_sk_id`,
+        `time_created`, `level`, `logger_id`, `thread_id`, `caller_id`,
         `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)
         ]]>
     </entry>
