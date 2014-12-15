@@ -32,12 +32,26 @@ class ExceptionVO(@BeanProperty val id: Long,
     result
   }
 
-  override def toString: String = s"""com.caibowen.prma.api.model.ExceptionVO{" +
-                    id=$id
-                    , exceptionName=$name
-                    , exceptionMessage=$message
-                    , stackTraces=$stackTraces
-                    }"""
+  def appendJson(implicit json: StringBuilder): StringBuilder ={
+    json.append("{\r\n\"id\":").append(id)
+      .append(",\r\n\"name\":\"").append(name)
+      .append("\"")
+    if (message.isDefined)
+      json.append(",\r\n\"message\":\"").append(message.get).append('\"')
+
+    if (stackTraces.isDefined && stackTraces.get.size > 0) {
+      json.append(",\r\n\"stackTraces\":[")
+      stackTraces.get.foreach(ExceptionVO.appendJson(_).append(",\r\n"))
+      json.deleteCharAt(json.length() - 3)
+      json.append("],\r\n")
+    }
+    json.append("}")
+  }
+  override def toString: String = {
+    val json = new StringBuilder(512)
+    appendJson(json)
+    json.toString
+  }
 
   override def equals(obj: scala.Any): Boolean = {
     if (this == obj)
@@ -65,6 +79,7 @@ class ExceptionVO(@BeanProperty val id: Long,
   }
 }
 object ExceptionVO {
+  @inline
   def calculateID(exceptionName: String,
                   exceptionMessage: String,
                   stackTraces: List[StackTraceElement]): Long = {
@@ -78,4 +93,14 @@ object ExceptionVO {
     }
     expID
   }
+
+  @inline
+  def appendJson(st: StackTraceElement)(implicit json: StringBuilder):StringBuilder =
+    json.append("{ \"file\":\"").append(st.getFileName)
+      .append("\",\r\n\"class\":\"").append(st.getClassName)
+      .append("\",\r\n\"function\":\"").append(st.getMethodName)
+      .append("\",\r\n\"line\":").append(st.getLineNumber).append(" }")
+
+//  @inline
+//  def appendJson()
 }

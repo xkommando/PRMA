@@ -10,16 +10,13 @@ import scala.beans.BeanProperty
  * @since  30/11/2014.
  */
 class FreqEval(eval: Evaluator, counter: FreqCounter) extends Evaluator {
+
   @BeanProperty var limit: Double = 1.0
 
-  override def eval(vo: EventVO): String = {
-    val ret = eval.eval(vo)
-    if (!Evaluator.REJECT.eq(ret)) {
+  override def eval(vo: EventVO): Response = eval(vo) match {
+    case Reject => Reject
+    case accept =>
       counter.count()
-      if (counter.freq >= limit)
-        return ret
-    }
-    Evaluator.REJECT
+      accept
   }
-
 }

@@ -50,6 +50,6 @@ class DBContext {
 
     actSys.shutdown()
     actSys.awaitTermination(Duration.apply(3000, TimeUnit.SECONDS))
-    println("done")
+    println("\r\n--------------------------------\r\ndone")
   }
 }

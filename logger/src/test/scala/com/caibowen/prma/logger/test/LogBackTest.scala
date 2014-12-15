@@ -1,19 +1,15 @@
 package com.caibowen.prma.logger.test
 
 import java.io.{FileNotFoundException, IOException}
-import java.util.concurrent.TimeUnit
 
-import akka.actor.ActorSystem
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.LoggingEvent
-import com.alibaba.fastjson.JSON
-import com.caibowen.gplume.context.AppContext
-import com.caibowen.prma.core.ActorBuilder
+import com.caibowen.prma.core.LogLevelSerivializer
 import com.caibowen.prma.logger.logback.LogbackEventAdaptor
+import net.liftweb.json
+import net.liftweb.json.{DefaultFormats, Serialization}
 import org.junit.Test
 import org.slf4j._
-
-import scala.concurrent.duration.Duration
 
 /**
  * @author BowenCai
@@ -40,18 +36,40 @@ class LogBackTest extends DBContext {
       LOG.asInstanceOf[ch.qos.logback.classic.Logger],
       Level.DEBUG,
       "scala logging store test", exp, null)
-
+    lbEvent.setMarker(mk1)
     val vo = adopter.from(lbEvent)
     Console.setOut(System.err)
-    //    Console.withOut(System.err){}
+//    //    Console.withOut(System.err){}
+//
+////    println(s"prop ${vo.propertyCount} mk ${vo.markerCount} exp ${vo.exceptionCount} \r\n vo $vo \r\n----\r\n")
+//    println(JSON.toJSONString(vo.asInstanceOf[AnyRef], true))
+//
+////    eventStore ! vo
+    val fmt = DefaultFormats + LogLevelSerivializer
 
-    println(s"prop ${vo.propertyCount} mk ${vo.markerCount} exp ${vo.exceptionCount} \r\n vo $vo \r\n----\r\n")
-    println(JSON.toJSONString(vo.asInstanceOf[AnyRef], true))
-    
-    eventStore ! vo
+    val js = Serialization.writePretty(vo)(fmt)
+//    println(js)
+//    println("\r\n\r\n")
+//    println(vo)
 
+    val ast = json.parse(vo.toString)
+    val clr = ast \\ "caller"
+    val ls = clr.children
+    ls.foreach(t=>println(t.values))
+//    val vvo = Serialization.read(vo.toString)(fmt, ManifestFactory.classType(classOf[EventVO]))
+//    println(vvo)
   }
 
 
-
 }
+
+
+//case object StackTraceElemtSerializer[StactTraceElement](
+//{
+//case JString(s) =>  LogLevel.from(s)
+//},
+//{
+//case d: LogLevel.LogLevel => JString(d.toString)
+//}
+//))
+//)

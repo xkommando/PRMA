@@ -16,6 +16,11 @@
     <orderEntry type="module" module-name="store" />
     <orderEntry type="module" module-name="api" />
     <orderEntry type="module" module-name="core" />
+    <orderEntry type="library" name="Maven: net.liftweb:lift-json_2.10:2.5.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scalap:2.10.0" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-compiler:2.10.0" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-reflect:2.10.0" level="project" />
+    <orderEntry type="library" name="Maven: com.thoughtworks.paranamer:paranamer:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.caibowen.gplumeframework:gplume-scala:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.caibowen.gplumeframework:gplume:2.3" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.2" level="project" />

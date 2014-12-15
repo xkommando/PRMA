@@ -91,20 +91,52 @@ class EventVO(@BeanProperty val id: Long,
     case _ => false
   }
 
-  override def toString: String = s""""com.caibowen.prma.api.model.EventVO":{" +
-    "id"=$id
-    , "timeCreated"=$timeCreated
-    , "level"="${level.toString}"
-    , "loggerName"="$loggerName"
-    , "threadName"="$threadName"
-    , "callerStackTrace"="$callerStackTrace"
-    , "flag"=$flag
-    , "message="$message"
-    , "reserved"=$reserved
-    , "properties"=$properties
-    , "exceptions"=$exceptions
-    , "markers"=$markers
-    }"""
+
+  def appendJson(implicit json: StringBuilder): StringBuilder = {
+
+    json.append(
+s"""{
+"id":$id,
+"timeCreated":$timeCreated,
+"level":"${level.toString}",
+"loggerName":"$loggerName",
+"threadName":"$threadName",
+"flag":$flag,
+"message":"$message",
+""")
+
+    json.append("\"caller\":")
+    ExceptionVO.appendJson(callerStackTrace)
+    json.append(",\r\n")
+    if (reserved.isDefined)
+      json.append( """"reserved":""")
+        .append(reserved.get)
+        .append(",\r\n")
+
+    if (exceptions.isDefined && exceptions.get.size > 0) {
+      json.append( """"exceptions":[""")
+      exceptions.get.foreach(_.appendJson.append(",\r\n"))
+      json.deleteCharAt(json.length - 3)
+        .append("],\r\n")
+    }
+    if (properties.isDefined && properties.get.size > 0) {
+      json.append("\"properties\":{\r\n")
+      properties.get.foreach((t: (Any, Any))
+      => json.append("\t\"").append(t._1).append("\":\"").append(t._2).append("\",\r\n"))
+      json.deleteCharAt(json.length - 3)
+      json.append("\t},\r\n"
+      )
+    }
+    if (markers.isDefined && markers.get.size > 0) {
+      json.append( """"markers":[""")
+      markers.get.foreach(json.append('\"').append(_).append("\","))
+      json.deleteCharAt(json.length - 1)
+      json.append("]\r\n")
+    }
+    json.append("}")
+  }
+
+  override def toString: String = appendJson(new StringBuilder(512)).toString
 
   def exceptionCount: Int = {
     return EventVO.part1(flag)

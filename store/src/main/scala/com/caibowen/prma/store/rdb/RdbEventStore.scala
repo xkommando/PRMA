@@ -22,6 +22,7 @@ class RdbEventStore private[this] (val dataSource: DataSource,
                                    val threadStore: KVStore[Int, String],
                                    val stackStore: KVStore[Int,StackTraceElement]) extends JdbcSupport(dataSource) with EventStore {
 
+
   override def put(@Nonnull event: EventVO): Long = {
     execute(new TransactionCallback[Long] {
       override def withTransaction(transaction: Transaction): Long = {

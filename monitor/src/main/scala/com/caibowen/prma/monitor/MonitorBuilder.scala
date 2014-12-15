@@ -39,7 +39,6 @@ object MonitorBuilder{
   def newName =
     "PRMA.Monitor_" + anonymousCount.incrementAndGet().toString
 }
-
 class MonitorBuilder extends ActorBuilder {
 
   @BeanProperty var name: String = _

@@ -9,10 +9,10 @@ import com.caibowen.prma.core.filter.StrFilter
  */
 class LoggerNameEval(filter: StrFilter) extends Evaluator {
 
-  override def eval(vo: EventVO): String = {
+  override def eval(vo: EventVO): Response =
     if (filter.accept(vo.loggerName) == 1)
-      Evaluator.ACCEPT
+      NotifyAll
     else
-      Evaluator.REJECT
-  }
+      Reject
+
 }
