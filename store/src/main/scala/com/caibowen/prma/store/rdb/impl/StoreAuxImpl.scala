@@ -4,7 +4,6 @@ import java.sql.{Connection, PreparedStatement, Types}
 
 import com.caibowen.gplume.jdbc.mapper.RowMapping
 import com.caibowen.gplume.jdbc.{JdbcException, JdbcSupport}
-import com.caibowen.gplume.misc.Bytes
 import com.caibowen.gplume.scala.conversion.CommonConversions._
 import com.caibowen.prma.api.model.ExceptionVO
 import com.caibowen.prma.core.StrLoader
@@ -18,7 +17,6 @@ import scala.beans.BeanProperty
  */
 class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with EventStoreAux {
 
-  @BeanProperty var exceptMsgStore: KVStore[Int, String] = _
   @BeanProperty var stackStore: KVStore[Int,StackTraceElement] = _
 
   @inline
@@ -28,17 +26,12 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
 
 
   // cached sql ref
-  final val _putExcept = sqls.get("ExceptionDAO.putExcept")
-  final val _putExceptR = sqls.get("ExceptionDAO.putEventExceptRelation")
-  final val _putExceptStackR = sqls.get("ExceptionDAO.putStackTraceExceptRelation")
+  final val _putExcept = sqls.get("Exception.putExcept")
+  final val _putExceptREvent = sqls.get("Exception.putRelationEvent")
+  final val _putExceptRStackTrace = sqls.get("Exception.putRelationStackTrace")
 
   def putExceptions(eventId: Long, exceps: List[ExceptionVO]): Unit = {
     val nexps = exceps.filter(!hasException(_))
-
-    val msgs = nexps.filter(_.message.isDefined)
-      .map(t=>t.message.get.hashCode -> t.message.get)
-
-    exceptMsgStore.putIfAbsent(msgs)
 
     val newStack = List.newBuilder[StackTraceElement]
     newStack.sizeHint(32)
@@ -51,8 +44,8 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
           ps.setString(2, exp.name)
 
           if (exp.message.isDefined)
-            ps.setInt(3, exp.message.get.hashCode)
-          else ps.setNull(3, Types.INTEGER)
+            ps.setString(3, exp.message.get)
+          else ps.setNull(3, Types.VARCHAR)
 
           if (exp.stackTraces.isDefined)
             newStack ++= exp.stackTraces.get
@@ -66,15 +59,15 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
     stackStore.putIfAbsent(newStack.result().map(t=>t.hashCode()->t))
 
     // insert relations with stack traces
-    batchInsert((con: Connection) => {
-      val ps = con.prepareStatement(_putExceptStackR)
-      for (exp <- nexps if exp.stackTraces.isDefined) {
-        val traces = exp.stackTraces.get
+      batchInsert((con: Connection) => {
+      val ps = con.prepareStatement(_putExceptRStackTrace)
+      for (except <- nexps if except.stackTraces.isDefined) {
+        val stackTraces = except.stackTraces.get
         var i = 0
-        for (straceElem <- traces) {
+        for (elem <- stackTraces) {
           ps.setInt(1, i)
-          ps.setInt(2, straceElem.hashCode())
-          ps.setLong(3, exp.id)
+          ps.setInt(2, elem.hashCode())
+          ps.setLong(3, except.id)
           ps.addBatch()
           i += 1
         }
@@ -85,7 +78,7 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
 
     // insert relations with Event
     batchInsert((con: Connection) => {
-        val ps = con.prepareStatement(_putExceptR)
+        val ps = con.prepareStatement(_putExceptREvent)
         var i = 0
         for (vo <- exceps) {
           ps.setInt(1, i)
@@ -98,41 +91,41 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
       },null,null)
   }
 
-  final val _putProp = sqls.get("PropertyDAO.putMap")
-  final val _putPropR = sqls.get("PropertyDAO.putRelation")
+  final val _putProp = sqls.get("Property.putMap")
+  final val _putPropR = sqls.get("Property.putRelation")
   def putProperties(eventId: Long, props: Map[String, String]): Unit = {
     val newPs = props.filterKeys(!hasProperty(_))
 
     batchInsert((con: Connection) => {
         val ps = con.prepareStatement(_putProp)
         for ((k,v) <- newPs) {
-          ps.setInt(1, k.hashCode);
-          ps.setString(2, k);
-          ps.setBytes(3, v.getBytes);
-          ps.addBatch();
+          ps.setInt(1, k.hashCode)
+          ps.setString(2, k)
+          ps.setBytes(3, v.getBytes)
+          ps.addBatch()
         }
-        ps;
+        ps
       }, null, null)
 
     batchInsert((con: Connection) => {
         val ps = con.prepareStatement(_putPropR)
         for ((k, v) <- props) {
-          ps.setInt(1, k.hashCode);
-          ps.setLong(2, eventId);
-          ps.addBatch();
+          ps.setInt(1, k.hashCode)
+          ps.setLong(2, eventId)
+          ps.addBatch()
         }
         ps
       }, null, null)
   }
 
 
-  final val _putMk = sqls.get("MarkerDAO.putMarker")
-  final val _putMKR = sqls.get("MarkerDAO.putRelation")
-  def putMarkers(eventId: Long, mks: Set[String]) {
-    val newMk = mks.filter(!hasMarker(_))
+  final val _putTags = sqls.get("Tag.putTags")
+  final val _putTagR = sqls.get("Tag.putRelation")
+  def putTags(eventId: Long, tags: Set[String]) {
+    val newTags = tags.filter(!hasTag(_))
     batchInsert((con: Connection) => {
-        val ps: PreparedStatement = con.prepareStatement(_putMk)
-        for (e <- newMk) {
+        val ps: PreparedStatement = con.prepareStatement(_putTags)
+        for (e <- newTags) {
           ps.setInt(1, e.hashCode)
           ps.setString(2, e)
           ps.addBatch
@@ -141,8 +134,8 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
       },null, null)
 
     batchInsert((con: Connection) => {
-        val ps: PreparedStatement = con.prepareStatement(_putMKR)
-        for (e <- mks) {
+        val ps: PreparedStatement = con.prepareStatement(_putTagR)
+        for (e <- tags) {
           ps.setInt(1, e.hashCode)
           ps.setLong(2, eventId)
           ps.addBatch
@@ -152,22 +145,22 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
   }
 
   def hasException(vo: ExceptionVO): Boolean =
-    queryForObject((con: Connection) => {
+    queryObject((con: Connection) => {
         val ps = con.prepareStatement("SELECT count(1) FROM `exception` WHERE id =?")
         ps.setLong(1, vo.id)
         ps
       }, RowMapping.BOOLEAN_ROW_MAPPING)
 
   def hasProperty(key: String): Boolean =
-    queryForObject((con: Connection) => {
+    queryObject((con: Connection) => {
         val ps = con.prepareStatement("SELECT count(1) FROM `property` WHERE id=?")
         ps.setInt(1, key.hashCode)
         ps
       }, RowMapping.BOOLEAN_ROW_MAPPING)
 
-  def hasMarker(key: String): Boolean =
-    queryForObject((con: Connection) => {
-        val ps = con.prepareStatement("SELECT count(1) FROM `marker_name` WHERE id=?")
+  def hasTag(key: String): Boolean =
+    queryObject((con: Connection) => {
+        val ps = con.prepareStatement("SELECT count(1) FROM `tag` WHERE id=?")
         ps.setInt(1, key.hashCode)
         ps
       }, RowMapping.BOOLEAN_ROW_MAPPING)

@@ -12,21 +12,21 @@ import com.caibowen.prma.store.rdb.KVStore
 class StrStore(private[this] val tableName: String) extends JdbcSupport with KVStore[Int, String] {
 
   override def hasKey(key: Int): Boolean =
-    queryForObject((con: Connection) => {
+    queryObject((con: Connection) => {
       val ps = con.prepareStatement("SELECT count(1) FROM " + tableName + " WHERE id=?")
       ps.setInt(1, key)
       ps
     }, RowMapping.BOOLEAN_ROW_MAPPING)
 
   override def hasVal(@Nonnull value: String): Boolean =
-    queryForObject((con: Connection) => {
+    queryObject((con: Connection) => {
       val ps = con.prepareStatement("SELECT COUNT (1) FROM " + tableName + " WHERE `value` = ? ")
       ps.setString(1, value)
       ps
     }, RowMapping.BOOLEAN_ROW_MAPPING)
 
   override def get(key: Int): Option[String] = {
-    val r = queryForObject((con: Connection) => {
+    val r = queryObject((con: Connection) => {
       val ps = con.prepareStatement("SELECT `value` FROM " + tableName + " WHERE id=? LIMIT 1")
       ps.setInt(1, key)
       ps

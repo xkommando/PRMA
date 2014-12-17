@@ -60,18 +60,47 @@ CREATE TABLE IF NOT EXISTS `prma_log`.`stack_trace` (
 
 
 -- -----------------------------------------------------
+-- Table `prma_log`.`exception_name`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prma_log`.`exception_name` ;
+
+CREATE TABLE IF NOT EXISTS `prma_log`.`exception_name` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `value` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`),
+  FULLTEXT INDEX `idx_exceptname_fulltxt` (`value` ASC))
+  ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
 -- Table `prma_log`.`exception`
 -- -----------------------------------------------------
 DROP TABLE IF EXISTS `prma_log`.`exception` ;
 
 CREATE TABLE IF NOT EXISTS `prma_log`.`exception` (
   `id` BIGINT(20) NOT NULL,
-  `name` VARCHAR(255) NOT NULL,
-  `msg` INT NULL,
+  `name_id` INT NOT NULL,
+  `msg_id` INT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_except_exp_msg_idx` (`msg` ASC))
+  INDEX `fk_except_exp_msg_idx` (`msg_id` ASC),
+  INDEX `fk_except_exp_name_idx` (`name_id` ASC))
   ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `prma_log`.`j_exception_stacktrace`
+-- -----------------------------------------------------
+DROP TABLE IF EXISTS `prma_log`.`j_exception_stacktrace` ;
+
+CREATE TABLE IF NOT EXISTS `prma_log`.`j_exception_stacktrace` (
+  `seq` INT NOT NULL,
+  `stacktrace_id` INT NOT NULL,
+  `except_id` BIGINT(20) NOT NULL,
+  PRIMARY KEY (`seq`, `except_id`, `stacktrace_id`),
+  INDEX `fk_j_except_event_except_idx` (`except_id` ASC),
+  INDEX `idx_j_except_ev_seq` USING BTREE (`except_id` ASC, `seq` ASC),
+  INDEX `fk_j_except_stacktrace_ev0_idx` (`stacktrace_id` ASC, `except_id` ASC))
+  ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `prma_log`.`event`
@@ -165,20 +194,6 @@ CREATE TABLE IF NOT EXISTS `prma_log`.`j_event_marker` (
   ENGINE = InnoDB;
 
 
--- -----------------------------------------------------
--- Table `prma_log`.`j_exception_stacktrace`
--- -----------------------------------------------------
-DROP TABLE IF EXISTS `prma_log`.`j_exception_stacktrace` ;
-
-CREATE TABLE IF NOT EXISTS `prma_log`.`j_exception_stacktrace` (
-  `seq` INT NOT NULL,
-  `stacktrace_id` INT NOT NULL,
-  `except_id` BIGINT(20) NOT NULL,
-  PRIMARY KEY (`seq`, `except_id`, `stacktrace_id`),
-  INDEX `fk_j_except_event_except_idx` (`except_id` ASC),
-  INDEX `idx_j_except_ev_seq` USING BTREE (`except_id` ASC, `seq` ASC),
-  INDEX `fk_j_except_stacktrace_ev0_idx` (`stacktrace_id` ASC, `except_id` ASC))
-  ENGINE = InnoDB;
 
 
 SET SQL_MODE=@OLD_SQL_MODE;

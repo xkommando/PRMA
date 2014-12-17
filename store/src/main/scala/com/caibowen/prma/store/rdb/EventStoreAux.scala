@@ -16,5 +16,5 @@ trait EventStoreAux {
 
   def putProperties(eventId: Long, prop: Map[String, String])
 
-  def putMarkers(eventId: Long, prop: Set[String])
+  def putTags(eventId: Long, prop: Set[String])
 }

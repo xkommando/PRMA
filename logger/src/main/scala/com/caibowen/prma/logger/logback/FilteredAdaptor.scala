@@ -11,7 +11,9 @@ import scala.collection.mutable.ArrayBuffer
  * @author BowenCai
  * @since  06/12/2014.
  */
-class FilteredAdaptor private[this](val classFilter: StrFilter, val  stackTraceFilter: StrFilter)
+class FilteredAdaptor(private[this] val classFilter: StrFilter,
+                      private[this] val stackTraceFilter: StrFilter)
+
   extends LogbackEventAdaptor {
 
   private def takeClass = (name: String)=>classFilter.accept(name) != 1

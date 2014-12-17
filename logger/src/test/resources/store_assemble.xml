@@ -6,7 +6,7 @@
         <prop name="driverClassName" val="com.mysql.jdbc.Driver"/>
         <prop name="username" val="bitranger" />
         <prop name="password" val="123456"/>
-        <prop name="jdbcUrl" val="jdbc:mysql://localhost:3306/prma_log" />
+        <prop name="jdbcUrl" val="jdbc:mysql://localhost:3306/prma_log_event" />
         <prop name="autoCommit" val="false" />
 
         <prop name="minimumIdle" val="2"/>
@@ -24,14 +24,6 @@
         </construct>
     </bean>
 
-    <!--<bean id="classNameFilter" class="com.caibowen.prma.core.filter.PartialStrFilter" aftercall="start">-->
-        <!--<construct val="ignored_classes.txt"/>-->
-    <!--</bean>-->
-
-    <bean id="exceptMsgStore" class="com.caibowen.prma.store.rdb.impl.StrStore">
-        <construct val="`exception_msg`"/>
-        <prop name="dataSource" ref="dataSource"/>
-    </bean>
 
     <bean id="stackTraceStore" class="com.caibowen.prma.store.rdb.impl.StackTraceStore">
         <construct ref="sqlLoader"/>
@@ -41,8 +33,19 @@
     <bean id="eventStoreAux" class="com.caibowen.prma.store.rdb.impl.StoreAuxImpl">
         <construct ref="sqlLoader"/>
         <prop name="dataSource" ref="dataSource"/>
-        <prop name="exceptMsgStore" ref="exceptMsgStore"/>
         <prop name="stackStore" ref="stackTraceStore"/>
+    </bean>
+
+    <bean id="cachedStoreAux" class="com.caibowen.prma.store.rdb.impl.CachedStoreAux" aftercall="start">
+        <construct ref="sqlLoader"/>
+        <prop name="dataSource" ref="dataSource"/>
+        <prop name="stackStore" ref="stackTraceStore"/>
+
+        <prop name="exceptCache" instance="com.caibowen.prma.core.cache.InMemCache"/>
+        <prop name="exceptCacheSize" val="256"/>
+
+        <prop name="propCache" instance="com.caibowen.prma.core.cache.InMemCache"/>
+        <prop name="tagCache" instance="com.caibowen.prma.core.cache.InMemCache"/>
     </bean>
 
     <!-- -->
@@ -55,22 +58,22 @@
         </construct>
     </bean>
 
-    <bean id="loggerNameStore" class="com.caibowen.prma.store.rdb.impl.StrStore">
-        <construct val="`logger_name`"/>
-        <prop name="dataSource" ref="dataSource"/>
-    </bean>
-    <bean id="threadStore" class="com.caibowen.prma.store.rdb.impl.StrStore">
-        <construct val="`thread_name`"/>
-        <prop name="dataSource" ref="dataSource"/>
-    </bean>
-
     <bean id="eventStore" class="com.caibowen.prma.store.rdb.StoreBuilder">
         <prop name="sqls" ref="eventSQL"/>
         <prop name="dataSource" ref="dataSource"/>
         <prop name="eventAux" ref="eventStoreAux"/>
-        <prop name="loggerNameStore" ref="loggerNameStore"/>
-        <prop name="threadStore" ref="threadStore"/>
         <prop name="stackStore" ref="stackTraceStore"/>
+    </bean>L
+
+    <bean id="classNameFilter" class="com.caibowen.prma.core.filter.PartialStrFilter" aftercall="start">
+        <construct val="classpath:ignored_classes.txt" />
+    </bean>
+
+    <bean id="logbackAdaptor" class="com.caibowen.prma.logger.logback.FilteredAdaptor">
+        <construct>
+            <ref>classNameFilter</ref>
+            <ref>classNameFilter</ref>
+        </construct>
     </bean>
 
     <!--<bean class="com.caibowen.prma.store.rdb.Test" aftercall="init">-->

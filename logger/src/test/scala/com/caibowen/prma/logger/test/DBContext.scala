@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 import javax.sql.DataSource
 
 import akka.actor.{ActorRef, ActorSystem}
-import com.caibowen.gplume.context.{AppContext, ContextBooter}
+import com.caibowen.gplume.scala.context.{AppContext, ContextBooter}
 import com.caibowen.gplume.jdbc.JdbcSupport
 import com.caibowen.gplume.resource.ClassLoaderInputStreamProvider
 import com.caibowen.prma.core.ActorBuilder

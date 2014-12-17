@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<beans namespace="prma::monitor" using="prma::internal::store">
+
+    <bean id="tLevelEval" class="com.caibowen.prma.monitor.eval.LevelEval">
+        <construct>
+            <val>INFO</val>
+            <val>FATAL</val>
+        </construct>
+    </bean>
+
+    <bean id="tMonitor1" class="com.caibowen.prma.monitor.MonitorBuilder">
+        <prop name="evaluator" ref="tLevelEval"/>
+        <prop name="notifiers">
+            <list>
+                <bean class="com.caibowen.prma.monitor.notify.HttpNotify">
+                    <prop name="name" val="HttpPost"/>
+                    <prop name="url" val="???"/>
+                    <prop name="params">
+                        <map>
+                            <app>prma-test</app>
+                            <token>123456</token>
+                        </map>
+                    </prop>
+                </bean>
+            </list>
+        </prop>
+    </bean>
+
+    <!--{-->
+    <!--bean:tMonitor1,-->
+    <!--class:com.caibowen.prma.monitor.MonitorBuilder-->
+    <!--props:{-->
+        <!--evaluator: {ref:tLevelEval},-->
+        <!--notifiers:[-->
+                    <!--{-->
+                        <!--class:com.caibowen.prma.monitor.notify.HttpNotify,-->
+                        <!--props:{-->
+                            <!--name:HttpPost-->
+                            <!--params:{-->
+                                    <!--app:prma-test-->
+                                    <!--token:123456-->
+                                    <!--}-->
+                            <!--}-->
+                    <!--}-->
+                <!--]-->
+            <!--}-->
+    <!--}-->
+
+
+</beans>

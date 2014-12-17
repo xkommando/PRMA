@@ -30,11 +30,9 @@ object Monitor {
   final val defaultStrategy = new OneForOneStrategy(defaultDecider)
 }
 @SerialVersionUID(7376528395328272879L)
-class Monitor(val evaluator: Evaluator, val notifierMap: Map[String, Notifier]) extends Actor {
+class Monitor(val evaluator: Evaluator, val notifierMap: Map[String, Notifier]) extends Actor with ActorLogging{
 
   override val supervisorStrategy = Monitor.defaultStrategy
-
-  private[this] val LOG = LoggerFactory.getLogger(classOf[Monitor])
 
   private[this] val allNotifiers = notifierMap.values.toList
 
@@ -48,12 +46,12 @@ class Monitor(val evaluator: Evaluator, val notifierMap: Map[String, Notifier]) 
             val notifier = notifierMap get name
             if (notifier.isDefined)
               notifier.get.send(vo)
-            else LOG.warn(s"Could not find notifier named [$name] on event [$vo]")
+            else log.warning(s"Could not find notifier named [$name] on event [$vo]")
           }
-//          case Reject =>
+          case Reject =>
         }
 
-        case Failure(e) => this.LOG.error(s"Could not evaluate [$vo] with evaluator [$evaluator]", e)
+        case Failure(e) => log.error(s"Could not evaluate [$vo] with evaluator [$evaluator]", e)
       }
     }
 

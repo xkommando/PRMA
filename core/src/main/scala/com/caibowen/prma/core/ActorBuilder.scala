@@ -1,11 +1,15 @@
 package com.caibowen.prma.core
 
-import akka.actor.{ActorRef, ActorRefFactory}
+import java.util.regex.Pattern
+
+import akka.actor.{ActorPath, InvalidActorNameException, ActorRef, ActorRefFactory}
 import com.caibowen.gplume.context.IBeanAssembler
 import com.caibowen.gplume.context.bean.{AssemblerAwareBean, IDAwareBean, InitializingBean}
+import com.caibowen.gplume.misc.Str.Utils
 import com.caibowen.gplume.misc.Str.Utils._
 
 import scala.beans.BeanProperty
+import scala.util.matching.Regex
 
 /**
  *
@@ -18,6 +22,17 @@ import scala.beans.BeanProperty
  */
 object ActorBuilder {
   var RootActorSystemBeanID = "PRMA_Root_ActorSystem"
+// """(?:[-\w:@&=+,.!~*'_;]|%\p{XDigit}{2})(?:[-\w:@&=+,.!~*'$_;]|%\p{XDigit}{2})*""")
+  val actorNamePattern: Pattern = ActorPath.ElementRegex.pattern
+
+  def validName(name: String): String = {
+    if (Utils.isBlank(name))
+      throw new InvalidActorNameException("actor name must not be empty")
+    if (!actorNamePattern.matcher(name).matches())
+      throw new InvalidActorNameException(s"illegal actor name [$name], must conform to $actorNamePattern")
+    else
+      name
+  }
 }
 trait ActorBuilder extends AssemblerAwareBean with IDAwareBean with InitializingBean {
 

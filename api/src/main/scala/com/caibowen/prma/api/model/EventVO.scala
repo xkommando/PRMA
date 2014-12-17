@@ -20,7 +20,12 @@ class EventVO(@BeanProperty val id: Long,
               @BeanProperty val reserved: Option[Long],
               @BeanProperty val properties: Option[Map[String, AnyRef]],
               @BeanProperty val exceptions: Option[List[ExceptionVO]],
-              @BeanProperty val markers: Option[Set[String]]) extends Serializable {
+              @BeanProperty val tags: Option[Set[String]]) extends Serializable {
+
+  require(loggerName != null, "Logger name cannot be null")
+  require(threadName != null, "Logger name cannot be null")
+  require(message != null, "message cannot be null")
+  require(callerStackTrace != null, "caller stackTrace cannot be null")
 
   def this(timeCreated: Long,
            level: LogLevel,
@@ -55,7 +60,7 @@ class EventVO(@BeanProperty val id: Long,
     result = 31 * result + (if (reserved.isDefined) reserved.get.hashCode else 0)
     result = 31 * result + (if (properties.isDefined) properties.get.hashCode else 0)
     result = 31 * result + (if (exceptions.isDefined) exceptions.get.hashCode else 0)
-    result = 31 * result + (if (markers.isDefined) markers.get.hashCode else 0)
+    result = 31 * result + (if (tags.isDefined) tags.get.hashCode else 0)
     return result
   }
 
@@ -73,7 +78,7 @@ class EventVO(@BeanProperty val id: Long,
       if (if (reserved.isDefined) reserved.get == eventVO.reserved.get else eventVO.reserved.isDefined) return false
       if (!(callerStackTrace.equals(eventVO.callerStackTrace))) return false
       if (if (exceptions.isDefined) !(exceptions.get.equals(eventVO.exceptions)) else eventVO.exceptions.isDefined) return false
-      if (if (markers.isDefined) !(markers.get.equals(eventVO.markers.get)) else eventVO.markers.isDefined) return false
+      if (if (tags.isDefined) !(tags.get.equals(eventVO.tags.get)) else eventVO.tags.isDefined) return false
       if (properties.isEmpty) {
         if (eventVO.properties.isDefined)
           return false
@@ -93,7 +98,6 @@ class EventVO(@BeanProperty val id: Long,
 
 
   def appendJson(implicit json: StringBuilder): StringBuilder = {
-
     json.append(
 s"""{
 "id":$id,
@@ -106,7 +110,7 @@ s"""{
 """)
 
     json.append("\"caller\":")
-    ExceptionVO.appendJson(callerStackTrace)
+    ExceptionVO.stackTraceJson(callerStackTrace)
     json.append(",\r\n")
     if (reserved.isDefined)
       json.append( """"reserved":""")
@@ -122,18 +126,19 @@ s"""{
     if (properties.isDefined && properties.get.size > 0) {
       json.append("\"properties\":{\r\n")
       properties.get.foreach((t: (Any, Any))
-      => json.append("\t\"").append(t._1).append("\":\"").append(t._2).append("\",\r\n"))
+                    => json.append("\t\"").append(t._1)
+                        .append("\":\"").append(t._2).append("\",\r\n"))
       json.deleteCharAt(json.length - 3)
       json.append("\t},\r\n"
       )
     }
-    if (markers.isDefined && markers.get.size > 0) {
+    if (tags.isDefined && tags.get.size > 0) {
       json.append( """"markers":[""")
-      markers.get.foreach(json.append('\"').append(_).append("\","))
+      tags.get.foreach(json.append('\"').append(_).append("\","))
       json.deleteCharAt(json.length - 1)
       json.append("]\r\n")
     }
-    json.append("}")
+    json.append('}')
   }
 
   override def toString: String = appendJson(new StringBuilder(512)).toString
@@ -162,6 +167,7 @@ object EventVO {
     val sz2: Int = add(sz11, sz12)
 
     add(sz1, sz2)
+    // except mk prop
   }
 
   @inline

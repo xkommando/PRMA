@@ -11,7 +11,7 @@ case object NotifyAll extends Response
 case object Reject extends Response
 case class NotifyOne(name: String) extends Response
 
-// response that carries extra data for the nofitier
+// response that carries extra data for the notifier
 class ResponseData[T](name: String, values: T) extends NotifyOne(name)
 
 trait Evaluator {

@@ -1,17 +1,14 @@
 package com.caibowen.prma.monitor
 
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.{List => JList, Map => JMap}
 
 import akka.actor.{ActorRef, ActorRefFactory}
-import com.caibowen.gplume.context.bean.InitializingBean
 import com.caibowen.gplume.scala.conversion.StrConversions.ApplyConversion
 import com.caibowen.prma.core.ActorBuilder
 import com.caibowen.prma.monitor.eval.Evaluator
 import com.caibowen.prma.monitor.notify.Notifier
 
 import scala.beans.BeanProperty
-import scala.collection.JavaConversions
 
 /*
 Example:
@@ -36,24 +33,23 @@ Example:
  */
 object MonitorBuilder{
   private val anonymousCount = new AtomicInteger(0)
-  def newName =
-    "PRMA.Monitor_" + anonymousCount.incrementAndGet().toString
+  private[monitor] def newName =
+    "PRMA.Monitor.Actor_No." + anonymousCount.incrementAndGet().toString
 }
 class MonitorBuilder extends ActorBuilder {
 
   @BeanProperty var name: String = _
   @BeanProperty var evaluator: Evaluator = _
 
-  @BeanProperty var notifiers: JList[Notifier] = _
+  @BeanProperty var notifiers: List[Notifier] = _
 
   override def buildWith(factory: ActorRefFactory): ActorRef = {
 
-    val notifierMap = JavaConversions.asScalaBuffer(notifiers)
-          .map(e=> (e.name -> e)).toMap
+    val notifierMap = notifiers.map(e=> (e.name -> e)).toMap
 
     val props = Monitor.prop(evaluator, notifierMap)
 
-    val monitorName: String = if (name.notBlank) name
+    val monitorName: String = if (name.notBlank) ActorBuilder.validName(name)
       else MonitorBuilder.newName
 
     factory.actorOf(props, monitorName)

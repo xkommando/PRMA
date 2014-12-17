@@ -32,26 +32,25 @@ class ExceptionVO(@BeanProperty val id: Long,
     result
   }
 
-  def appendJson(implicit json: StringBuilder): StringBuilder ={
+  def appendJson(implicit json: StringBuilder): StringBuilder = {
+    val extra = 100 + (if (stackTraces.isDefined) stackTraces.get.size * 128 else 0)
+    json.ensureCapacity(json.capacity + extra)
+
     json.append("{\r\n\"id\":").append(id)
-      .append(",\r\n\"name\":\"").append(name)
-      .append("\"")
+      .append(",\r\n\"name\":\"").append(name).append("\"")
     if (message.isDefined)
       json.append(",\r\n\"message\":\"").append(message.get).append('\"')
 
     if (stackTraces.isDefined && stackTraces.get.size > 0) {
       json.append(",\r\n\"stackTraces\":[")
-      stackTraces.get.foreach(ExceptionVO.appendJson(_).append(",\r\n"))
+      stackTraces.get.foreach(ExceptionVO.stackTraceJson(_).append(",\r\n"))
       json.deleteCharAt(json.length() - 3)
       json.append("],\r\n")
     }
-    json.append("}")
+    json.append('}')
   }
-  override def toString: String = {
-    val json = new StringBuilder(512)
-    appendJson(json)
-    json.toString
-  }
+
+  override def toString: String = appendJson(new StringBuilder(256)).toString
 
   override def equals(obj: scala.Any): Boolean = {
     if (this == obj)
@@ -95,7 +94,7 @@ object ExceptionVO {
   }
 
   @inline
-  def appendJson(st: StackTraceElement)(implicit json: StringBuilder):StringBuilder =
+  def stackTraceJson(st: StackTraceElement)(implicit json: StringBuilder):StringBuilder =
     json.append("{ \"file\":\"").append(st.getFileName)
       .append("\",\r\n\"class\":\"").append(st.getClassName)
       .append("\",\r\n\"function\":\"").append(st.getMethodName)

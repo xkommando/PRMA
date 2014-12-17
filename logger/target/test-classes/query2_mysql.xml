@@ -9,19 +9,18 @@
         <!--WHERE JEM.event_id=?-->
     <!--]]></entry>-->
 
-    <entry key="MarkerDAO.putMarker"><![CDATA[
-        INSERT INTO `marker_name`(`id`, `value`)VALUES(?,?)
-    ]]></entry>
-
-    <entry key="MarkerDAO.getMarkerIDs"><![CDATA[
-        SELECT `id` FROM `marker_name` LIMIT ?
+    <entry key="Tag.putTags"><![CDATA[
+        INSERT INTO `tag`(`id`, `value`)VALUES(?,?)
     ]]></entry>
 
 
-    <entry key="MarkerDAO.putRelation"><![CDATA[
-    INSERT INTO `j_event_marker`(`marker_id`, `event_id`)VALUES(?,?)
+    <entry key="Tag.putRelation"><![CDATA[
+    INSERT INTO `j_event_tag`(`tag_id`, `event_id`)VALUES(?,?)
     ]]></entry>
 
+    <entry key="Tag.getIDs"><![CDATA[
+    SELECT id FROM `tag` LIMIT ?
+    ]]></entry>
 
     <!--<entry key="PropertyDAO.getByEvent"><![CDATA[-->
         <!--SELECT PROP.`key`, PROP.`value` FROM `property` as PROP-->
@@ -29,15 +28,15 @@
         <!--WHERE JEP.event_id=?-->
     <!--]]></entry>-->
 
-    <entry key="PropertyDAO.putMap"><![CDATA[
+    <entry key="Property.putMap"><![CDATA[
         INSERT IGNORE INTO `property`(`id`, `key`, `value`)VALUES (?,?,?)
     ]]></entry>
 
-    <entry key="PropertyDAO.putRelation"><![CDATA[
+    <entry key="Property.putRelation"><![CDATA[
         INSERT INTO `j_event_prop`(`prop_id`, `event_id`)VALUES (?,?)
     ]]></entry>
 
-    <entry key="PropertyDAO.getPropertyIDs"><![CDATA[
+    <entry key="Property.getPropertyIDs"><![CDATA[
         SELECT `id` FROM `property` LIMIT ?
     ]]></entry>
 
@@ -48,20 +47,19 @@
         <!--WHERE JEE.event_id=? ORDER BY JEE.seq ASC-->
     <!--]]></entry>-->
 
-    <entry key="ExceptionDAO.putExcept"><![CDATA[
-        INSERT INTO `exception`(`id`,`name`,`msg`)
-        VALUES (?,?,?)
+    <entry key="Exception.putExcept"><![CDATA[
+        INSERT INTO `exception`(`id`,`name`,`msg`) VALUES (?,?,?)
     ]]></entry>
 
-    <entry key="ExceptionDAO.putStackTraceExceptRelation"><![CDATA[
+    <entry key="Exception.putRelationStackTrace"><![CDATA[
         INSERT INTO `j_exception_stacktrace`(`seq`,`stacktrace_id`,`except_id`)VALUES(?,?,?)
     ]]></entry>
 
-    <entry key="ExceptionDAO.putEventExceptRelation"><![CDATA[
+    <entry key="Exception.putRelationEvent"><![CDATA[
         INSERT INTO `j_event_exception`(`seq`,`event_id`,`except_id`)VALUES(?,?,?)
     ]]></entry>
 
-    <entry key="ExceptionDAO.getExceptIDs"><![CDATA[
+    <entry key="Exception.getExceptIDs"><![CDATA[
         SELECT `id` FROM `exception` LIMIT ?
     ]]></entry>
 

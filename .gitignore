@@ -6,6 +6,8 @@
 /out
 /SDK/*SDK
 /target
+/target/*
+*/target/*
 /*.bat
 bin/
 build/
@@ -28,7 +30,7 @@ hs_err_pid*
 *.bak
 *.swp
 *~.nib
-
+*.timestamp
 *.iml
 
 ## File-based project format:

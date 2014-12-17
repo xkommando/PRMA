@@ -17,7 +17,7 @@ object EventStore {
     case _: ActorKilledException => Stop
     case _: DeathPactException => Stop
     case _: AkkaException => Restart
-    case _: Exception => Resume
+    case _: Exception => Escalate
   }
   final val defaultStrategy = new OneForOneStrategy(defaultDecider)
 }

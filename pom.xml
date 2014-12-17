@@ -27,11 +27,13 @@
     </licenses>
 
     <modules>
+        <module>analyze</module>
         <module>api</module>
         <module>core</module>
         <module>monitor</module>
         <module>store</module>
         <module>logger</module>
+        <module>webface</module>
     </modules>
 
 
@@ -48,6 +50,14 @@
         <protobuf-version>2.6.1</protobuf-version>
         <javaxmail-version>1.4.7</javaxmail-version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>2.10.4</version>
+        </dependency>
+    </dependencies>
 
     <reporting>
         <plugins>
@@ -74,6 +84,19 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

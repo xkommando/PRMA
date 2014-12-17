@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<properties>
+    <comment>rolling event operations</comment>
+
+    <entry key="TimeRolling.Event.selectOldIds">
+        <![CDATA[SELECT id FROM `event` WHERE time_created < ?]]>
+    </entry>
+
+    <entry key="TimeRolling.Event.selectLowerIds">
+        <![CDATA[SELECT id FROM `event` WHERE level < ?]]>
+    </entry>
+
+    <entry key="TimeRolling.Event.deleteTag"><![CDATA[
+DELETE FROM `tag` as TG
+INNER JOIN j_event_tag as JEM ON TG.id = JEM.tag_id
+WHERE JEM.event_id IN (?) AND JEM.tag_id NOT IN
+(
+	SELECT JEM2.tag_id FROM j_event_tag as JEM2
+	WHERE JEM2.event_id NOT IN (?)
+)
+    ]]></entry>
+
+    <entry key="TimeRolling.Event.deleteProp"><![CDATA[
+DELETE FROM `property` as PROP
+INNER JOIN j_event_prop as JEP ON PROP.id = JEP.prop_id
+WHERE JEP.event_id IN (?) AND JEP.prop_id NOT IN
+(
+	SELECT JEP2.prop_id FROM j_event_prop as JEP2
+	WHERE JEP2.event_id NOT IN (?)
+)
+    ]]></entry>
+
+    <entry key="TimeRolling.Event.delete">
+        <![CDATA[DELETE FROM `event` WHERE id IN(?)]]>
+    </entry>
+
+    <!-- Exceptions -->
+    <entry key="TimeRolling.Except.delete"><![CDATA[
+DELETE FROM `exception` as EXC
+INNER JOIN `j_event_exception` AS JEE ON JEE.except_id = EXC.id
+WHERE JEE.event_id IN (?) AND JEE.except_id NOT IN
+(
+    SELECT JEE2.except_id FROM `j_event_exception` as JEE2
+    WHERE JEE2.event_id NOT IN(?)
+)
+    ]]></entry>
+
+
+
+</properties>
+

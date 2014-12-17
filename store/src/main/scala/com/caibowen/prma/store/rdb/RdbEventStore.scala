@@ -18,8 +18,6 @@ import com.caibowen.prma.store.EventStore
 class RdbEventStore private[this] (val dataSource: DataSource,
                                     val sqls: StrLoader,
                                    val eventAux: EventStoreAux,
-                                   val loggerNameStore: KVStore[Int, String],
-                                   val threadStore: KVStore[Int, String],
                                    val stackStore: KVStore[Int,StackTraceElement]) extends JdbcSupport(dataSource) with EventStore {
 
 
@@ -29,27 +27,22 @@ class RdbEventStore private[this] (val dataSource: DataSource,
         // do
         val id = putEvent(event)
 
-        if (event.markers.isDefined)
-          eventAux.putMarkers(id, event.markers.get)
+        if (event.tags.isDefined)
+          eventAux.putTags(id, event.tags.get)
 
         if (event.exceptions.isDefined)
           eventAux.putExceptions(id, event.exceptions.get)
 
         if (event.properties.isDefined)
           eventAux.putProperties(id, event.properties.get.asInstanceOf[Map[String, String]])
+
         id
       }
     })
   }
 
-  @inline
-  protected def putStr(store: KVStore[Int, String], str: String) = store.put(str.hashCode, str)
-
   final val _putEvent = sqls.get("EventStore.insert")
   protected def putEvent(event: EventVO): Long = {
-
-    putStr(loggerNameStore, event.loggerName)
-    putStr(threadStore, event.threadName)
 
     val st = event.callerStackTrace
     stackStore.put(st.hashCode(), st)
@@ -62,8 +55,8 @@ class RdbEventStore private[this] (val dataSource: DataSource,
 
         ps.setLong(1, event.timeCreated)
         ps.setByte(2, event.level.id.toByte)
-        ps.setInt(3, event.loggerName.hashCode)
-        ps.setInt(4, event.threadName.hashCode)
+        ps.setString(3, event.loggerName)//
+        ps.setString(4, event.threadName)//
         ps.setInt(5, event.callerStackTrace.hashCode())
         ps.setLong(6, event.flag)
         ps.setString(7, event.message)
@@ -80,9 +73,7 @@ object RdbEventStore{
   def prop(dataSource: DataSource,
            sqls: StrLoader,
            eventAux: EventStoreAux,
-           loggerNameStore: KVStore[Int, String],
-           threadStore: KVStore[Int, String],
            stackStore: KVStore[Int,StackTraceElement])
 
-  = Props(classOf[RdbEventStore],dataSource, sqls, eventAux, loggerNameStore, threadStore, stackStore)
+  = Props(classOf[RdbEventStore], dataSource, sqls, eventAux, stackStore)
 }

@@ -15,7 +15,7 @@ import scala.beans.BeanProperty
  * @author BowenCai
  * @since  06/12/2014.
  */
-class CachedStoreAux private[this](val sqls: StrLoader)
+class CachedStoreAux (private[this] val sqls: StrLoader)
           extends StoreAuxImpl(sqls) with LifeCycle {
 
   private[this] val NA = new AnyRef
@@ -26,25 +26,25 @@ class CachedStoreAux private[this](val sqls: StrLoader)
   @BeanProperty var propCache: SimpleCache[Int, AnyRef] = _
   @BeanProperty var propsCacheSize: Int = 128
 
-  @BeanProperty var markerCache: SimpleCache[Int, AnyRef] = _
-  @BeanProperty var markerCacheSize: Int = 128
+  @BeanProperty var tagCache: SimpleCache[Int, AnyRef] = _
+  @BeanProperty var tagCacheSize: Int = 128
 
   override def start(): Unit = {
-    loadInt4Keys("MarkerDAO.getMarkerIDs", markerCacheSize, markerCache)
-    loadInt4Keys("PropertyDAO.getPropertyIDs", propsCacheSize, propCache)
-    loadInt8Keys("ExceptionDAO.getExceptIDs", exceptCacheSize, exceptCache)
+    loadInt4Keys("Tag.getIDs", tagCacheSize, tagCache)
+    loadInt4Keys("Property.getPropertyIDs", propsCacheSize, propCache)
+    loadInt8Keys("Exception.getExceptIDs", exceptCacheSize, exceptCache)
     super.start()
   }
 
   override def stop(): Unit ={
-    markerCache.clear()
+    tagCache.clear()
     propCache.clear()
     exceptCache.clear()
     super.stop()
   }
 
   private final def loadInt4Keys(sqlID: String, limit: Int, cache: SimpleCache[Int,AnyRef]): Unit = {
-    val recentIDs = queryForList((con: Connection)=> {
+    val recentIDs = queryList((con: Connection)=> {
       val ps = con.prepareStatement(sqls.get(sqlID))
       ps.setInt(1, limit)
       ps
@@ -53,7 +53,7 @@ class CachedStoreAux private[this](val sqls: StrLoader)
       cache.put(i, NA)
   }
   private final def loadInt8Keys(sqlID: String, limit: Int, cache: SimpleCache[Long,AnyRef]): Unit = {
-    val recentIDs = queryForList((con: Connection)=> {
+    val recentIDs = queryList((con: Connection)=> {
       val ps = con.prepareStatement(sqls.get(sqlID))
       ps.setInt(1, limit)
       ps
@@ -86,11 +86,11 @@ class CachedStoreAux private[this](val sqls: StrLoader)
     }
   }
 
-  override def hasMarker(key: String): Boolean = {
-    if (markerCache.get(key.hashCode).isDefined)
+  override def hasTag(key: String): Boolean = {
+    if (tagCache.get(key.hashCode).isDefined)
       true
     else {
-      if (super.hasMarker(key)){
+      if (super.hasTag(key)){
         exceptCache.put(key.hashCode, NA)
         true
       }

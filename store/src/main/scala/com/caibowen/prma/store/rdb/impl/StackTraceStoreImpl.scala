@@ -28,7 +28,7 @@ object StackTraceStore {
 class StackTraceStore(private[this] val loader: StrLoader) extends JdbcSupport with KVStore[Int, StackTraceElement] {
 
   override def hasKey(key: Int): Boolean =
-    0 < queryForObject((con: Connection) => {
+    0 < queryObject((con: Connection) => {
       val ps = con.prepareStatement("SELECT count(1) FROM `stack_trace` WHERE id=?")
       ps.setInt(1, key)
       ps
@@ -37,7 +37,7 @@ class StackTraceStore(private[this] val loader: StrLoader) extends JdbcSupport w
   override def hasVal(@Nonnull `val`: StackTraceElement): Boolean = hasKey(`val`.hashCode)
 
   override def get(key: Int): Option[StackTraceElement] = {
-    val r = queryForObject((con: Connection) => {
+    val r = queryObject((con: Connection) => {
       val ps = con.prepareStatement("SELECT `file`,`class`,`function`,`line` FROM `stack_trace` WHERE id=?")
       ps.setInt(1, key)
       ps

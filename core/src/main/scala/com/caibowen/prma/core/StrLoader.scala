@@ -11,7 +11,7 @@ import com.caibowen.gplume.resource.{InputStreamCallback, InputStreamProviderPro
  * @since  01/12/2014.
  */
 @SerialVersionUID(-1515727644434333582L)
-class StrLoader(private[this] val paths: java.util.List[String]) extends InputStreamSupport with LifeCycle with Serializable {
+class StrLoader(private[this] val paths: List[String]) extends InputStreamSupport with LifeCycle with Serializable {
 
   private[this] val map = new scala.collection.mutable.HashMap[String, String]
 
@@ -38,7 +38,6 @@ class StrLoader(private[this] val paths: java.util.List[String]) extends InputSt
       })
       props.clear()
     }
-    paths.clear()
     started = true
   }
 
