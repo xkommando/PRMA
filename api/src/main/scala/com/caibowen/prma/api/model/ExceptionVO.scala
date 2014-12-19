@@ -12,6 +12,8 @@ class ExceptionVO(@BeanProperty val id: Long,
                   @BeanProperty val message: Option[String],
                   @BeanProperty val stackTraces: Option[List[StackTraceElement]]) extends Serializable {
 
+  require(name != null, "Exception name cannot be null")
+
   def this(eN: String, eMsg: String, sts: List[StackTraceElement]) {
     this(ExceptionVO.calculateID(eN, eMsg, sts), eN,
       if (eMsg == null) None else Some(eMsg),
@@ -36,15 +38,15 @@ class ExceptionVO(@BeanProperty val id: Long,
     val extra = 100 + (if (stackTraces.isDefined) stackTraces.get.size * 128 else 0)
     json.ensureCapacity(json.capacity + extra)
 
-    json.append("{\r\n\"id\":").append(id)
-      .append(",\r\n\"name\":\"").append(name).append("\"")
+    json.append("{\r\n  \"id\":").append(id)
+      .append(",\r\n  \"name\":\"").append(name).append("\"")
     if (message.isDefined)
-      json.append(",\r\n\"message\":\"").append(message.get).append('\"')
+      json.append(",\r\n  \"message\":\"").append(message.get).append('\"')
 
     if (stackTraces.isDefined && stackTraces.get.size > 0) {
-      json.append(",\r\n\"stackTraces\":[")
+      json.append(",\r\n  \"stackTraces\":[")
       stackTraces.get.foreach(ExceptionVO.stackTraceJson(_).append(",\r\n"))
-      json.deleteCharAt(json.length() - 3)
+      json.deleteCharAt(json.length - 3)
       json.append("],\r\n")
     }
     json.append('}')
@@ -95,10 +97,10 @@ object ExceptionVO {
 
   @inline
   def stackTraceJson(st: StackTraceElement)(implicit json: StringBuilder):StringBuilder =
-    json.append("{ \"file\":\"").append(st.getFileName)
-      .append("\",\r\n\"class\":\"").append(st.getClassName)
-      .append("\",\r\n\"function\":\"").append(st.getMethodName)
-      .append("\",\r\n\"line\":").append(st.getLineNumber).append(" }")
+    json.append("{\r\n\t\"file\":\"").append(st.getFileName)
+      .append("\",\r\n\t\"class\":\"").append(st.getClassName)
+      .append("\",\r\n\t\"function\":\"").append(st.getMethodName)
+      .append("\",\r\n\t\"line\":").append(st.getLineNumber).append("\r\n}")
 
 //  @inline
 //  def appendJson()

@@ -41,6 +41,7 @@
         <prma-version>0.1</prma-version>
         <java-version>1.7</java-version>
         <gp-scala-version>1.0</gp-scala-version>
+        <gp-web-version>2.0</gp-web-version>
         <junit-version>4.9</junit-version>
         <akka-version>2.3.7</akka-version>
         <slick-version>2.1.0</slick-version>

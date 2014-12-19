@@ -26,8 +26,8 @@
 
         <dependency>
             <groupId>com.caibowen.gplumeframework</groupId>
-            <artifactId>gplume-webex</artifactId>
-            <version>${gp-scala-version}</version>
+            <artifactId>gplume-web</artifactId>
+            <version>${gp-web-version}</version>
         </dependency>
 
     </dependencies>

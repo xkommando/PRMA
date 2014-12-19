@@ -100,31 +100,31 @@ class EventVO(@BeanProperty val id: Long,
   def appendJson(implicit json: StringBuilder): StringBuilder = {
     json.append(
 s"""{
-"id":$id,
-"timeCreated":$timeCreated,
-"level":"${level.toString}",
-"loggerName":"$loggerName",
-"threadName":"$threadName",
-"flag":$flag,
-"message":"$message",
+  "id":$id,
+  "timeCreated":$timeCreated,
+  "level":"${level.toString}",
+  "loggerName":"$loggerName",
+  "threadName":"$threadName",
+  "flag":$flag,
+  "message":"$message",
 """)
 
-    json.append("\"caller\":")
+    json.append("  \"callerStackTrace\":")
     ExceptionVO.stackTraceJson(callerStackTrace)
     json.append(",\r\n")
     if (reserved.isDefined)
-      json.append( """"reserved":""")
+      json.append( """  "reserved":""")
         .append(reserved.get)
         .append(",\r\n")
 
     if (exceptions.isDefined && exceptions.get.size > 0) {
-      json.append( """"exceptions":[""")
+      json.append( """  "exceptions":[""")
       exceptions.get.foreach(_.appendJson.append(",\r\n"))
       json.deleteCharAt(json.length - 3)
         .append("],\r\n")
     }
     if (properties.isDefined && properties.get.size > 0) {
-      json.append("\"properties\":{\r\n")
+      json.append("  \"properties\":{\r\n")
       properties.get.foreach((t: (Any, Any))
                     => json.append("\t\"").append(t._1)
                         .append("\":\"").append(t._2).append("\",\r\n"))
@@ -133,7 +133,7 @@ s"""{
       )
     }
     if (tags.isDefined && tags.get.size > 0) {
-      json.append( """"markers":[""")
+      json.append( """  "tags":[""")
       tags.get.foreach(json.append('\"').append(_).append("\","))
       json.deleteCharAt(json.length - 1)
       json.append("]\r\n")

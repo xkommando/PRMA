@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://java.sun.com/xml/ns/javaee"
+xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
+http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+
+
+<!-- Configuration  
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>dashboard</web-resource-name>
+			<url-pattern>/dashboard/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+
+	<security-constraint>
+		<web-resource-collection>
+			<web-resource-name>command</web-resource-name>
+			<url-pattern>/cmd/*</url-pattern>
+		</web-resource-collection>
+		<auth-constraint>
+			<role-name>admin</role-name>
+		</auth-constraint>
+	</security-constraint>
+Context  -->
+
+	<context-param>
+        <param-name>manifest</param-name>
+        <param-value>classpath:app-manifest.xml</param-value>
+    </context-param>
+
+	<listener>
+		<listener-class>com.caibowen.gplume.web.WebAppBooter</listener-class>
+	</listener>
+<!-- Listener 
+
+<listener>
+	<listener-class>com.caibowen.web.plugin.statistic.SessionMonitor</listener-class>
+</listener>
+-->
+	<filter>
+		<filter-name>dispatcher</filter-name>
+		<filter-class>com.caibowen.gplume.web.GFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>dispatcher</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+
+<!-- Filter -->
+<!--  
+	<filter>
+		<filter-name>debug</filter-name>
+		<filter-class>com.caibowen.gplume.web.DebuggingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>debug</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+-->
+	
+<!-- Filter -->
+
+
+</web-app>
