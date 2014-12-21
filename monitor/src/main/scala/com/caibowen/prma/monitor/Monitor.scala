@@ -25,7 +25,7 @@ object Monitor {
     case _: ActorKilledException => Stop
     case _: DeathPactException => Stop
     case _: AkkaException => Restart
-    case _: Exception => Resume
+    case _: Exception => Escalate
   }
   final val defaultStrategy = new OneForOneStrategy(defaultDecider)
 }
@@ -40,15 +40,13 @@ class Monitor(val evaluator: Evaluator, val notifierMap: Map[String, Notifier]) 
     case vo: EventVO => {
       Try(evaluator.eval(vo)) match {
         case Success(response) => response match {
-
-          case NotifyAll => allNotifiers.foreach(_ send vo)
-          case NotifyOne(name) => {
-            val notifier = notifierMap get name
+          case n: NotifyOne => {
+            val notifier = notifierMap get n.name
             if (notifier.isDefined)
-              notifier.get.send(vo)
-            else log.warning(s"Could not find notifier named [$name] on event [$vo]")
+              notifier.get.take(n)
+            else log.warning(s"Could not find notifier named [${n.name}] on event [$vo]")
           }
-          case Reject =>
+          case n: Response => allNotifiers.foreach(_ take n)
         }
 
         case Failure(e) => log.error(s"Could not evaluate [$vo] with evaluator [$evaluator]", e)

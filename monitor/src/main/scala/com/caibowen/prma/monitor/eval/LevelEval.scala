@@ -4,11 +4,12 @@ import com.caibowen.prma.api.LogLevel
 import com.caibowen.prma.api.model.EventVO
 
 /**
+ *
  * @author BowenCai
  * @since  30/11/2014.
  */
-class LevelEval (private[this] val lowerBound: Int,
-                 private[this] val upperBound: Int) extends Evaluator {
+class LevelEval(lowerBound: Int,
+                upperBound: Int) extends Evaluator {
 
   def this(lowerBound: String, upperBound: String){
     this(LogLevel.from(lowerBound).id, LogLevel.from(upperBound).id)
@@ -18,7 +19,7 @@ class LevelEval (private[this] val lowerBound: Int,
   override def eval(vo : EventVO): Response = {
     val level = vo.level.id
     if (lowerBound <= level && level <= upperBound)
-      NotifyAll
+      new Response(vo)
     else
       Reject
   }

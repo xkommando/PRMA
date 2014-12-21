@@ -22,7 +22,7 @@ public class ViewNotify {
 
     @Test
     public void ref() {
-        for (Field f:EventVO$.class.getDeclaredFields())
+        for (Field f: EventVO$.class.getDeclaredFields())
             System.out.println(f);
 
         System.out.println("=================");

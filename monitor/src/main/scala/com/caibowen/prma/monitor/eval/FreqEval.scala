@@ -17,6 +17,9 @@ class FreqEval(eval: Evaluator, counter: FreqCounter) extends Evaluator {
     case Reject => Reject
     case accept =>
       counter.count()
-      accept
+      if (counter.freq > limit)
+        accept
+      else
+        Reject
   }
 }

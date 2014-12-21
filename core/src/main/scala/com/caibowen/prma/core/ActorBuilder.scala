@@ -2,14 +2,13 @@ package com.caibowen.prma.core
 
 import java.util.regex.Pattern
 
-import akka.actor.{ActorPath, InvalidActorNameException, ActorRef, ActorRefFactory}
+import akka.actor.{ActorPath, ActorRef, ActorRefFactory, InvalidActorNameException}
 import com.caibowen.gplume.context.IBeanAssembler
 import com.caibowen.gplume.context.bean.{AssemblerAwareBean, IDAwareBean, InitializingBean}
 import com.caibowen.gplume.misc.Str.Utils
 import com.caibowen.gplume.misc.Str.Utils._
 
 import scala.beans.BeanProperty
-import scala.util.matching.Regex
 
 /**
  *
@@ -21,7 +20,7 @@ import scala.util.matching.Regex
  * @since  10/12/2014.
  */
 object ActorBuilder {
-  var RootActorSystemBeanID = "PRMA_Root_ActorSystem"
+  var RootActorSystemBeanID = "PRMA.Root_ActorSystem"
 // """(?:[-\w:@&=+,.!~*'_;]|%\p{XDigit}{2})(?:[-\w:@&=+,.!~*'$_;]|%\p{XDigit}{2})*""")
   val actorNamePattern: Pattern = ActorPath.ElementRegex.pattern
 

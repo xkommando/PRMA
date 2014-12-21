@@ -1,12 +1,10 @@
 package com.caibowen.prma.logger.test
 
 import java.util.concurrent.TimeUnit
-import javax.sql.DataSource
 
-import akka.actor.{ActorRef, ActorSystem}
-import com.caibowen.gplume.scala.context.{AppContext, ContextBooter}
-import com.caibowen.gplume.jdbc.JdbcSupport
+import akka.actor.ActorSystem
 import com.caibowen.gplume.resource.ClassLoaderInputStreamProvider
+import com.caibowen.gplume.scala.context.{AppContext, ContextBooter}
 import com.caibowen.prma.core.ActorBuilder
 import org.junit.After
 
@@ -16,9 +14,10 @@ import scala.concurrent.duration.Duration
  * @author BowenCai
  * @since  08/12/2014.
  */
-class DBContext {
+class BuildContext {
 
-  val manifestPath: String = "classpath:store_assemble.xml"
+  def manifestPath  = "classpath:store_assemble.xml"
+  def actorBeanPrefix = "prma::internal::store::"
 
   def _prepare() : Unit = {
 
@@ -28,20 +27,13 @@ class DBContext {
     _bootstrap.setManifestPath(manifestPath)
 
     val actorSystem = ActorSystem("test-prma-actor")
-    AppContext.beanAssembler.addBean("prma::internal::store::" + ActorBuilder.RootActorSystemBeanID, actorSystem)
+    AppContext.beanAssembler.addBean(actorBeanPrefix + ActorBuilder.RootActorSystemBeanID, actorSystem)
 
     _bootstrap.boot
-
-    println(AppContext.beanAssembler.getBean("eventStore"))
   }
 
   _prepare()
 
-  val dataSource = AppContext.beanAssembler.getBean("dataSource").asInstanceOf[DataSource]
-  val jdbcSupport = new JdbcSupport(dataSource)
-  jdbcSupport setTraceSQL false
-
-  val eventStore = AppContext.beanAssembler.getBean("eventStore").asInstanceOf[ActorRef]
   val actSys = AppContext.beanAssembler.getBean(ActorBuilder.RootActorSystemBeanID).asInstanceOf[ActorSystem]
 
 

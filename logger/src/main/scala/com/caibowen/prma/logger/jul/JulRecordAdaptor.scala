@@ -1,8 +1,10 @@
 package com.caibowen.prma.logger.jul
 
+import java.net.InetAddress
 import java.util.logging.{LogRecord => JulLogRecord}
 import javax.annotation.{Nonnull, Nullable}
 
+import com.caibowen.gplume.misc.Str
 import com.caibowen.prma.api.LogLevel.LogLevel
 import com.caibowen.prma.api.model.{EventVO, ExceptionVO}
 import com.caibowen.prma.api.{EventAdaptor, LogLevel}
@@ -26,12 +28,12 @@ class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormat
     return new EventVO(ev.getMillis, le,
       loggerName, ev.getThreadID.toString, st,
       msg,
-      -1,
+      JulRecordAdaptor.localIP,
       null,
       getExcepts(ev),
       null)
   }
-  override def to(vo: EventVO): JulLogRecord = throw new NotImplementedError()
+  override def to(vo: EventVO): JulLogRecord = ???
 
   @Nullable
   def getExcepts(ev: JulLogRecord): List[ExceptionVO] = {
@@ -64,6 +66,8 @@ class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormat
 
 }
 object JulRecordAdaptor {
+
+  val localIP = Str.Utils.ipV4ToLong(InetAddress.getLocalHost.getHostAddress)
 
   @Nonnull
   def getCallerST(record: JulLogRecord): StackTraceElement = {

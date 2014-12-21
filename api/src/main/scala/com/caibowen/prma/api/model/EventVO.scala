@@ -9,18 +9,18 @@ import scala.beans.BeanProperty
 * @since  02/12/2014.
 */
 @SerialVersionUID(-8179577194579626226L)
-class EventVO(@BeanProperty val id: Long,
-              @BeanProperty val timeCreated: Long,
-              @BeanProperty val level: LogLevel,
-              @BeanProperty val loggerName: String,
-              @BeanProperty val threadName: String,
-              @BeanProperty val callerStackTrace: StackTraceElement,
-              @BeanProperty val flag: Long,
-              @BeanProperty val message: String,
-              @BeanProperty val reserved: Option[Long],
-              @BeanProperty val properties: Option[Map[String, AnyRef]],
-              @BeanProperty val exceptions: Option[List[ExceptionVO]],
-              @BeanProperty val tags: Option[Set[String]]) extends Serializable {
+class EventVO(val id: Long,
+              val timeCreated: Long,
+              val level: LogLevel,
+              val loggerName: String,
+              val threadName: String,
+              val callerStackTrace: StackTraceElement,
+              val flag: Long,
+              val message: String,
+              val reserved: Option[Long],
+              val properties: Option[Map[String, AnyRef]],
+              val exceptions: Option[List[ExceptionVO]],
+              val tags: Option[Set[String]]) extends Serializable {
 
   require(loggerName != null, "Logger name cannot be null")
   require(threadName != null, "Logger name cannot be null")
@@ -65,32 +65,54 @@ class EventVO(@BeanProperty val id: Long,
   }
 
   override def equals(o: scala.Any): Boolean = o match {
-    case eventVO: EventVO => {
+    case other: EventVO => {
 
-      if (id != eventVO.id) return false
-      if (timeCreated != eventVO.timeCreated) return false
-      if (level ne eventVO.level) return false
-      if (flag != eventVO.flag) return false
-      if (!(threadName == eventVO.threadName)) return false
-      if (!(loggerName == eventVO.loggerName)) return false
-      if (!(message == eventVO.message)) return false
+      if (id != other.id) return false
+      if (timeCreated != other.timeCreated) return false
+      if (level != other.level) return false
+      if (flag != other.flag) return false
+      if (!(threadName == other.threadName)) return false
+      if (!(loggerName == other.loggerName)) return false
+      if (!(message == other.message)) return false
+      if (!(callerStackTrace == other.callerStackTrace)) return false
 
-      if (if (reserved.isDefined) reserved.get == eventVO.reserved.get else eventVO.reserved.isDefined) return false
-      if (!(callerStackTrace.equals(eventVO.callerStackTrace))) return false
-      if (if (exceptions.isDefined) !(exceptions.get.equals(eventVO.exceptions)) else eventVO.exceptions.isDefined) return false
-      if (if (tags.isDefined) !(tags.get.equals(eventVO.tags.get)) else eventVO.tags.isDefined) return false
-      if (properties.isEmpty) {
-        if (eventVO.properties.isDefined)
+      if (reserved.isEmpty) {
+        if (other.reserved.isDefined)
           return false
       } else {
-        if (!properties.equals(eventVO.properties))
+        val op = other.reserved
+        if (op.isEmpty ||
+          !(reserved.get == op.get))
           return false
       }
-      if (if (properties.isDefined)
-            properties != eventVO.properties
-          else eventVO.properties.isEmpty) {
-        return false
+
+      val ots = other.tags
+      if (tags.isEmpty) {
+        if (ots.isDefined) return false
+      } else {
+        if (ots.isEmpty ||
+          !(tags.get == ots.get))
+          return false
       }
+
+      val op = other.properties
+      if (properties.isEmpty) {
+        if (op.isDefined) return false
+      } else {
+        if (op.isEmpty ||
+              !(properties.get == op.get))
+          return false
+      }
+
+      val oes = other.exceptions
+      if (exceptions.isEmpty) {
+        if (oes.isDefined) return false
+      } else {
+        if (oes.isEmpty ||
+          !(exceptions.get == oes.get))
+          return false
+      }
+
       true
     }
     case _ => false
@@ -136,8 +158,9 @@ s"""{
       json.append( """  "tags":[""")
       tags.get.foreach(json.append('\"').append(_).append("\","))
       json.deleteCharAt(json.length - 1)
-      json.append("]\r\n")
+      json.append("],\r\n")
     }
+    json.deleteCharAt(json.length - 3)
     json.append('}')
   }
 

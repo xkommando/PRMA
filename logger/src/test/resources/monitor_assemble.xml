@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<beans namespace="prma::monitor" using="prma::internal::store">
+<beans namespace="prma::test::monitor" using="prma::internal::store">
 
     <bean id="tLevelEval" class="com.caibowen.prma.monitor.eval.LevelEval">
         <construct>
-            <val>INFO</val>
+            <val>WARN</val>
             <val>FATAL</val>
         </construct>
     </bean>
@@ -14,14 +14,11 @@
         <prop name="notifiers">
             <list>
                 <bean class="com.caibowen.prma.monitor.notify.HttpNotify">
-                    <prop name="name" val="HttpPost"/>
-                    <prop name="url" val="???"/>
-                    <prop name="params">
-                        <map>
-                            <app>prma-test</app>
-                            <token>123456</token>
-                        </map>
-                    </prop>
+                    <construct>
+                        <val>http://cbw-prma.appspot.com/notify</val>
+                        <val>cbw-test</val>
+                        <val>password</val>
+                    </construct>
                 </bean>
             </list>
         </prop>

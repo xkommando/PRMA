@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -124,7 +125,7 @@
                         </div>
                     </li>
                     <li>
-                        <a href="notifications.html"><i class="fa fa-dashboard fa-fw"></i> Notifications</a>
+                        <a href="index.html"><i class="fa fa-dashboard fa-fw"></i> Notifications</a>
                     </li>
                     <li>
                         <a class="active" href="logs.html"><i class="fa fa-table fa-fw"></i> Logs</a>
@@ -139,111 +140,86 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Logs</h1>
+                <h1 class="page-header">Notifications</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
         <!-- /.row -->
         <div class="row">
-            <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-
-                        <div class="table-responsive col-lg-10">
-                            <table class="table borderless">
-                                <tbody>
-                                <tr>
-                                    <td> <label class="pull-right">
-                                            Start Time:
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control">
-                                    </td>
-                                    <td><label class="pull-right">
-                                        End Time:
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control">
-                                    </td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td><label class="pull-right">
-                                        Level:
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control column_filter" id="col1_filter">
-                                    </td>
-                                    <td><label class="pull-right">
-                                        Logger:
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control column_filter" id="col2_filter">
-                                    </td>
-                                    <td>
-                                        <label>Use Regex</label>
-                                        <span class="col-lg-4">
-                                            <input type="checkbox" class="form-control column_filter" id="col2_regex">
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><label class="pull-right">
-                                        Thread:
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control column_filter" id="col4_filter">
-                                    </td>
-                                    <td><label class="pull-right">
-                                        Message:
-                                        </label>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control column_filter" id="col3_filter">
-                                    </td>
-                                    <td>
-                                        <label>Use Regex</label>
-                                        <span class="col-lg-4">
-                                            <input type="checkbox" class="form-control" id="col3_regex">
-                                        </span>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                            <div class="text-center">
-                                <button type="button" class="btn btn-primary">Load Logs</button>
-                            </div>
-                            <hr/>
-
-                            <table class="table table-striped table-bordered table-hover" id="prma-log-table">
-                                <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Level</th>
-                                    <th>Logger</th>
-                                    <th>Message</th>
-                                    <th>Thread</th>
-                                </tr>
-                                </thead>
-
-                            </table>
+            <div class="col-lg-6">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="alert alert-success alert-dismissable">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Collapsible Group Item #1
+                                </a>
+                            </h4>
                         </div>
-                    <!--</div>-->
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
                     </div>
-                    <!-- /.panel-body -->
-                </div>
+                    <div class="alert alert-info alert-dismissable">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <h4 class="panel-title">
+                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Collapsible Group Item #3
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- /.panel group-->
                 <!-- /.panel -->
             </div>
-            <!-- /.col-lg-12 -->
-        </div> <!-- /.row -->
-
-    </div>
-    <!-- /#page-wrapper -->
+            <!-- /.col-lg-6 -->
+            <div class="col-lg-6">
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                    <div class="alert alert-danger alert-dismissable">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    Collapsible Group Item #1
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning alert-dismissable">
+                        <div class="panel-heading" role="tab" id="headingThree">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <h4 class="panel-title">
+                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    Collapsible Group Item #3
+                                </a>
+                            </h4>
+                        </div>
+                        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                            </div>
+                        </div>
+                    </div>
+                </div> <!-- /.panel group-->
+            </div>
+            <!-- /.col-lg-6 -->
+        </div>
+        <!-- /.row -->
+    </div> <!--page wrapper -->
 
 </div>
 <!-- /#wrapper -->
@@ -283,14 +259,18 @@
         });
     });
 
-    function fmtDate(num) {
-        var date = new Date(num);
-        var year = date.getFullYear();
-        return year + "-" + date.getMonth() + "-" + date.getDate()
-                + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    }
-
     $(document).ready(function() {
+        $('#prma-log-table').dataTable(
+                {
+                    "columns": [
+                        { "width": "10%" },
+                        { "width": "20%" },
+                        null,
+                        null,
+                        null
+                    ]
+                }
+        );
 
         $(window).scroll(function () {
             if ($(this).scrollTop() > 50) {
@@ -308,64 +288,6 @@
             }, 800);
             return false;
         });
-
-        function dtAddDetail ( d ) {
-            // `d` is the original data object for the row
-            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-                    '<tr>'+
-                    '<td>Full name:</td>'+
-                    '<td>'+d.name+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                    '<td>Extension number:</td>'+
-                    '<td>'+d.extn+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                    '<td>Extra info:</td>'+
-                    '<td>And any further details here (images etc)...</td>'+
-                    '</tr>'+
-                    '</table>';
-        }
-
-        console.log("fk9");
-        var dtable = $('#prma-log-table');
-        dtable.dataTable(
-                {
-                    "ajax": "http://localhost:63342/PRMA/webface/src/main/webapp/testdata.json",
-                    "columns": [
-                        {
-                            "data": "timeCreated",
-                            "width": "10%"
-                        }, // time
-                        {
-                            "data": "level",
-                            "width": "3%"
-                        }, // level
-                        {
-                            "data": "loggerName",
-                            "width": "15%"
-                        }, // logger
-                        {
-                            "data": "message",
-                            "width": "40%"
-                        }, // message
-                        {
-                            "data": "threadName",
-                            "width": "8%"
-                        } // message
-                    ],
-                    "columnDefs": [
-                        {
-                            "render": function ( data, type, row ) {
-                                return fmtDate(row.timeCreated);
-                            },
-                            "targets": 0
-                        }
-                    ]
-                }
-        );
-        console.log("fk10")
-
     });
 </script>
 

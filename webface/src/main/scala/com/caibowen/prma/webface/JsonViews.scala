@@ -6,9 +6,13 @@ import com.caibowen.gplume.web.{IViewResolver, RequestContext}
  * @author BowenCai
  * @since  18/12/2014.
  */
-class JsonResult[T](val data: AnyRef, val code: Int = 200, var message: Option[String] = None)
+class JsonResult[T](val data: T, val code: Int, var message: Option[String])
 
   extends Serializable {
+
+  def this(d: T) {
+    this(d, 200, None)
+  }
 
   def ok = code == 200
 
@@ -21,9 +25,8 @@ class JsonViewResolver extends IViewResolver {
     case _ => -1
   }
 
-  override def resolve(ctx: RequestContext, view: Any): Unit = {
-    val jr = view.asInstanceOf[JsonResult[_]]
-
+  override def resolve(ctx: RequestContext, view: Any): Unit = view match {
+    case jsr: JsonResult[_] =>
   }
 
 }

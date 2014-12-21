@@ -17,7 +17,11 @@
             <artifactId>store</artifactId>
             <version>${prma-version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.caibowen.prma</groupId>
+            <artifactId>monitor</artifactId>
+            <version>${prma-version}</version>
+        </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>

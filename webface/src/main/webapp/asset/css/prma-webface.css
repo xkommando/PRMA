@@ -13,21 +13,23 @@
     margin-right: 0px;
     margin-left: 0px;
 }
-.syntaxhighlighter {
-    overflow-y: hidden !important;
-    overflow-x: auto !important
-}
 
 body {
     background-color: #f8f8f8;
 }
+
+.borderless td {
+    border: none !important;
+}
+
+.top-buffer{margin-top:20px}
 
 #wrapper {
     width: 100%;
 }
 
 #page-wrapper {
-    padding: 0 10px;
+    padding: 0 5px;
     min-height: 568px;
     background-color: #fff;
 }
@@ -36,9 +38,13 @@ body {
     #page-wrapper {
         position: inherit;
         /*equals sidebar*/
-        margin: 0 0 0 220px;
-        padding: 0 30px;
+        margin: 0 0 0 180px;
+        padding: 0 8px;
         border-left: 1px solid #e7e7e7;
+    }
+    .row .col-lg-12 {
+        padding-left: 2px;
+        padding-right: 2px;
     }
 }
 
@@ -146,7 +152,7 @@ body {
     .sidebar {
         z-index: 1;
         position: absolute;
-        width: 220px;
+        width: 180px;
         margin-top: 51px;
     }
 

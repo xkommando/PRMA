@@ -11,7 +11,7 @@ class MsgEval(filter: StrFilter) extends Evaluator {
 
   override def eval(vo: EventVO): Response =
     if (filter.accept(vo.loggerName) == 1)
-      NotifyAll
+      new Response(vo)
     else
       Reject
 }

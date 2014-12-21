@@ -1,7 +1,10 @@
 package com.caibowen.prma.logger.logback
 
+import java.net.InetAddress
+
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.{ILoggingEvent, IThrowableProxy}
+import com.caibowen.gplume.misc.Str
 import com.caibowen.prma.api.model.{EventVO, ExceptionVO}
 import com.caibowen.prma.api.{EventAdaptor, LogLevel}
 
@@ -22,16 +25,13 @@ class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
     val le = LogbackEventAdaptor.logLevel(event)
 
     new EventVO(event.getTimeStamp, le, event.getLoggerName, event.getThreadName,
-        st, event.getFormattedMessage,-1,
+        st, event.getFormattedMessage, LogbackEventAdaptor.localIP,
       getProperties(event),
       getExcepts(event),
       getMarkers(event))
   }
 
-  override def to(vo: EventVO): ILoggingEvent = {
-    throw new UnsupportedOperationException
-  }
-
+  override def to(vo: EventVO): ILoggingEvent = ???
 
 
   def getExcepts(event: ILoggingEvent): List[ExceptionVO] = {
@@ -43,7 +43,7 @@ class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
       val stps = px.getStackTraceElementProxyArray
       val buf = new ArrayBuffer[StackTraceElement](16)
       stps.take(stps.length - start).foreach(buf += _.getStackTraceElement)
-      new ExceptionVO(px.getClassName, px.getMessage, buf.toList)
+      new ExceptionVO(px.getClassName, px.getMessage, if (buf.size > 0) buf.toList else null)
     }
 
     var _cause = px.getCause
@@ -88,10 +88,13 @@ class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
       tb.put(k, v)
     tb.toMap
   }
-
 }
+
 object LogbackEventAdaptor {
+
   val NA_ST = new StackTraceElement("?", "?", "?", -1)
+
+  val localIP = Str.Utils.ipV4ToLong(InetAddress.getLocalHost.getHostAddress)
 
   @inline
   private def getCallerST = (event: ILoggingEvent) => {

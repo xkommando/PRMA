@@ -3,7 +3,11 @@ package com.caibowen.prma.logger.test
 import java.io.{FileNotFoundException, IOException}
 import java.util.Date
 import java.util.logging.{ConsoleHandler, Level => JulLevel, LogRecord => JulLogRecord, Logger => JulLogger}
+import javax.sql.DataSource
 
+import akka.actor.ActorRef
+import com.caibowen.gplume.jdbc.JdbcSupport
+import com.caibowen.gplume.scala.context.AppContext
 import com.caibowen.prma.logger.jul.JulRecordAdaptor
 import org.junit.Test
 
@@ -11,7 +15,15 @@ import org.junit.Test
  * @author BowenCai
  * @since  08/12/2014.
  */
-class JulTest extends DBContext {
+class JulTest extends BuildContext {
+
+  val dataSource = AppContext.beanAssembler.getBean("dataSource").asInstanceOf[DataSource]
+  val jdbcSupport = new JdbcSupport(dataSource)
+  jdbcSupport setTraceSQL false
+
+  val eventStore = AppContext.beanAssembler.getBean("eventStore").asInstanceOf[ActorRef]
+
+
 
   val LOG = JulLogger.getLogger(classOf[JulTest].getName)
   val adaptor = new JulRecordAdaptor

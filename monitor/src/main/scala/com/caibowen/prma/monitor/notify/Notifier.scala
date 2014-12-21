@@ -1,7 +1,7 @@
 package com.caibowen.prma.monitor.notify
 
-import com.caibowen.prma.api.model.EventVO
 
+import com.caibowen.prma.monitor.eval.Response
 import scala.beans.BeanProperty
 
 
@@ -13,5 +13,5 @@ trait Notifier {
 
   @BeanProperty var name: String = _
 
-  def send(vo: EventVO): Unit
+  def take(vo: Response): Unit
 }

@@ -7,10 +7,10 @@ import scala.beans.BeanProperty
  * @since  02/12/2014.
  */
 @SerialVersionUID(8087093751948611040L)
-class ExceptionVO(@BeanProperty val id: Long,
-                  @BeanProperty val name: String,
-                  @BeanProperty val message: Option[String],
-                  @BeanProperty val stackTraces: Option[List[StackTraceElement]]) extends Serializable {
+class ExceptionVO(val id: Long,
+                  val name: String,
+                  val message: Option[String],
+                  val stackTraces: Option[List[StackTraceElement]]) extends Serializable {
 
   require(name != null, "Exception name cannot be null")
 
@@ -49,34 +49,38 @@ class ExceptionVO(@BeanProperty val id: Long,
       json.deleteCharAt(json.length - 3)
       json.append("],\r\n")
     }
+    json.deleteCharAt(json.length - 3)
     json.append('}')
   }
 
   override def toString: String = appendJson(new StringBuilder(256)).toString
 
-  override def equals(obj: scala.Any): Boolean = {
-    if (this == obj)
-      return true
-    if (!obj.isInstanceOf[ExceptionVO])
-      return false
-    val that = obj.asInstanceOf[ExceptionVO]
+  override def equals(obj: scala.Any): Boolean = obj match {
+    case that: ExceptionVO => {
+      if (this eq that)
+        return true
 
-    if (id != that.id) return false
+      if (id != that.id) return false
 
-    if (!name.equals(that.name)) return false
+      if (!(name == that.name)) return false
 
-    if (message.isEmpty) {
-      if (that.message.isDefined) return false
-    } else {
-      if (!message.get.equals(that.message.get)) return false
-    }
+      val om = that.message
+      if (message.isEmpty) {
+        if (om.isDefined) return false
+      } else {
+        if (om.isEmpty || !(message.get == om.get)) return false
+      }
 
-    if (stackTraces.isEmpty) {
-      if (that.stackTraces.isDefined) return false
-    } else {
-      if (!stackTraces.get.equals(that.stackTraces.get)) return false
-    }
-    true
+      val oss = that.stackTraces
+      if (stackTraces.isEmpty) {
+        if (oss.isDefined) return false
+      } else {
+        if (oss.isEmpty || !(stackTraces.get == oss.get)) return false
+      }
+
+      true
+  }
+    case _ => false
   }
 }
 object ExceptionVO {
@@ -98,7 +102,7 @@ object ExceptionVO {
   @inline
   def stackTraceJson(st: StackTraceElement)(implicit json: StringBuilder):StringBuilder =
     json.append("{\r\n\t\"file\":\"").append(st.getFileName)
-      .append("\",\r\n\t\"class\":\"").append(st.getClassName)
+      .append("\",\r\n\t\"className\":\"").append(st.getClassName)
       .append("\",\r\n\t\"function\":\"").append(st.getMethodName)
       .append("\",\r\n\t\"line\":").append(st.getLineNumber).append("\r\n}")
 
