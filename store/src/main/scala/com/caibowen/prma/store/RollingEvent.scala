@@ -12,5 +12,4 @@ trait RollingEvent {
 
   def deleteLowLevelEntry(lowerBound: LogLevel)
 
-
 }

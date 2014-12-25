@@ -1,3 +1,20 @@
+/* override bootstrap */
+
+/* wdider log panel*/
+.row {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+body {
+    background-color: #f8f8f8;
+}
+
+
+.t-query > tbody > tr > td {
+    padding: 2px;
+}
+
 .back-to-top {
     cursor: pointer;
     position: fixed;
@@ -8,14 +25,6 @@
 }
 .login-panel {
     margin-top: 25%;
-}
-.row {
-    margin-right: 0px;
-    margin-left: 0px;
-}
-
-body {
-    background-color: #f8f8f8;
 }
 
 .borderless td {
