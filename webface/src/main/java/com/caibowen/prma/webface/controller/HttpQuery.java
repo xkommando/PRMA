@@ -10,12 +10,7 @@ import com.caibowen.gplume.web.annotation.ReqParam;
  */
 public class HttpQuery {
 
-    @ReqParam(defaultVal = "0")
-    int offset;
-    @ReqParam(defaultVal = "200")
-    int limit;
-
-    @ReqParam
+    @ReqParam(required=true)
     Integer minTime;
     @ReqParam
     Integer maxTime;
@@ -23,10 +18,21 @@ public class HttpQuery {
     @ReqParam
     Integer lowLevel;
     @ReqParam
-    Integer maxLevel;
-
+    Integer highLevel;
 
     @ReqParam
-    Boolean hasException;
+    String loggerName;
+
+    @ReqParam
+    String threadName;
+
+    @ReqParam
+    String message;
+
+    @ReqParam
+    boolean fuzzyQuery;
+
+    @ReqParam
+    boolean exceptionOnly;
 
 }

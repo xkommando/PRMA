@@ -48,7 +48,7 @@
             <!-- /.dropdown -->
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-alerts">
                     <li>
@@ -74,7 +74,7 @@
             </li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-messages">
                     <li>
@@ -95,12 +95,13 @@
                             <i class="fa fa-angle-right"></i>
                         </a>
                     </li>
-                </ul><!-- /.dropdown-messages -->
+                </ul>
+                <!-- /.dropdown-messages -->
             </li>
             <!-- /.dropdown -->
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
@@ -128,7 +129,7 @@
                         <a href="notifications.html"><i class="fa fa-bell fa-fw"></i> Notifications</a>
                     </li>
                     <li>
-                        <a class="active" href="logs.html"><i class="fa fa-table fa-fw"></i> Logs</a>
+                        <a class="active" href="logs.html"><i class="fa fa-file-text  fa-fw"></i> Logs</a>
                     </li>
                 </ul>
             </div>
@@ -141,175 +142,161 @@
 
         <div class="row">
             <div class="col-lg-12  top-buffer">
-<div><i class="fa fa-database"></i> Query DB</div>
-                            <table class="table borderless t-query top-buffer">
-                                <tbody>
-                                <tr>
-                                    <td><label class="pull-right">
-                                            Start Time:
-                                        </label>
-                                    </td>
-                                    <td class="col-lg-2">
-                                        <div class="input-group input-group-sm">
-                                            <input size="16" type="text" class="form_datetime form-control" id="tq-minTime">
+                <div><i class="fa fa-database"></i> Query DB</div>
+                <table class="table borderless t-query top-buffer">
+                    <tbody>
+                    <tr>
+                        <td><label class="pull-right">
+                            Start Time:
+                        </label>
+                        </td>
+                        <td class="col-lg-2">
+                            <div class="input-group input-group-sm">
+                                <input size="16" type="text" class="form_datetime form-control" id="tq-minTime">
                                             <span class="input-group-addon">
                                             <i class="glyphicon glyphicon-time"></i>
                                             </span>
-                                        </div>
-                                    </td>
-                                    <td><label class="pull-right">
-                                        End Time:
-                                        </label>
-                                    </td>
-                                    <td class="col-lg-2">
-                                        <div class="input-group input-group-sm">
-                                            <input size="16" type="text" class="form_datetime form-control" id="tq-maxTime">
+                            </div>
+                        </td>
+                        <td><label class="pull-right">
+                            End Time:
+                        </label>
+                        </td>
+                        <td class="col-lg-2">
+                            <div class="input-group input-group-sm">
+                                <input size="16" type="text" class="form_datetime form-control" id="tq-maxTime">
                                             <span class="input-group-addon">
                                             <i class="glyphicon glyphicon-time"></i>
                                             </span>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <label class="pull-right">
-                                            Lower Level:
-                                        </label>
-                                    </td>
-                                    <td class="col-lg-1">
-                                    <div class="input-group-sm">
-                                        <select class="form-control" id="tq-llevel">
-                                            <option>TRACE</option>
-                                            <option>DEBUG</option>
-                                            <option>INFO</option>
-                                            <option>WARN</option>
-                                            <option>ERROR</option>
-                                            <option>FATAL</option>
-                                        </select>
-                                    </div>
-                                    </td>
-                                    <td>
-                                        <label class="pull-right">
-                                            Higher Level:
-                                        </label>
-                                    </td>
-                                    <td class="col-lg-1">
-                                    <div class="input-group-sm">
-                                        <select class="form-control" id="tq-hlevel">
-                                            <option>FATAL</option>
-                                            <option>ERROR</option>
-                                            <option>WARN</option>
-                                            <option>INFO</option>
-                                            <option>DEBUG</option>
-                                            <option>TRACE</option>
-                                        </select>
-                                        </div>
-                                    </td>
-                                    <td><div class="col-lg-push-1">&nbsp;&nbsp;&nbsp;</div></td>
-                                </tr>
-                        </tbody>
-                    </table>
-
-                    <table class="table borderless t-query top-buffer">
-                        <tbody>
-                            <tr>
-                                <td>
-                                <label class="pull-right">
-                                    Logger:
-                                </label>
-                            </td>
-                            <td class="col-lg-2">
-                                <input type="text" class="form-control column_filter" id="tq-logger">
-                            </td>
-                            <td>
-                                <label class="pull-right">
-                                    Thread:
-                                </label>
-                            </td>
-                            <td class="col-lg-1">
-                                <input type="text" class="form-control column_filter" id="tq-thread">
-                            </td>
-                            <td>
-                                <label class="pull-right">
-                                    Message:
-                                </label>
-                            </td>
-                            <td class="col-lg-4">
-                                <input type="text" class="form-control column_filter" id="tq-msg">
-                            </td>
-                            <td class="col-lg-1">
-                                <label class="pull-right">Fuzzy Search</label>
-                            </td>
-                            <td class="col-lg-1">
+                            </div>
+                        </td>
+                        <td>
+                            <label class="pull-right">
+                                Lower Level:
+                            </label>
+                        </td>
+                        <td class="col-lg-1">
+                            <div class="input-group-sm">
+                                <select class="form-control" id="tq-llevel">
+                                    <option>TRACE</option>
+                                    <option>DEBUG</option>
+                                    <option>INFO</option>
+                                    <option>WARN</option>
+                                    <option>ERROR</option>
+                                    <option>FATAL</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <label class="pull-right">
+                                Higher Level:
+                            </label>
+                        </td>
+                        <td class="col-lg-1">
+                            <div class="input-group-sm">
+                                <select class="form-control" id="tq-hlevel">
+                                    <option>FATAL</option>
+                                    <option>ERROR</option>
+                                    <option>WARN</option>
+                                    <option>INFO</option>
+                                    <option>DEBUG</option>
+                                    <option>TRACE</option>
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <label class="pull-right">Exception Only</label>
+                        </td>
+                        <td class="col-lg-1">
                                 <span class="col-lg-3">
-                                    <input type="checkbox" checked="true" id="tq-msg-fuzzy" data-size="mini">
+                                    <input type="checkbox" checked="true" id="tq-only-except" data-size="mini">
                                 </span>
-                            </td>
-                        </tr>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
 
-                            <div class="text-center top-buffer">
-                                <button type="button" class="btn btn-primary">
-                                <i class="fa fa-refresh"></i>&nbsp;&nbsp;Load Logs 
-                                </button>
-                                <div class="top-buffer"></div>
-                            </div>
-                            
+                <table class="table borderless t-query top-buffer">
+                    <tbody>
+                    <tr>
+                        <td>
+                            <label class="pull-right">
+                                Logger:
+                            </label>
+                        </td>
+                        <td class="col-lg-2">
+                            <input type="text" class="form-control column_filter" id="tq-logger">
+                        </td>
+                        <td>
+                            <label class="pull-right">
+                                Thread:
+                            </label>
+                        </td>
+                        <td class="col-lg-1">
+                            <input type="text" class="form-control column_filter" id="tq-thread">
+                        </td>
+                        <td>
+                            <label class="pull-right">
+                                Message:
+                            </label>
+                        </td>
+                        <td class="col-lg-4">
+                            <input type="text" class="form-control column_filter" id="tq-msg">
+                        </td>
+                        <td class="col-lg-2">
+                            <label class="pull-right">Fuzzy Search</label>
+                        </td>
+                        <td class="col-lg-1">
+                                <span class="col-lg-3">
+                                    <input type="checkbox" checked="true" id="tq-msg-fuzzy" data-size="mini">
+                                </span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
 
-<hr/>
-</div>
+                <div class="text-center top-buffer">
+                    <button type="button" class="btn btn-primary" id="tq-btn">
+                        <i class="fa fa-refresh"></i>&nbsp;&nbsp;Load Logs
+                    </button>
+                    <div class="top-buffer"></div>
+                </div>
+
+                <hr/>
+            </div>
             <div class="col-lg-11">
 
-<div><i class="fa fa-file-text"></i> Query Page</div>
-<div class="top-buffer"></div>
-                            <table class="table table-striped table-bordered table-hover" id="prma-log-table">
-                                <thead>
-                                <tr>
-                                    <th>Time</th>
-                                    <th>Level</th>
-                                    <th>Logger</th>
-                                    <th>Message</th>
-                                    <th>Thread</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                     <tr class="gradeA">
-                                            <td>Gecko</td>
-                                            <td>Firefox 2.0</td>
-                                            <td>Win 98+ / OSX.2+</td>
-                                            <td class="center">1.8</td>
-                                            <td class="center">A</td>
-                                        </tr>
-                                        <tr class="gradeA">
-                                            <td>Gecko</td>
-                                            <td>Firefox 3.0</td>
-                                            <td>Win 2k+ / OSX.3+</td>
-                                            <td class="center">1.9</td>
-                                            <td class="center">A</td>
-                                        </tr>
-                                        <tr class="gradeA">
-                                            <td>Gecko</td>
-                                            <td>Camino 1.0</td>
-                                            <td>OSX.2+</td>
-                                            <td class="center">1.8</td>
-                                            <td class="center">A</td>
-                                        </tr>
-                                </tbody>
-                            </table>
+                <div><i class="fa fa-file-text"></i> Query Page</div>
+                <div class="top-buffer"></div>
+                <table class="table table-striped table-bordered table-hover" id="prma-log-table">
+                    <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Level</th>
+                        <th>Logger</th>
+                        <th>Message</th>
+                        <th>Thread</th>
+                    </tr>
+                    </thead>
+                </table>
                 <!-- /.panel -->
             </div>
             <!-- /.col-lg-12 -->
-        </div> <!-- /.row -->
+        </div>
+        <!-- /.row -->
 
+        <hr/>
     </div>
     <!-- /#page-wrapper -->
-<footer>
+    <footer>
         <div class="text-center center-block">
             <p><i class="fa fa-copyright"></i> <label> 2014-2015 Cai Bowen </label>&nbsp;
-             <a href="https://github.com/xKommando/PRMA" target="_blank">
-             <i class="fa fa-github"></i>
-             </p>
+                <a href="https://github.com/xKommando/PRMA" target="_blank">
+                    <i class="fa fa-github"></i>
+                </a>
+            </p>
         </div>
-</footer>
+    </footer>
 </div>
 <!-- /#wrapper -->
 <a id="back-to-top" href="#"
@@ -318,6 +305,7 @@
    data-toggle="tooltip" data-placement="left">
     <span class="glyphicon glyphicon-chevron-up"></span>
 </a>
+
 <script src="asset/js/jquery.min.js"></script>
 <script src="asset/js/bootstrap.min.js"></script>
 <script src="asset/js/metisMenu.min.js"></script>
@@ -325,135 +313,8 @@
 <script src="asset/js/dataTables.bootstrap.js"></script>
 <script src="asset/js/bootstrap-datetimepicker.min.js"></script>
 <script src="asset/js/bootstrap-switch.min.js"></script>
-<script>
 
-        console.log("fk7");
-
-    $(".form_datetime").datetimepicker({
-        format: 'yyyy-mm-dd hh:ii',
-        todayHighlight: true,
-        todayBtn: true,
-        minuteStep: 1,
-        autoclose: true
-    });
-
-    $("#tq-msg-fuzzy").bootstrapSwitch();
-
-
-
-        console.log("fk6");
-
-    $(function() {
-        $('#side-menu').metisMenu();
-    });
-    $(function() {
-        $(window).bind("load resize", function() {
-            topOffset = 50;
-            width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
-            if (width < 768) {
-                $('div.navbar-collapse').addClass('collapse');
-                topOffset = 100; // 2-row-menu
-            } else {
-                $('div.navbar-collapse').removeClass('collapse');
-            }
-
-            height = (this.window.innerHeight > 0) ? this.window.innerHeight : this.screen.height;
-            height = height - topOffset;
-            if (height < 1) height = 1;
-            if (height > topOffset) {
-                $("#page-wrapper").css("min-height", (height) + "px");
-            }
-        });
-    });
-
-    function fmtDate(num) {
-        var date = new Date(num);
-        var year = date.getFullYear();
-        return year + "-" + date.getMonth() + "-" + date.getDate()
-                + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-    }
-
-    $(document).ready(function() {
-
-        $(window).scroll(function () {
-            if ($(this).scrollTop() > 50) {
-                $('#back-to-top').fadeIn();
-            } else {
-                $('#back-to-top').fadeOut();
-            }
-        });
-        var $root = $('html, body');
-        // scroll body to 50px on click
-        $('#back-to-top').click(function () {
-            $('#back-to-top').tooltip('hide');
-            $root.animate({
-                scrollTop: 0
-            }, 800);
-            return false;
-        });
-
-        function dtAddDetail ( d ) {
-            // `d` is the original data object for the row
-            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-                    '<tr>'+
-                    '<td>Full name:</td>'+
-                    '<td>'+d.name+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                    '<td>Extension number:</td>'+
-                    '<td>'+d.extn+'</td>'+
-                    '</tr>'+
-                    '<tr>'+
-                    '<td>Extra info:</td>'+
-                    '<td>And any further details here (images etc)...</td>'+
-                    '</tr>'+
-                    '</table>';
-        }
-
-        console.log("fk9");
-        var dtable = $('#prma-log-table');
-        dtable.dataTable(
-                {
-                    "ajax": "testdata.json",
-                    "columns": [
-                        {
-                            "data": "timeCreated",
-                            "width": "10%"
-                        }, // time
-                        {
-                            "data": "level",
-                            "width": "3%"
-                        }, // level
-                        {
-                            "data": "loggerName",
-                            "width": "15%"
-                        }, // logger
-                        {
-                            "data": "message",
-                            "width": "40%"
-                        }, // message
-                        {
-                            "data": "threadName",
-                            "width": "8%"
-                        } // message
-                    ],
-                    "columnDefs": [
-                        {
-                            "render": function ( data, type, row ) {
-                                return fmtDate(row.timeCreated);
-                            },
-                            "targets": 0
-                        }
-                    ]
-                }
-        );
-        console.log("fk10");
-
-    });
-
-
-
-</script>
+<script src="asset/js/prma-admin.js"></script>
 
 </body>
 
