@@ -21,7 +21,7 @@ class JsonResult[T](val data: T, val code: Int, var message: Option[String])
 class JsonViewResolver extends IViewResolver {
 
   override def fitness (klass: Class[_]): Int = klass match {
-    case _: JsonResult[_] => 1
+    case a : JsonResult[_] => 1
     case _ => -1
   }
 

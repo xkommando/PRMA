@@ -1,6 +1,5 @@
 package com.caibowen.prma.api.model
 
-import scala.beans.BeanProperty
 
 /**
  * @author BowenCai

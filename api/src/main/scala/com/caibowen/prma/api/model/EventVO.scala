@@ -2,8 +2,6 @@ package com.caibowen.prma.api.model
 
 import com.caibowen.prma.api.LogLevel.LogLevel
 
-import scala.beans.BeanProperty
-
 /**
 * @author BowenCai
 * @since  02/12/2014.

@@ -2,7 +2,6 @@
  * Created by Bowen Cai on 12/25/2014.
  */
 
-console.log("fk7");
 
 $(".form_datetime").datetimepicker({
     format: 'yyyy-mm-dd hh:ii:ss',
@@ -12,17 +11,12 @@ $(".form_datetime").datetimepicker({
     autoclose: true
 });
 
-
 $("#tq-msg-fuzzy").bootstrapSwitch();
 $("#tq-only-except").bootstrapSwitch();
 
 
-console.log("fk6");
-
 $(function () {
-
     $('#side-menu').metisMenu();
-
     $(window).bind("load resize", function () {
         var topOffset = 50;
         var width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
@@ -54,7 +48,9 @@ function encodeQueryData(data) {
         ret.push(encodeURIComponent(d) + "=" + encodeURIComponent(data[d]));
     return ret.join("&");
 }
+
 var dtable = $('#prma-log-table');
+
 $(document).ready(function () {
 
     $(window).scroll(function () {
@@ -111,10 +107,9 @@ $(document).ready(function () {
         }
     );
     console.log("fk10");
-
 });
-var tst = 1;
-$('#tq-btn').click(function(){
+
+$('#tq-btn').click(function () {
     var minTime = $('#tq-minTime').val();
     var maxTime = $('#tq-maxTime').val();
     var llevel = $('#tq-llevel').val();
@@ -128,12 +123,13 @@ $('#tq-btn').click(function(){
     maxTime = maxTime ? new Date(maxTime).getTime() : new Date().getTime();
     minTime = minTime ? new Date(minTime).getTime() : maxTime - 3600000; // last hour
 
-    var q = {"minTime": minTime,
-            "maxTime": maxTime,
-            "lowLevel": llevel,
-            "highLevel": hlevel,
-            "exceptionOnly": exceptOnly
-            };
+    var q = {
+        "minTime": minTime,
+        "maxTime": maxTime,
+        "lowLevel": llevel,
+        "highLevel": hlevel,
+        "exceptionOnly": exceptOnly
+    };
 
     if (lgName)
         q["loggerName"] = lgName;

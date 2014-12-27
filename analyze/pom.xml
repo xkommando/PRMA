@@ -50,11 +50,11 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor_2.10</artifactId>
-            <version>${akka-version}</version>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>com.typesafe.akka</groupId>-->
+            <!--<artifactId>akka-actor_2.10</artifactId>-->
+            <!--<version>${akka-version}</version>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.typesafe.slick</groupId>
             <artifactId>slick_2.10</artifactId>

@@ -20,7 +20,8 @@ class Runs {
     if (!ctor.isAccessible) ctor.setAccessible(true)
 
     val ins = ctor.newInstance()
-    println(ins)
+
+    println(Long.MaxValue)
 
   }
 }
