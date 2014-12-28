@@ -99,7 +99,7 @@ object ExceptionVO {
   }
 
   @inline
-  def stackTraceJson(st: StackTraceElement)(implicit json: StringBuilder):StringBuilder =
+  def stackTraceJson(st: StackTraceElement)(implicit json: StringBuilder): StringBuilder =
     json.append("{\r\n\t\"file\":\"").append(st.getFileName)
       .append("\",\r\n\t\"className\":\"").append(st.getClassName)
       .append("\",\r\n\t\"function\":\"").append(st.getMethodName)

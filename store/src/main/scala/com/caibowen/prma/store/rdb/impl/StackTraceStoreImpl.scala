@@ -5,7 +5,7 @@ import javax.annotation.Nonnull
 
 import com.caibowen.gplume.jdbc.JdbcSupport
 import com.caibowen.gplume.jdbc.mapper.RowMapping
-import com.caibowen.gplume.scala.conversion.CommonConversions._
+import gplume.scala.conversion.CommonConversions._
 import com.caibowen.prma.core.StrLoader
 import com.caibowen.prma.store.rdb.KVStore
 

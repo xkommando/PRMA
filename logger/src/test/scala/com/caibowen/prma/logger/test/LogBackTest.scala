@@ -8,7 +8,7 @@ import akka.actor.{ActorRef, ActorPath}
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.LoggingEvent
 import com.caibowen.gplume.jdbc.JdbcSupport
-import com.caibowen.gplume.scala.context.AppContext
+import gplume.scala.context.AppContext
 import com.caibowen.prma.core.filter.StrFilter
 import com.caibowen.prma.logger.logback.{FilteredAdaptor, LogbackEventAdaptor}
 import org.junit.Test

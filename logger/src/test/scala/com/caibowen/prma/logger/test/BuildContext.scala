@@ -4,7 +4,7 @@ import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
 import com.caibowen.gplume.resource.ClassLoaderInputStreamProvider
-import com.caibowen.gplume.scala.context.{AppContext, ContextBooter}
+import gplume.scala.context.{AppContext, ContextBooter}
 import com.caibowen.prma.core.ActorBuilder
 import org.junit.After
 

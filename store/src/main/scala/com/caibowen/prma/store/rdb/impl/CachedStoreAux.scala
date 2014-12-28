@@ -3,7 +3,7 @@ package com.caibowen.prma.store.rdb.impl
 import java.sql.Connection
 
 import com.caibowen.gplume.jdbc.mapper.RowMapping
-import com.caibowen.gplume.scala.conversion.CommonConversions._
+import gplume.scala.conversion.CommonConversions._
 import com.caibowen.prma.api.SimpleCache
 import com.caibowen.prma.api.model.ExceptionVO
 import com.caibowen.prma.core.{LifeCycle, StrLoader}

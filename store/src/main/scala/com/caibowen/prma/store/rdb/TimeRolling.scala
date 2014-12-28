@@ -4,8 +4,8 @@ import java.sql.Connection
 
 import com.caibowen.gplume.jdbc.JdbcSupport
 import com.caibowen.gplume.jdbc.transaction.Transaction
-import com.caibowen.gplume.scala.conversion.CommonConversions._
-import com.caibowen.gplume.scala.jdbc.RowMappings
+import gplume.scala.conversion.CommonConversions._
+import gplume.scala.jdbc.RowMappings
 import com.caibowen.prma.api.LogLevel._
 import com.caibowen.prma.core.StrLoader
 import com.caibowen.prma.store.RollingEvent

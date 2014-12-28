@@ -22,6 +22,8 @@ class TestWidget {
       """
          蔡博文
       """
+    val ss = s"$q"
+    println(ss)
     q.message =
       """
          "name" is 'msg'

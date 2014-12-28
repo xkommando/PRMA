@@ -7,7 +7,7 @@ import javax.sql.DataSource
 
 import akka.actor.ActorRef
 import com.caibowen.gplume.jdbc.JdbcSupport
-import com.caibowen.gplume.scala.context.AppContext
+import gplume.scala.context.AppContext
 import com.caibowen.prma.logger.jul.JulRecordAdaptor
 import org.junit.Test
 
