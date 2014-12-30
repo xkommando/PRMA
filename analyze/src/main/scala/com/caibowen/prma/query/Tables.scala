@@ -41,7 +41,6 @@ class Except(tag: Tag) extends Table[(Long, String, String)](tag, "exception") {
 }
 
 class Event(tag: Tag) extends Table[(Long, Long, LevelT, String, String, Long, Option[Long], Int)](tag, "event") {
-
   implicit val levelMapper = MappedColumnType.base[LevelT, Int](
   { e => e.id
   }, {

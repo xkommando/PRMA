@@ -1,6 +1,6 @@
 package com.caibowen.prma.monitor.notify
 
-import com.caibowen.gplume.scala.Http
+import gplume.scala.Http
 import com.caibowen.prma.monitor.eval.{Response, WithData}
 
 

@@ -3,7 +3,7 @@ package com.caibowen.prma.monitor
 import java.util.concurrent.atomic.AtomicInteger
 
 import akka.actor.{ActorRef, ActorRefFactory}
-import com.caibowen.gplume.scala.conversion.StrConversions._
+import gplume.scala.conversion.StrConversions._
 import com.caibowen.prma.core.ActorBuilder
 import com.caibowen.prma.monitor.eval.Evaluator
 import com.caibowen.prma.monitor.notify.Notifier

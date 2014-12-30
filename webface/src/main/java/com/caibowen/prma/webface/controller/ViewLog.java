@@ -15,10 +15,10 @@ public class ViewLog {
     SearchEngine engine;
 
     @Handle({"/q"})
-    public JsonResult latestN(HttpQuery q) {
+    public JsonResult query(HttpQuery q) {
 
-        String json = engine.process(q);
-        return new JsonResult<String>(json);
+//        String json = engine.process(q);
+        return new JsonResult<String>(null);
     }
 
 }

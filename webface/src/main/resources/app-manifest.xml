@@ -1,0 +1,14 @@
+<beans>
+    <bean class="com.caibowen.gplume.web.WebConfig">
+        <prop name="pkgs">
+            <list>
+                <val>com.caibowen.prma.webface.controller</val>
+            </list>
+        </prop>
+        <prop name="viewResolvers">
+            <list>
+                <bean class="com.caibowen.prma.webface.JsonViewResolver"/>
+            </list>
+        </prop>
+    </bean>
+</beans>

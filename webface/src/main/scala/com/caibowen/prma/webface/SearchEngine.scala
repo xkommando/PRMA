@@ -1,15 +1,18 @@
 package com.caibowen.prma.webface
 
 import com.caibowen.prma.api.LogLevel
+import com.caibowen.prma.api.model.EventVO
 import com.caibowen.prma.webface.controller.HttpQuery
 import com.caibowen.gplume.misc.Str.Utils._
+import gplume.scala.jdbc.SQLOperation
+
 /**
  * @author BowenCai
  * @since  21/12/2014.
  */
 class SearchEngine {
 
-  def process(q: HttpQuery): String = {
+  def process(q: HttpQuery): List[EventVO] = {
 
     implicit val b = new StringBuilder(512, "SELECT * FROM `event` WHERE "
       + "time_created > ").append(q.minTime)
@@ -36,7 +39,10 @@ class SearchEngine {
 
     b append " ORDER BY time_created DESC LIMIT 4096"
 
-    b.toString
+//    val sql = new SQLOperation(b.toString, null)
+//    sql.list(rs=>
+//    )
+    null
   }
 
   def quote(param: String)(implicit b: StringBuilder): StringBuilder = {
