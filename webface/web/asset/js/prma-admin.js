@@ -73,7 +73,7 @@ $(document).ready(function () {
     console.log("fk9");
     dtable.dataTable(
         {
-            "ajax": "testdata.json?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+            "ajax": "testdata.txt?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
             "columns": [
                 {
                     "data": "timeCreated",
@@ -141,7 +141,7 @@ $('#tq-btn').click(function () {
     }
     q = encodeQueryData(q);
     console.log(q);
-    //dtable.ajax.url("log.json?" + q).load();
+    dtable.api().ajax.url("log.json?" + q).load();
     //$.get( "http://localhost:63342/PRMA/webface/src/main/webapp", q)
     //    .done(function( data ) {
     //        alert( "Data Loaded: " + data );

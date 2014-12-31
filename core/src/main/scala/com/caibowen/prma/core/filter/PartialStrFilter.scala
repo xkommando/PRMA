@@ -18,7 +18,7 @@ class PartialStrFilter(private[this] val configPath: String) extends StrFilter(c
       return
 
     if (ptn.startsWith("*"))
-      matchSuffix.makeBranch(ptn.substring(1, ptn.length - 1), NA)
+      matchSuffix.makeBranch(ptn.substring(1, ptn.length), NA)
     else if (ptn.endsWith("*"))
       matchPrefix.makeBranch(ptn.substring(0, ptn.length - 1), NA)
     else

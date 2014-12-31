@@ -15,7 +15,6 @@ class StrFilter(configPath: String) extends InputStreamSupport with Filter[Strin
 
   protected[this] val matchFull = new mutable.HashSet[String]
 
-
   @inline
   protected def parse(ptn: String): Unit = {
     matchFull.add(ptn)

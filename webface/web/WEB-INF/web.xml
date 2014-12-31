@@ -13,14 +13,23 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
         <listener-class>com.caibowen.gplume.web.WebAppBooter</listener-class>
     </listener>
 
-    <filter>
-        <filter-name>dispatcher</filter-name>
-        <filter-class>com.caibowen.gplume.web.GFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>dispatcher</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <servlet>
+        <servlet-name>Gplume</servlet-name>
+        <servlet-class>com.caibowen.gplume.web.GServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Gplume</servlet-name>
+        <url-pattern>*.json</url-pattern>
+    </servlet-mapping>
+
+    <!--<filter>-->
+        <!--<filter-name>dispatcher</filter-name>-->
+        <!--<filter-class>com.caibowen.gplume.web.GFilter</filter-class>-->
+    <!--</filter>-->
+    <!--<filter-mapping>-->
+        <!--<filter-name>dispatcher</filter-name>-->
+        <!--<url-pattern>/*</url-pattern>-->
+    <!--</filter-mapping>-->
 
     <!-- Listener
     -->
