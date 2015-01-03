@@ -1,24 +1,27 @@
 package com.caibowen.prma.webface
 
 import java.io.IOException
+import java.sql.ResultSet
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.LoggingEvent
 import com.caibowen.prma.api.LogLevel
-import com.caibowen.prma.api.model.EventVO
+import com.caibowen.prma.api.model.{ExceptionVO, EventVO}
 import com.caibowen.prma.core.filter.StrFilter
 import com.caibowen.prma.logger.logback.LogbackEventAdaptor
+import com.caibowen.prma.query.Q
 import com.caibowen.prma.webface.controller.HttpQuery
 import com.caibowen.gplume.misc.Str.Utils._
 import gplume.scala.context.AppContext
-import gplume.scala.jdbc.SQLOperation
+import gplume.scala.jdbc
+import gplume.scala.jdbc.{DB, SQLOperation}
 import org.slf4j.{LoggerFactory, Logger, MDC, MarkerFactory}
 
 /**
  * @author BowenCai
  * @since  21/12/2014.
  */
-class SearchEngine {
+class SearchEngine(db: DB) {
 
   val LOG = LoggerFactory.getLogger(classOf[SearchEngine])
 
@@ -53,11 +56,15 @@ class SearchEngine {
       gen(false, false)
     ), 500, Some("server screwed up"))
 
+  //---------------------------------------------------------------------------------------
+
+
 
   def process(q: HttpQuery): List[EventVO] = {
 
-    implicit val b = new StringBuilder(512, "SELECT * FROM `event` WHERE "
-      + "time_created > ").append(q.minTime)
+    implicit val b = new StringBuilder(512, """
+SELECT id,time_created,level,logger,thread,caller_id,flag,message,reserved FROM `event`
+WHERE time_created > """).append(q.minTime)
       .append(" AND time_created < ").append(q.maxTime)
       .append(" AND level > ").append(LogLevel.from(q.lowLevel))
       .append(" AND level < ").append(LogLevel.from(q.highLevel))
@@ -81,11 +88,46 @@ class SearchEngine {
 
     b append " ORDER BY time_created DESC LIMIT 4096"
 
-//    val sql = new SQLOperation(b.toString, null)
-//    sql.list(rs=>
-//    )
-    null
+    db newSession{implicit session =>
+      new SQLOperation(b toString, null).list(eventVOCol)
+    }
   }
+
+  def eventDetail(eventID: Long, flag: Long): EventVO =
+    db.newSession{implicit session=>
+      val caller = Q.callerStackTrace(eventID)
+      val tags = if (EventVO.hasTags(flag)) Some(Q.tagsByEventID(eventID)) else None
+      val props = if (EventVO.hasProperty(flag)) Some(Q.propsByEventID(eventID)) else None
+      val excepts = if (EventVO.hasException(flag)) Some(Q.exceptByEventID(eventID)) else None
+      new EventVO(eventID, -1, LogLevel.OFF, "", "", caller, flag, "", None, props, excepts, tags)
+    }
+
+  val eventVOCol: (ResultSet) => EventVO = rs => {
+    val res = rs.getObject(8)
+    val reserved = if (res == null) None else Some(res.asInstanceOf[Long])
+    new EventVO(rs.getLong(1), rs.getLong(2), LogLevel.from(rs.getInt(3)),
+      rs.getString(4), rs.getString(5), // logger, thread
+      EventVO.NA_ST,
+      rs.getLong(7), // flag
+      rs.getString(8), reserved, None, None, None)
+  }
+
+//  `id` INT NOT NULL,
+//  `file` VARCHAR(255) NOT NULL,
+//  `class` VARCHAR(255) NULL,
+//  `function` VARCHAR(255) NOT NULL,
+//  `line` INT NOT NULL,
+//  public StackTraceElement(String declaringClass, String methodName,
+//    String fileName, int lineNumber) {
+  val stackTraceCol = (rs: ResultSet) =>
+      new StackTraceElement(rs.getString(3),
+                            rs.getString(4),
+                            rs.getString(2),
+                            rs.getInt(5))
+
+//  `id` BIGINT(20) NOT NULL,
+//  `name` VARCHAR(255) NOT NULL,
+//  `msg` VARCHAR(255) NULL,
 
   def quote(param: String)(implicit b: StringBuilder): StringBuilder = {
     b append '\''
@@ -100,7 +142,6 @@ class SearchEngine {
       case '\032' => b append '\\' append 'Z'
       case o => b append o
     }
-
     b append '\''
   }
 

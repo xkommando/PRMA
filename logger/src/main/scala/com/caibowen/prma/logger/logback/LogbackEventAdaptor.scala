@@ -92,7 +92,6 @@ class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
 
 object LogbackEventAdaptor {
 
-  val NA_ST = new StackTraceElement("?", "?", "?", -1)
 
   val localIP = Str.Utils.ipV4ToLong(InetAddress.getLocalHost.getHostAddress)
 
@@ -101,7 +100,7 @@ object LogbackEventAdaptor {
     val _callerSTs: Array[StackTraceElement] = event.getCallerData
     var callerST: StackTraceElement = null
     if (_callerSTs != null && _callerSTs.length > 0) callerST = _callerSTs(0)
-    else callerST = LogbackEventAdaptor.NA_ST
+    else callerST = EventVO.NA_ST
     callerST
   }
 

@@ -31,14 +31,16 @@ class TestWidget {
       """
          蔡博文
       """
-    val ss = s"$q"
-    println(ss)
+    q.threadName = "thrradsaf name"
     q.message =
       """
          "name" is 'msg'
       """
-    val s = new SearchEngine().process(q)
+    q.fuzzyQuery = true;
+    q.exceptionOnly = false;
+    val s = new SearchEngine(null).process(q)
     println(s)
+    println(s.length)
   }
 
   def sss(jsr:JsonResult[_]): String ={

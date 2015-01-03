@@ -217,6 +217,19 @@ body {
     margin-right: 5px;
 }
 
+/* datatable*/
+td.details-control {
+    background: url('../img/plus-24-128.png') no-repeat center center;
+    background-size: 15px 15px;
+    cursor: pointer;
+}
+tr.shown td.details-control7 {
+    background-size: 15px 15px;
+    background: url('../img/minus-24-128.png') no-repeat center center;
+}
+.datatable td {
+    word-wrap: break-word;
+}
 table.dataTable thead .sorting,
 table.dataTable thead .sorting_asc,
 table.dataTable thead .sorting_desc,

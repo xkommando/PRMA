@@ -6,6 +6,8 @@ import com.caibowen.prma.api.LogLevel.LogLevel
 * @author BowenCai
 * @since  02/12/2014.
 */
+
+//SELECT id,time_created,level,logger,thread,caller_id,flag,message,reserved FROM `event`
 @SerialVersionUID(-8179577194579626226L)
 class EventVO(val id: Long,
               val timeCreated: Long,
@@ -179,6 +181,8 @@ s"""{
 }
 object EventVO {
 
+  val NA_ST = new StackTraceElement("?", "?", "?", -1)
+
   def buildFlag(prop: Map[_, _], markers: Set[String], exceptions: List[ExceptionVO]): Long = {
     val sz1: Int = if (exceptions != null) exceptions.size else 0
 
@@ -197,7 +201,7 @@ object EventVO {
   }
 
   @inline
-  def hasMarkers(flag: Long): Boolean = {
+  def hasTags(flag: Long): Boolean = {
     return flag > 65536L
   }
 

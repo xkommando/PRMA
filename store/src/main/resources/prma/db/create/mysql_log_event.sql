@@ -73,7 +73,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `prma_log_event`.`j_event_prop`
 -- -----------------------------------------------------
-DROP TABLE IF EXISTS `prma_log_event`.`j_event_prop` ;
+DROP TABLE IF EXISTS `prma_log_event`.j_event_prop;
 
 CREATE TABLE IF NOT EXISTS `prma_log_event`.`j_event_prop` (
   `prop_id` INT(11) NOT NULL,

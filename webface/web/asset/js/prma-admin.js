@@ -48,8 +48,24 @@ function encodeQueryData(data) {
         ret.push(encodeURIComponent(d) + "=" + encodeURIComponent(data[d]));
     return ret.join("&");
 }
-
-var dtable = $('#prma-log-table');
+function format ( d ) {
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+        '<tr>'+
+        '<td>Full name:</td>'+
+        '<td>'+d.name+'</td>'+
+        '</tr>'+
+        '<tr>'+
+        '<td>Extension number:</td>'+
+        '<td>'+d.extn+'</td>'+
+        '</tr>'+
+        '<tr>'+
+        '<td>Extra info:</td>'+
+        '<td>And any further details here (images etc)...</td>'+
+        '</tr>'+
+        '</table>';
+}
+var logTable = $('#prma-log-table');
 
 $(document).ready(function () {
 
@@ -71,13 +87,13 @@ $(document).ready(function () {
     });
 
     console.log("fk9");
-    dtable.dataTable(
+    var dtable = logTable.DataTable(
         {
             "ajax": "testdata.txt?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
             "columns": [
                 {
                     "data": "timeCreated",
-                    "width": "10%"
+                    "width": "13%"
                 }, // time
                 {
                     "data": "level",
@@ -89,12 +105,19 @@ $(document).ready(function () {
                 }, // logger
                 {
                     "data": "message",
-                    "width": "40%"
+                    "width": "57%"
                 }, // message
                 {
                     "data": "threadName",
                     "width": "8%"
-                } // message
+                }, // message
+                {
+                    "width": "4%",
+                    "className":      'details-control',
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ''
+                }
             ],
             "columnDefs": [
                 {
@@ -103,10 +126,43 @@ $(document).ready(function () {
                     },
                     "targets": 0
                 }
-            ]
+            ]//,
+            //responsive: true,
+            //"jQueryUI": true
         }
     );
     console.log("fk10");
+    // Add event listener for opening and closing details
+    $('#prma-log-table tbody').on('click', 'td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = dtable.row( tr );
+
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            var evId = row.data().id;
+            var evFlag = row.data().flag;
+            //$.get( "log/detail.json", { id: evId, flag: evFlag } )
+            //    .done(function( data ) {
+            //        row.child("data").show();
+            //        tr.addClass('shown');
+            //    });
+            $.get("testdata2.txt", {id: evId, flag: evFlag})
+                .done(function (resp) {
+                    var data = JSON.parse(resp).data;
+                    console.log(data);
+                    //console.log(data.properties);
+                    row.child("data").show();
+                    tr.addClass('shown');
+                });
+        }
+    } );
+
+    console.log("fk11");
 });
 
 $('#tq-btn').click(function () {
@@ -141,7 +197,7 @@ $('#tq-btn').click(function () {
     }
     q = encodeQueryData(q);
     console.log(q);
-    dtable.api().ajax.url("log.json?" + q).load();
+    logTable.api().ajax.url("logs.json?" + q).load();
     //$.get( "http://localhost:63342/PRMA/webface/src/main/webapp", q)
     //    .done(function( data ) {
     //        alert( "Data Loaded: " + data );

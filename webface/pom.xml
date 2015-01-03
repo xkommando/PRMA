@@ -19,6 +19,11 @@
             <version>${prma-version}</version>
         </dependency>
         <dependency>
+            <groupId>com.caibowen.prma</groupId>
+            <artifactId>analyze</artifactId>
+            <version>${prma-version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.caibowen.gplumeframework</groupId>
             <artifactId>gplume-web</artifactId>
             <version>${gp-web-version}</version>

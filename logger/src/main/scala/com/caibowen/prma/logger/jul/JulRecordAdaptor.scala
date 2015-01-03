@@ -77,7 +77,7 @@ object JulRecordAdaptor {
       val sts = new Throwable().getStackTrace
       if (sts != null && sts.length > 2)
         sts(2)
-      else LogbackEventAdaptor.NA_ST
+      else EventVO.NA_ST
     }
 
   }

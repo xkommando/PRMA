@@ -22,7 +22,11 @@
             <artifactId>core</artifactId>
             <version>${prma-version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.caibowen.gplumeframework</groupId>
+            <artifactId>gplume-scala</artifactId>
+            <version>${gp-scala-version}</version>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

@@ -1,7 +1,7 @@
 package com.caibowen.prma.webface
 
 import com.caibowen.gplume.web.{IViewResolver, RequestContext}
-import com.caibowen.prma.api.model.EventVO
+import com.caibowen.prma.api.model.{ExceptionVO, EventVO}
 
 /**
  * @author BowenCai
@@ -25,22 +25,31 @@ class JsonViewResolver extends IViewResolver {
 
   override def fitness (klass: Class[_]) = if (klass eq classOf[JsonResult[_]]) 1 else -1
 
-  override def resolve(ctx: RequestContext, view: Any): Unit = {
-    val jsr = view.asInstanceOf[JsonResult[_]]
-    ctx.response.setContentType("application/json")
+  override def resolve(ctx: RequestContext, view: Any): Unit = view match {
+    case jsr: JsonResult[_] =>
+      ctx.response.setContentType("application/json")
+      val w = ctx.response.getWriter
+      w.append("{\r\n\"code\":").write(jsr.code)
+      if (jsr.message.isDefined)
+        w.append(",\r\n\"message\":\"").append(jsr.message.get).append('\"')
 
-    val evls = jsr.data.asInstanceOf[List[EventVO]]
-    val w = ctx.response.getWriter
-    w.append("{\r\n\"code\":").write(jsr.code)
-    if (jsr.message.isDefined)
-      w.append(",\r\n\"message\":\"").append(jsr.message.get).append('\"')
+      w.append(",\r\n\"data\":")
 
-    w.append(",\r\n\"data\":[\r\n")
+      jsr.data match {
+        case evls: List[EventVO] =>
+          w.append('[')
+          evls.take(evls.size - 1).foreach(ev => w.append(ev.toString).append('\n').append(','))
+          w.append(evls.last.toString).append(']')
 
+        case ev: EventVO =>
+          w.append(ev.toString)
 
-    evls.take(evls.size - 1).foreach(ev => w.append(ev.toString).append('\n').append(','))
-    w.append(evls.last.toString).append(']')
-    w.append("\r\n}")
+        case except: ExceptionVO =>
+          w.append(except.toString)
+      }
+
+      w.append("\r\n}")
+      w.flush()
   }
 
 }
