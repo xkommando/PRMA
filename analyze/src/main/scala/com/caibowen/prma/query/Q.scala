@@ -18,16 +18,24 @@ object Q {
   def propsByEventID(id: Long)(implicit session: DBSession): Map[String, String] =
     _propsByEventID.list(rs=>(rs.getString(1), rs.getString(2)), _.setLong(1, id))(session).toMap
 
-  val colStackTrace = (rs: ResultSet) => new StackTraceElement(rs.getString(2),
-    rs.getString(3),
-    rs.getString(1),
-    rs.getInt(4))
 
+  val colStackTrace = (rs: ResultSet) => {
+    val line = rs.getInt(4)
+    if (line < 0)
+      EventVO.NA_ST
+    else
+      new StackTraceElement(rs.getString(2),
+        rs.getString(3),
+        rs.getString(1),
+        line)
+  }
   val _callerStackTrace = new SQLOperation("SELECT SCK.file, SCK.class, SCK.function, SCK.line FROM 'stack_trace' as SCK WHERE SCK.id = ?", null)
-//  String declaringClass, String methodName,
-//  String fileName, int lineNumber) {
+  //  String declaringClass, String methodName,
+  //  String fileName, int lineNumber) {
   def callerStackTrace(id: Long)(implicit session: DBSession): StackTraceElement =
     _callerStackTrace.single(colStackTrace, _.setLong(1, id))(session).get
+
+
 
   val _exceptStackTraces = new SQLOperation("SELECT SCK.file, SCK.class, SCK.function, SCK.line FROM 'stack_trace' as SCK\n\tINNER JOIN `j_exception_stacktrace` AS JES on JES.stacktrace_id = SCK.id\nWHERE JES.except_id = ?", null)
   def exceptStackTraces(id: Long)(implicit session: DBSession): List[StackTraceElement] =

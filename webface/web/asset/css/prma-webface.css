@@ -223,8 +223,8 @@ td.details-control {
     background-size: 15px 15px;
     cursor: pointer;
 }
-tr.shown td.details-control7 {
-    background-size: 15px 15px;
+tr.shown td.details-control {
+    background-size: 15px 15px !important;
     background: url('../img/minus-24-128.png') no-repeat center center;
 }
 .datatable td {

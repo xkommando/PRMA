@@ -36,35 +36,8 @@ $(function () {
     });
 });
 
-function fmtDate(num) {
-    var date = new Date(num);
-    var year = date.getFullYear();
-    return year + "-" + date.getMonth() + "-" + date.getDate()
-        + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
-}
-function encodeQueryData(data) {
-    var ret = [];
-    for (var d in data)
-        ret.push(encodeURIComponent(d) + "=" + encodeURIComponent(data[d]));
-    return ret.join("&");
-}
-function format ( d ) {
-    // `d` is the original data object for the row
-    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-        '<tr>'+
-        '<td>Full name:</td>'+
-        '<td>'+d.name+'</td>'+
-        '</tr>'+
-        '<tr>'+
-        '<td>Extension number:</td>'+
-        '<td>'+d.extn+'</td>'+
-        '</tr>'+
-        '<tr>'+
-        '<td>Extra info:</td>'+
-        '<td>And any further details here (images etc)...</td>'+
-        '</tr>'+
-        '</table>';
-}
+// cached data
+var $root = $('html, body');
 var logTable = $('#prma-log-table');
 
 $(document).ready(function () {
@@ -76,7 +49,6 @@ $(document).ready(function () {
             $('#back-to-top').fadeOut();
         }
     });
-    var $root = $('html, body');
     // scroll body to 50px on click
     $('#back-to-top').click(function () {
         $('#back-to-top').tooltip('hide');
@@ -87,50 +59,9 @@ $(document).ready(function () {
     });
 
     console.log("fk9");
-    var dtable = logTable.DataTable(
-        {
-            "ajax": "testdata.txt?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
-            "columns": [
-                {
-                    "data": "timeCreated",
-                    "width": "13%"
-                }, // time
-                {
-                    "data": "level",
-                    "width": "3%"
-                }, // level
-                {
-                    "data": "loggerName",
-                    "width": "15%"
-                }, // logger
-                {
-                    "data": "message",
-                    "width": "57%"
-                }, // message
-                {
-                    "data": "threadName",
-                    "width": "8%"
-                }, // message
-                {
-                    "width": "4%",
-                    "className":      'details-control',
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ''
-                }
-            ],
-            "columnDefs": [
-                {
-                    "render": function (data, type, row) {
-                        return fmtDate(row.timeCreated);
-                    },
-                    "targets": 0
-                }
-            ]//,
-            //responsive: true,
-            //"jQueryUI": true
-        }
-    );
+
+    //var dtable = logTable.dataTable();
+    var dtable = logTable.DataTable(Prma.dtableOptions);
     console.log("fk10");
     // Add event listener for opening and closing details
     $('#prma-log-table tbody').on('click', 'td.details-control', function () {
@@ -146,23 +77,18 @@ $(document).ready(function () {
             // Open this row
             var evId = row.data().id;
             var evFlag = row.data().flag;
-            //$.get( "log/detail.json", { id: evId, flag: evFlag } )
-            //    .done(function( data ) {
-            //        row.child("data").show();
-            //        tr.addClass('shown');
-            //    });
             $.get("testdata2.txt", {id: evId, flag: evFlag})
                 .done(function (resp) {
                     var data = JSON.parse(resp).data;
-                    console.log(data);
-                    //console.log(data.properties);
-                    row.child("data").show();
+                    var htmlStr = Prma.logDetail(data);
+                    row.child(htmlStr).show();
                     tr.addClass('shown');
                 });
         }
     } );
 
     console.log("fk11");
+
 });
 
 $('#tq-btn').click(function () {
@@ -195,7 +121,7 @@ $('#tq-btn').click(function () {
         q["message"] = msg;
         q["fuzzyQuery"] = msgFuzzyQ;
     }
-    q = encodeQueryData(q);
+    q = Prma.encodeQueryData(q);
     console.log(q);
     logTable.api().ajax.url("logs.json?" + q).load();
     //$.get( "http://localhost:63342/PRMA/webface/src/main/webapp", q)
@@ -204,4 +130,153 @@ $('#tq-btn').click(function () {
     //    });
 });
 
-console.log("fk11");
+
+var Prma = {
+    dtableOptions: {
+        "ajax": "testdata.txt?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        "columns": [
+            {
+                "data": "timeCreated",
+                "width": "13%",
+                "render": function (data, type, row) {
+                    return Prma.fmtDate(row.timeCreated);
+                }
+            }, // time
+            {
+                "data": "level",
+                "width": "3%"
+            }, // level
+            {
+                "data": "loggerName",
+                "width": "15%"
+            }, // logger
+            {
+                "data": "message",
+                "width": "57%"
+            }, // message
+            {
+                "data": "threadName",
+                "width": "8%"
+            }, // message
+            {
+                "width": "4%",
+                "className": 'details-control',
+                "orderable": false,
+                "data": null,
+                "defaultContent": ''
+            }
+        ]
+        //responsive: true,
+        //"jQueryUI": true
+    }
+
+    , fmtDate: function (num) {
+        var date = new Date(num);
+        var year = date.getFullYear();
+        return year + "-" + date.getMonth() + "-" + date.getDate()
+            + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    }
+    , encodeQueryData: function (data) {
+        var ret = [];
+        for (var d in data)
+            ret.push(encodeURIComponent(d) + "=" + encodeURIComponent(data[d]));
+        return ret.join("&");
+    }
+// MyClass.mash(MyClass.java:9)
+    , fmtStackTrace: function (data) {
+        var line = data["line"];
+        if (line && line != -1)
+            return data.className + " => " + data["function"] + "(" + data.file + ":" + data["line"] + ")";
+        else
+            return "Undefined";
+    }
+
+    , fmtLevel: function(name) {
+        //<tr class="active">...</tr>
+        //<tr class="success">...</tr>
+        //<tr class="warning">...</tr>
+        //<tr class="danger">...</tr>
+        //<tr class="info">...</tr>
+        //<option>TRACE</option> -> nothing
+        //<option>DEBUG</option> -> active
+        //<option>INFO</option>  -> info
+        //<option>WARN</option>  -> warn
+        //<option>ERROR</option> -> danger
+        //<option>FATAL</option>
+    }
+
+    , logDetail: function(data) {
+        var callerStr = Prma.fmtStackTrace(data.callerStackTrace);
+
+        var tagStr = "";
+        if (data.tags) {
+            tagStr = ' <span class="label label-info">';
+            tagStr = tagStr.concat(data.tags.join('</span> <span class="label label-info"> '));
+            tagStr = tagStr.concat("</span> ");
+        }
+
+        var propStr = "";
+        if (data.properties) {
+            var _props = data.properties;
+            var _p = [];
+            for(var _k in _props)
+                _p.push("<tr><td>" + _k + "</td><td>" + _props[_k] + "</td></tr>");
+            propStr = _p.join("\r\n");
+        }
+
+        var exceptStr = "<tr>";
+        if (data.exceptions) {
+            var exceptions = data.exceptions;
+            var _lsExcept = [];
+
+            for (var i = 0; i < exceptions.length; i++) {
+                var except = exceptions[i];
+                var head = '<td><label class="label label-danger">' + except.name + '</label><hr/><label class="label label-info">' + except.message + '</label></td>';
+
+                var stacks = "<td style='text-decoration: underline;'>";
+                if (except.stackTraces) {
+                    var _sts = except.stackTraces;
+                    var lines = [];
+
+                    for (var _i = 0; _i < _sts.length; _i++)
+                        lines.push(Prma.fmtStackTrace(_sts[_i]));
+
+                    stacks = stacks.concat(lines.join("\r\n<br/>"));
+                }
+                stacks = stacks.concat("</td>");
+                _lsExcept.push(head.concat(stacks))
+            }
+
+            exceptStr = exceptStr.concat(_lsExcept.join("</tr>\r\n<tr>"))
+        }
+        exceptStr = exceptStr.concat("</tr>");
+
+        //console.log(exceptStr);
+
+        return '<table class="table">'
+            +'    <tbody>'
+            +'        <tr>'
+            +'            <td> <label> Caller: </label> ' + callerStr
+            +'            </td>'
+            +'            <td> Reserved: <span class="badge">' + data.reserved + '</span>'
+            +'            </td>'
+            +'        </tr>'
+            +'        <tr>'
+            +'            <td> <label> Tags:  </label> ' + tagStr + '</td>'
+            +'        </tr>'
+            +'        <tr>'
+            +'            <table class="table table-condensed">'
+            +'                 <label> Properties: </label> <tbody>' + propStr
+            +'                </tbody>'
+            +'            </table>'
+            +'        </tr>'
+            +'        <tr> <label> Exceptions: </label> '
+            +'            <table class="table">'
+            +'                <tbody>' + exceptStr
+            +'                </tbody>'
+            +'            </table>'
+            +'        </tr>'
+            +'    </tbody>'
+            +'</table>';
+    }
+}

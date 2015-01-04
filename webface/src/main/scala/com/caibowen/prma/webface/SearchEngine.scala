@@ -14,7 +14,7 @@ import com.caibowen.prma.webface.controller.HttpQuery
 import com.caibowen.gplume.misc.Str.Utils._
 import gplume.scala.context.AppContext
 import gplume.scala.jdbc
-import gplume.scala.jdbc.{DB, SQLOperation}
+import gplume.scala.jdbc.{DBSession, DB, SQLOperation}
 import org.slf4j.{LoggerFactory, Logger, MDC, MarkerFactory}
 
 /**
@@ -89,28 +89,30 @@ WHERE time_created > """).append(q.minTime)
     b append " ORDER BY time_created DESC LIMIT 4096"
 
     db newSession{implicit session =>
-      new SQLOperation(b toString, null).list(eventVOCol)
+
+      val eventVOCol = (rs:ResultSet) => {
+        val id = rs.getLong(1)
+        val res = rs.getObject(8)
+        val reserved = if (res == null) None else Some(res.asInstanceOf[Long])
+        new EventVO(id, rs.getLong(2), LogLevel.from(rs.getInt(3)),
+          rs.getString(4), rs.getString(5), // logger, thread
+          Q.callerStackTrace(id),
+          rs.getLong(7), // flag
+          rs.getString(8), reserved, None, None, None)
+      }
+
+      new SQLOperation(b.toString, null).list(eventVOCol)
     }
   }
 
   def eventDetail(eventID: Long, flag: Long): EventVO =
     db.newSession{implicit session=>
-      val caller = Q.callerStackTrace(eventID)
       val tags = if (EventVO.hasTags(flag)) Some(Q.tagsByEventID(eventID)) else None
-      val props = if (EventVO.hasProperty(flag)) Some(Q.propsByEventID(eventID)) else None
-      val excepts = if (EventVO.hasException(flag)) Some(Q.exceptByEventID(eventID)) else None
-      new EventVO(eventID, -1, LogLevel.OFF, "", "", caller, flag, "", None, props, excepts, tags)
+      val props = if (EventVO.hasProperties(flag)) Some(Q.propsByEventID(eventID)) else None
+      val excepts = if (EventVO.hasExceptions(flag)) Some(Q.exceptByEventID(eventID)) else None
+      new EventVO(eventID, -1, LogLevel.OFF, "", "", EventVO.NA_ST, flag, "", None, props, excepts, tags)
     }
 
-  val eventVOCol: (ResultSet) => EventVO = rs => {
-    val res = rs.getObject(8)
-    val reserved = if (res == null) None else Some(res.asInstanceOf[Long])
-    new EventVO(rs.getLong(1), rs.getLong(2), LogLevel.from(rs.getInt(3)),
-      rs.getString(4), rs.getString(5), // logger, thread
-      EventVO.NA_ST,
-      rs.getLong(7), // flag
-      rs.getString(8), reserved, None, None, None)
-  }
 
 //  `id` INT NOT NULL,
 //  `file` VARCHAR(255) NOT NULL,

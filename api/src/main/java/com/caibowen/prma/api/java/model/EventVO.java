@@ -1,5 +1,6 @@
 package com.caibowen.prma.api.java.model;
 
+import com.caibowen.prma.api.model.EventVO$;
 import scala.Enumeration;
 
 import java.io.Serializable;
@@ -190,5 +191,30 @@ public class EventVO implements Serializable {
                 ", exceptions=" + exceptions +
                 ", tags=" + tags +
                 '}';
+    }
+
+    public static long buildFlag(Map prop, Set<String> tags , List<ExceptionVO> exceptions) {
+        int sz1 = exceptions != null ? exceptions.size() : 0;
+        short sz11 = tags != null? (short)tags.size() : 0;
+        short sz12 = prop != null ? (short)prop.size() : 0;
+        int sz2 = add(sz11, sz12);
+        return add(sz1, sz2);
+    }
+
+    public static int add(short a, short b) {
+        return (int)a << 16 | (int)b & 0xFFFF;
+    }
+    public static long add(int a, int b) {
+        return ((long)a << 32) | ((long)b & 0xFFFFFFFFL);
+    }
+
+    public static boolean hasProperties(long flag) {
+        return com.caibowen.prma.api.model.EventVO.hasProperties(flag);
+    }
+    public static boolean hasExceptions(long flag) {
+        return com.caibowen.prma.api.model.EventVO.hasExceptions(flag);
+    }
+    public static boolean hasTags(long flag) {
+        return com.caibowen.prma.api.model.EventVO.hasTags(flag);
     }
 }

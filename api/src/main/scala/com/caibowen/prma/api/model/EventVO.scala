@@ -165,72 +165,41 @@ s"""{
   }
 
   override def toString: String = appendJson(new StringBuilder(512)).toString
-
-  def exceptionCount: Int = {
-    return EventVO.part1(flag)
-  }
-
-  def markerCount: Int = {
-    return EventVO.part1(EventVO.part2(flag))
-  }
-
-  def propertyCount: Int = {
-    return EventVO.part2(EventVO.part2(flag))
-  }
-
 }
 object EventVO {
 
   val NA_ST = new StackTraceElement("?", "?", "?", -1)
 
-  def buildFlag(prop: Map[_, _], markers: Set[String], exceptions: List[ExceptionVO]): Long = {
+  //   |<-----  32  ----->|<-- 16 -->|<-- 16 -->|
+  //          exception       tags        props
+  //
+  def buildFlag(prop: Map[_, _], tags: Set[String], exceptions: List[ExceptionVO]): Long = {
     val sz1: Int = if (exceptions != null) exceptions.size else 0
 
-    val sz11: Short = if (markers != null) markers.size.toShort else 0
+    val sz11: Short = if (tags != null) tags.size.toShort else 0
     val sz12: Short = if (prop != null) prop.size.toShort else 0
 
     val sz2: Int = add(sz11, sz12)
 
     add(sz1, sz2)
-    // except mk prop
   }
+  
+  @inline def exceptionCount(flag: Long) = EventVO.part1(flag)
 
-  @inline
-  def hasException(flag: Long): Boolean = {
-    return flag > 4294967296L
-  }
+  @inline def tagCount(flag: Long) = EventVO.part1(EventVO.part2(flag))
 
-  @inline
-  def hasTags(flag: Long): Boolean = {
-    return flag > 65536L
-  }
+  @inline def propertyCount(flag: Long) = EventVO.part2(EventVO.part2(flag))
 
-  @inline
-  def hasProperty(flag: Long): Boolean = {
-    throw new UnsupportedOperationException
-  }
+  @inline def hasExceptions(flag: Long) = flag > 4294967295L
 
-  private def add(a: Short, b: Short): Int = {
-    return (a.toInt << 16) | (b.toInt & 0xFFFF)
-  }
+  @inline def hasTags(flag: Long) = tagCount(flag) > 0
 
-  private def add(a: Int, b: Int): Long = {
-    return (a.toLong << 32) | (b.toLong & 0xFFFFFFFFL)
-  }
+  @inline def hasProperties(flag: Long): Boolean = propertyCount(flag) > 0
 
-  private def part1(c: Long): Int = {
-    return (c >> 32).toInt
-  }
-
-  private def part2(c: Long): Int = {
-    return c.toInt
-  }
-
-  private def part1(c: Int): Short = {
-    return (c >> 16).toShort
-  }
-
-  private def part2(c: Int): Short = {
-    return c.toShort
-  }
+  @inline private[prma] def add(a: Short, b: Short) = (a.toInt << 16) | (b.toInt & 0xFFFF)
+  @inline private[prma] def add(a: Int, b: Int) = (a.toLong << 32) | (b.toLong & 0xFFFFFFFFL)
+  @inline private def part1(c: Long) = (c >> 32).toInt
+  @inline private def part2(c: Long) = c.toInt
+  @inline private def part1(c: Int) = (c >> 16).toShort
+  @inline private def part2(c: Int) = c.toShort
 }
