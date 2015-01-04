@@ -62,6 +62,26 @@ $(document).ready(function () {
 
     //var dtable = logTable.dataTable();
     var dtable = logTable.DataTable(Prma.dtableOptions);
+    dtable.on( 'draw', function () {
+        $('.dt-level').each(function (i, e) {
+            switch (e.innerHTML){
+                case "INFO":
+                    e.classList.add("info");
+                    break;
+                case "FATAL":
+                case "ERROR":
+                    e.classList.add("danger");
+                    break;
+                case "WARN":
+                    e.classList.add("warning");
+                    break;
+                case "DEBUG":
+                    e.classList.add("success");
+                    break;
+            }
+        });
+    } );
+
     console.log("fk10");
     // Add event listener for opening and closing details
     $('#prma-log-table tbody').on('click', 'td.details-control', function () {
@@ -133,33 +153,38 @@ $('#tq-btn').click(function () {
 
 var Prma = {
     dtableOptions: {
-        "ajax": "testdata.txt?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        //"ajax": "testdata.txt?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        "ajax": "log.json?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
         "columns": [
             {
                 "data": "timeCreated",
-                "width": "13%",
+                "width": "11%",
                 "render": function (data, type, row) {
                     return Prma.fmtDate(row.timeCreated);
                 }
             }, // time
             {
-                "data": "level",
-                "width": "3%"
+                "data": "level"
+                ,"width": "2%"
+                ,"className": "dt-level"
             }, // level
             {
-                "data": "loggerName",
-                "width": "15%"
+                "data": "callerStackTrace"
+                ,"width": "15%"
+                , "render": function (data, type, row) {
+                return Prma.fmtLocation(data, row.loggerName);
+            }
             }, // logger
             {
                 "data": "message",
-                "width": "57%"
+                "width": "62%"
             }, // message
             {
                 "data": "threadName",
                 "width": "8%"
             }, // message
             {
-                "width": "4%",
+                "width": "2%",
                 "className": 'details-control',
                 "orderable": false,
                 "data": null,
@@ -176,6 +201,7 @@ var Prma = {
         return year + "-" + date.getMonth() + "-" + date.getDate()
             + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
     }
+
     , encodeQueryData: function (data) {
         var ret = [];
         for (var d in data)
@@ -191,18 +217,12 @@ var Prma = {
             return "Undefined";
     }
 
-    , fmtLevel: function(name) {
-        //<tr class="active">...</tr>
-        //<tr class="success">...</tr>
-        //<tr class="warning">...</tr>
-        //<tr class="danger">...</tr>
-        //<tr class="info">...</tr>
-        //<option>TRACE</option> -> nothing
-        //<option>DEBUG</option> -> active
-        //<option>INFO</option>  -> info
-        //<option>WARN</option>  -> warn
-        //<option>ERROR</option> -> danger
-        //<option>FATAL</option>
+    , fmtLocation: function(stackTrace, loggerName) {
+        var line = stackTrace["line"];
+        if (line && line != -1)
+            return stackTrace.className + " => " + stackTrace["function"] + "(" + stackTrace.file + ":" + stackTrace["line"] + ")";
+        else
+            return loggerName;
     }
 
     , logDetail: function(data) {

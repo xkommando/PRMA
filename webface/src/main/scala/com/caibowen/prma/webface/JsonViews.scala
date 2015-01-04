@@ -7,16 +7,22 @@ import com.caibowen.prma.api.model.{ExceptionVO, EventVO}
  * @author BowenCai
  * @since  18/12/2014.
  */
+object JsonResult {
+  val invalidParameter = new JsonResult(400, "Invalid Parameter")
+  val notFound = new JsonResult(404, "Data Not Found")
+}
 class JsonResult[T](val data: T, val code: Int, var message: Option[String])
 
   extends Serializable {
 
+  def this(code: Int, msg: String) {
+    this(null.asInstanceOf[T], code, Some(msg))
+  }
+
   def this(d: T) {
     this(d, 200, None)
   }
-  def this(d: T, msg: String) {
-    this(d, 200, Some(msg))
-  }
+
   def ok = code == 200
 
 }
@@ -29,7 +35,7 @@ class JsonViewResolver extends IViewResolver {
     case jsr: JsonResult[_] =>
       ctx.response.setContentType("application/json")
       val w = ctx.response.getWriter
-      w.append("{\r\n\"code\":").write(jsr.code)
+      w.append("{\r\n\"code\":").write(jsr.code.toString)
       if (jsr.message.isDefined)
         w.append(",\r\n\"message\":\"").append(jsr.message.get).append('\"')
 

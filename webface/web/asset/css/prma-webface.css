@@ -217,14 +217,15 @@ body {
     margin-right: 5px;
 }
 
+
 /* datatable*/
 td.details-control {
     background: url('../img/plus-24-128.png') no-repeat center center;
-    background-size: 15px 15px;
+    background-size: 18px 18px;
     cursor: pointer;
 }
 tr.shown td.details-control {
-    background-size: 15px 15px !important;
+    background-size: 18px 18px !important;
     background: url('../img/minus-24-128.png') no-repeat center center;
 }
 .datatable td {

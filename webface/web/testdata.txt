@@ -9,10 +9,10 @@
       "flag": 8590065668,
       "message": "scala logging store test",
       "callerStackTrace": {
-        "file": "?",
-        "className": "?",
-        "function": "?",
-        "line": -1
+        "file": "FreqCounter.scala",
+        "className": "com.caibowen.prma.core.FreqCounter",
+        "function": "count",
+        "line": 30
       },
       "reserved": 2438906630,
       "exceptions": [
