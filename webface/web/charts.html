@@ -17,6 +17,8 @@
     <link href="asset/css/dataTables.bootstrap.css" rel="stylesheet">
     <link href="asset/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="asset/css/morris.css">
+
     <link href="asset/css/prma-webface.css" rel="stylesheet">
 
 
@@ -143,83 +145,42 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">Notifications</h1>
+                <h1 class="page-header">Summary</h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
         <!-- /.row -->
         <div class="row">
             <div class="col-lg-6">
-                <div class="panel-group" id="accordion1" role="tablist" aria-multiselectable="true">
-                    <div class="alert alert-success alert-dismissable">
-                        <div class="panel-heading" role="tab">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion1" href="#collapse11" aria-expanded="true" aria-controls="collapse11">
-                                    Collapsible Group Item #1
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapse11" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                            <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor
-                            </div>
-                        </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Area Chart Example
                     </div>
-                    <div class="alert alert-info alert-dismissable">
-                        <div class="panel-heading" role="tab">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <h4 class="panel-title">
-                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion1" href="#collapse12" aria-expanded="false" aria-controls="collapse12">
-                                    Collapsible Group Item #3
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapse12" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, 
-                            </div>
-                        </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div id="morris-area-chart"></div>
                     </div>
-                </div> <!-- /.panel group-->
+                    <!-- /.panel-body -->
+                </div>
+                <!-- /.panel -->
+            </div>
+
+            <!-- /.col-lg-6 -->
+            <div class="col-lg-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Bar Chart Example
+                    </div>
+                    <!-- /.panel-heading -->
+                    <div class="panel-body">
+                        <div id="morris-bar-chart"></div>
+                    </div>
+                    <!-- /.panel-body -->
+                </div>
                 <!-- /.panel -->
             </div>
             <!-- /.col-lg-6 -->
-            <div class="col-lg-6">
-                <div class="panel-group" id="accordion2" role="tablist" aria-multiselectable="true">
-                    <div class="alert alert-danger alert-dismissable">
-                        <div class="panel-heading" role="tab" >
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" data-parent="#accordion2" href="#collapse21" aria-expanded="true" aria-controls="collapse21">
-                                    Collapsible Group Item #1
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapse21" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                            <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, 
-                            </div>
-                        </div>
-                    </div>
-                    <div class="alert alert-warning alert-dismissable">
-                        <div class="panel-heading" role="tab" >
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <h4 class="panel-title">
-                                <a class="collapsed" data-toggle="collapse" data-parent="#accordion2" href="#collapse22" aria-expanded="false" aria-controls="collapse22">
-                                    Collapsible Group Item #3
-                                </a>
-                            </h4>
-                        </div>
-                        <div id="collapse22" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
-                            <div class="panel-body">
-                                Anim pariatur cliche reprehenderit, enim eius
-                            </div>
-                        </div>
-                    </div>
-                </div> <!-- /.panel group-->
-            </div>
-            <!-- /.col-lg-6 -->
+
         </div>
         <!-- /.row -->
     </div> <!--page wrapper -->
@@ -232,11 +193,16 @@
    data-toggle="tooltip" data-placement="left">
     <span class="glyphicon glyphicon-chevron-up"></span>
 </a>
+
 <script src="asset/js/jquery.min.js"></script>
 <script src="asset/js/bootstrap.min.js"></script>
 <script src="asset/js/metisMenu.min.js"></script>
 
+<script src="asset/js/raphael-min.js"></script>
+<script src="asset/js/morris.min.js"></script>
+
 <script src="asset/js/prma-admin.js"></script>
+<script src="asset/js/prma-admin-charts.js"></script>
 
 </body>
 

@@ -8,7 +8,7 @@ import com.caibowen.prma.api.LogLevel
 import com.caibowen.prma.api.model.EventVO
 import com.caibowen.prma.core.filter.StrFilter
 import com.caibowen.prma.logger.logback.LogbackEventAdaptor
-import com.caibowen.prma.webface.{JsonViewResolver, JsonResult, SearchEngine}
+import com.caibowen.prma.webface.{FastJsonViewResolver, JsonResult, SearchEngine}
 import com.caibowen.prma.webface.controller.HttpQuery
 import gplume.scala.context.AppContext
 import org.junit.Test
@@ -60,12 +60,12 @@ class TestWidget {
   }
   @Test
   def testResolve: Unit ={
-    val resolver = new JsonViewResolver
-    val result = new JsonResult[List[EventVO]](List(
+    val resolver = new FastJsonViewResolver
+    val result = new JsonResult(Some(List(
     gen(true, false),
 //    gen(false, true),
     gen(false, false)
-    ), 500, Some("server screwed up"))
+    )), 500, Some("server screwed up"))
     println(sss(result))
 
   }

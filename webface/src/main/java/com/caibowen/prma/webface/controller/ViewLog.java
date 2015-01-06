@@ -6,8 +6,6 @@ import com.caibowen.gplume.web.annotation.Handle;
 import com.caibowen.prma.webface.JsonResult;
 import com.caibowen.prma.webface.SearchEngine;
 
-import javax.inject.Named;
-
 /**
  * @author BowenCai
  * @since 21/12/2014.
@@ -15,7 +13,7 @@ import javax.inject.Named;
 @Controller
 public class ViewLog {
 
-//    @Named
+//    @Inject
     public SearchEngine engine;
 
 //    @Handle({"/log.json"})
@@ -27,14 +25,14 @@ public class ViewLog {
         return q == null ? JsonResult.invalidParameter(): new JsonResult(engine.process(q));
     }
 
-    @Handle({"/log/detail.sjon"})
-    public JsonResult otherInfo(RequestContext ctx) {
+    @Handle({"/log/detail.json"})
+    public JsonResult logDetail(RequestContext ctx) {
         Long id = ctx.getLongParam("id");
         Long flag = ctx.getLongParam("flag");
-        if (id == null || flag == null) {
+        if (id == null || flag == null || flag < 0) {
             return JsonResult.invalidParameter();
         }
-        return new JsonResult(engine.eventDetail(id, flag));
+        return new JsonResult(engine.detailedEvent(id, flag));
     }
 
 }

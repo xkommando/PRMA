@@ -4,11 +4,6 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.caibowen.prma</groupId>
-    <artifactId>parent</artifactId>
-    <packaging>pom</packaging>
-    <version>0.1</version>
-
     <name>Program Run-time Monitoring and Analysing</name>
     <url>https://github.com/xkommando/PRMA</url>
 
@@ -32,6 +27,11 @@
         <connection>scm:https://github.com/xkommando/PRMA.git</connection>
     </scm>
 
+    <groupId>com.caibowen.prma</groupId>
+    <artifactId>parent</artifactId>
+    <packaging>pom</packaging>
+    <version>0.1</version>
+
     <modules>
         <module>analyze</module>
         <module>api</module>
@@ -41,8 +41,7 @@
         <module>logger</module>
         <module>webface</module>
     </modules>
-
-
+    
     <properties>
         <prma-version>0.1</prma-version>
         <java-version>1.7</java-version>
