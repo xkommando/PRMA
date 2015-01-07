@@ -15,10 +15,11 @@ import com.caibowen.prma.store.EventStore
  * @author BowenCai
  * @since  05/12/2014.
  */
-class RdbEventStore private[this] (val dataSource: DataSource,
-                                    val sqls: StrLoader,
-                                   val eventAux: EventStoreAux,
-                                   val stackStore: KVStore[Int,StackTraceElement]) extends JdbcSupport(dataSource) with EventStore {
+class RdbEventStore private[this] (dataSource: DataSource,
+                                    sqls: StrLoader,
+                                   eventAux: EventStoreAux,
+                                   stackStore: KVStore[Int,StackTraceElement],
+                                    loggerNameStore: KVStore[Int,String]) extends JdbcSupport(dataSource) with EventStore {
 
 
   override def put(@Nonnull event: EventVO): Long = {
@@ -46,6 +47,8 @@ class RdbEventStore private[this] (val dataSource: DataSource,
 
     val st = event.callerStackTrace
     stackStore.put(st.hashCode(), st)
+    val ln = event.loggerName
+    loggerNameStore.put(ln.hashCode, ln)
 
     insert(new StatementCreator {
       @throws(classOf[SQLException])
@@ -55,7 +58,7 @@ class RdbEventStore private[this] (val dataSource: DataSource,
 
         ps.setLong(1, event.timeCreated)
         ps.setByte(2, event.level.id.toByte)
-        ps.setString(3, event.loggerName)//
+        ps.setInt(3, event.loggerName.hashCode)//
         ps.setString(4, event.threadName)//
         ps.setInt(5, event.callerStackTrace.hashCode())
         ps.setLong(6, event.flag)

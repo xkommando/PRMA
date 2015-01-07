@@ -3,6 +3,7 @@ package com.caibowen.prma.webface.controller;
 import com.caibowen.gplume.web.RequestContext;
 import com.caibowen.gplume.web.annotation.Controller;
 import com.caibowen.gplume.web.annotation.Handle;
+import com.caibowen.gplume.web.annotation.ReqParam;
 import com.caibowen.prma.webface.JsonResult;
 import com.caibowen.prma.webface.SearchEngine;
 
@@ -20,19 +21,26 @@ public class ViewLog {
 //    public JsonResult query(HttpQuery q) {
 //        return q == null ? JsonResult.invalidParameter(): new JsonResult( new SearchEngine(null)._test());
 //    }
-    @Handle({"/log.json"})
+    @Handle({"/log/list.json"})
     public JsonResult query(HttpQuery q) {
         return q == null ? JsonResult.invalidParameter(): new JsonResult(engine.process(q));
     }
 
+    class DetailQuery {
+        @ReqParam(required = true)
+        Integer loggerName;
+        @ReqParam(required = true)
+        Long id;
+        @ReqParam(required = true)
+        Long flag;
+    }
+
     @Handle({"/log/detail.json"})
-    public JsonResult logDetail(RequestContext ctx) {
-        Long id = ctx.getLongParam("id");
-        Long flag = ctx.getLongParam("flag");
-        if (id == null || flag == null || flag < 0) {
+    public JsonResult logDetail(DetailQuery q) {
+        if (q == null || q.flag < 0) {
             return JsonResult.invalidParameter();
         }
-        return new JsonResult(engine.detailedEvent(id, flag));
+        return new JsonResult(engine.detailedEvent(q.loggerName, q.id, q.flag));
     }
 
 }

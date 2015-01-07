@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `prma_log_event`.`event` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT,
   `time_created` BIGINT(20) NOT NULL,
   `level` TINYINT(4) NOT NULL,
-  `logger` VARCHAR(255) NOT NULL,
+  `logger_id` BIGINT(20) NOT NULL,
   `thread` VARCHAR(255) NOT NULL,
   `caller_id` BIGINT(20) NOT NULL,
   `flag` BIGINT(20) NOT NULL,
@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS `prma_log_event`.`event` (
   `reserved` BIGINT(20) NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_event_st_idx` (`caller_id` ASC),
+  INDEX `fk_event_logger_idx` (`logger_id` ASC),
   INDEX `idx_event_time` USING BTREE (`time_created` ASC),
   FULLTEXT INDEX `idx_event_fulltext` (`message` ASC))
 ENGINE = InnoDB;
@@ -110,6 +111,16 @@ CREATE TABLE IF NOT EXISTS `prma_log_event`.`tag` (
   PRIMARY KEY (`id`))
 ENGINE = InnoDB;
 
+
+
+-- -----------------------------------------------------
+-- Table `prma_log_event`.`logger`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `prma_log_event`.`logger` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `value` VARCHAR(255) NOT NULL,
+  PRIMARY KEY (`id`))
+  ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `prma_log_event`.`j_event_tag`

@@ -27,6 +27,13 @@
             <artifactId>gplume-scala</artifactId>
             <version>${gp-scala-version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.slick</groupId>
+            <artifactId>slick_2.10</artifactId>
+            <version>${slick-version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -59,11 +66,6 @@
             <!--<artifactId>akka-actor_2.10</artifactId>-->
             <!--<version>${akka-version}</version>-->
         <!--</dependency>-->
-        <dependency>
-            <groupId>com.typesafe.slick</groupId>
-            <artifactId>slick_2.10</artifactId>
-            <version>${slick-version}</version>
-        </dependency>
 
     </dependencies>
 

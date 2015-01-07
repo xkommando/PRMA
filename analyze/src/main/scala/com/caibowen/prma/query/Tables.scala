@@ -14,6 +14,11 @@ class LogTag(tag: Tag) extends Table[(Int, String)](tag, "tag") {
   def value = column[String]("VALUE")
   def * = (id, value)
 }
+class LoggerName(tag: Tag) extends Table[(Int, String)](tag, "logger") {
+  def id = column[Int]("ID", O.PrimaryKey)
+  def value = column[String]("VALUE")
+  def * = (id, value)
+}
 
 class StackTrace(tag: Tag) extends Table[(String, String, String, Int)](tag, "stack_trace") {
   def id = column[Int]("id", O.PrimaryKey)
@@ -40,7 +45,7 @@ class Except(tag: Tag) extends Table[(Long, String, String)](tag, "exception") {
   def * = (id, name, message)
 }
 
-class Event(tag: Tag) extends Table[(Long, Long, LevelT, String, String, Long, Option[Long], Int)](tag, "event") {
+class Event(tag: Tag) extends Table[(Long, Long, LevelT, Int, String, Long, Option[Long], Int)](tag, "event") {
   implicit val levelMapper = MappedColumnType.base[LevelT, Int](
   { e => e.id
   }, {
@@ -54,7 +59,10 @@ class Event(tag: Tag) extends Table[(Long, Long, LevelT, String, String, Long, O
 
   def level = column[LevelT]("level")
 
-  def loggerName = column[String]("logger")
+  def _loggerName = column[Int]("logger")
+
+  def loggerName: ForeignKeyQuery[LoggerName, (Int, String)]
+  = foreignKey("", _loggerName, TableQuery[LoggerName])(_.id)
 
   def threadName = column[String]("thread")
 
@@ -69,6 +77,6 @@ class Event(tag: Tag) extends Table[(Long, Long, LevelT, String, String, Long, O
 
   def message = column[String]("message")
 
-  def * : ProvenShape[(Long, Long, LevelT, String, String, Long, Option[Long], Int)]
-  = (id, timeCreated, level, loggerName, threadName, flag, reserved, _stackTraceID)
+  def * : ProvenShape[(Long, Long, LevelT, Int, String, Long, Option[Long], Int)]
+  = (id, timeCreated, level, _loggerName, threadName, flag, reserved, _stackTraceID)
 }

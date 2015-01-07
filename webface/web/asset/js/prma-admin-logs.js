@@ -57,7 +57,9 @@ $(document).ready(function () {
             // Open this row
             var evId = row.data().id;
             var evFlag = row.data().flag;
-            $.get("testdata2.txt", {id: evId, flag: evFlag})
+            var evLoggerN = row.data().loggerName;
+            //$.get("log/detail.json", {id: evId, flag: evFlag, loggerName: evLoggerN})
+            $.get("testdata2.txt", {id: evId, flag: evFlag, loggerName: evLoggerN})
                 .done(function (resp) {
                     var data = JSON.parse(resp).data;
                     var htmlStr = PrmaLog.logDetail(data);
@@ -103,7 +105,7 @@ $('#tq-btn').click(function () {
     }
     q = Prma.encodeQueryData(q);
     console.log(q);
-    logTable.api().ajax.url("logs.json?" + q).load();
+    logTable.api().ajax.url("log/list.json?" + q).load();
     //$.get( "http://localhost:63342/PRMA/webface/src/main/webapp", q)
     //    .done(function( data ) {
     //        alert( "Data Loaded: " + data );
@@ -113,8 +115,8 @@ $('#tq-btn').click(function () {
 
 var PrmaLog = {
     dtableOptions: {
-        "ajax": "testdata.txt?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
-        //"ajax": "log.json?minTime=1&maxTime=2147483647&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        "ajax": "testdata.txt?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        //"ajax": "log/list.json?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
         "columns": [
             {
                 "data": "timeCreated",

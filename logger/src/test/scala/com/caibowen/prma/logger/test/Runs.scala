@@ -1,5 +1,6 @@
 package com.caibowen.prma.logger.test
 
+import java.util
 import java.util.concurrent.{TimeUnit, ConcurrentLinkedQueue, Executors}
 
 import com.caibowen.prma.api.model.EventVO
@@ -19,6 +20,22 @@ class Runs {
   @Test
   def r2: Unit = {
 
+    val a = Array(1, 2, 3, 4, 5)
+    val b = a.sortWith(_>_)
+    println(util.Arrays.toString(b))
+    val c = (1, 2, 3)
+    println(c)
+    println(b.mkString("[", ",", "]"))
+
+    val op = Some(c)
+    println(op)
+    println(None)
+
+//    println(Int.MaxValue)
+//    println(Long.MaxValue)
+//    2147483647
+//    9223372036854775807
+//    31536000000
   }
 
 
