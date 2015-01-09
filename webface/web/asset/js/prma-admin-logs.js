@@ -56,10 +56,12 @@ $(document).ready(function () {
         else {
             // Open this row
             var evId = row.data().id;
-            var evFlag = row.data().flag;
             var evLoggerN = row.data().loggerName;
-            //$.get("log/detail.json", {id: evId, flag: evFlag, loggerName: evLoggerN})
-            $.get("testdata2.txt", {id: evId, flag: evFlag, loggerName: evLoggerN})
+            var evthreadN = row.data().threadName;
+            var evFlag = row.data().flag;
+            var qp = {id: evId, flag: evFlag, loggerName: evLoggerN, threadName: evthreadN}
+            //$.get("log/detail.json", qp)
+            $.get("testdata2.txt", qp)
                 .done(function (resp) {
                     var data = JSON.parse(resp).data;
                     var htmlStr = PrmaLog.logDetail(data);

@@ -50,6 +50,7 @@ class SearchEngine(db: DB) {
   val eventVOCol = (rs:ResultSet) => {
 
     val loggerID = rs.getInt(4).toString
+    val threadID = rs.getInt(5).toString
     val _res = rs.getObject(8)
     val reserved = if (_res == null) None else Some(_res.asInstanceOf[Long])
 
@@ -62,7 +63,7 @@ class SearchEngine(db: DB) {
       _line)
 
     new EventVO(rs.getLong(1), rs.getLong(2), LogLevel.from(rs.getInt(3)),
-      loggerID, rs.getString(5), // logger, thread
+      loggerID, threadID, // logger, thread
       stackTrace,
       rs.getLong(6), // flag
       rs.getString(7), reserved, None, None, None)
@@ -75,7 +76,7 @@ class SearchEngine(db: DB) {
   private def listSimple(filterStr: String): Seq[EventVO] = {
 
     implicit val b = new StringBuilder(512,
-      """ SELECT EV.id,EV.time_created,EV.level,EV.logger_id,EV.thread,EV.flag,EV.message,EV.reserved,
+      """ SELECT EV.id,EV.time_created,EV.level,EV.logger_id,EV.thread_id,EV.flag,EV.message,EV.reserved,
     SK.file,SK.class,SK.function,SK.line
    FROM `event` AS EV
    INNER JOIN `stack_trace` AS SK ON SK.id = EV.caller_id
@@ -87,15 +88,16 @@ WHERE """)
     }
   }
 
-  def detailedEvent(loggerID: Int, eventID: Long, flag: Long): EventVO =
+  def detailedEvent(eventID: Long, threadID: Int, loggerID: Int, flag: Long): EventVO =
     db.readOnlySession{implicit session=>
-      val loggerName = Q.logggerNameByID(loggerID)
+      val loggerName = Q.logggerNameByID(loggerID, "Undefined")
+      val threadName = Q.threadNameByID(threadID, "Undefined")
+//      val threadName = Q.threadNameByID()
       val tags = if (EventVO.hasTags(flag)) Some(Q.tagsByEventID(eventID)) else None
       val props = if (EventVO.hasProperties(flag)) Some(Q.propsByEventID(eventID)) else None
       val excepts = if (EventVO.hasExceptions(flag)) Some(Q.exceptByEventID(eventID)) else None
       new EventVO(eventID, -1, LogLevel.OFF,
-                if (loggerName.isDefined) loggerName.get else "",
-                "", EventVO.NA_ST, flag, "", None, props, excepts, tags)
+                loggerName, threadName, EventVO.NA_ST, flag, "", None, props, excepts, tags)
     }
 
 }

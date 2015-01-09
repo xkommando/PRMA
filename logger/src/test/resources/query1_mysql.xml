@@ -15,7 +15,7 @@
 
     <entry key="EventStore.insert"><![CDATA[
     INSERT INTO `event`(
-        `time_created`, `level`, `logger_id`, `thread`, `caller_id`,
+        `time_created`, `level`, `logger_id`, `thread_id`, `caller_id`,
         `flag`, `message`,`reserved`)VALUES(?,?,?,?,?,?,?,?)
         ]]>
     </entry>
@@ -23,7 +23,7 @@
 
     <entry key="EventStore.getWithException"><![CDATA[
     SELECT id, time_created, level, flag, message, reserved,
-        logger_id, thread_id, caller_sk_id
+        logger_id, thread_id, caller_id
         FROM `event`
         WHERE flag>4294967296 AND time_created>? LIMIT ?
         ]]>

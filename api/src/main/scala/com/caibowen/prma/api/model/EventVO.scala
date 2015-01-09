@@ -1,7 +1,7 @@
 package com.caibowen.prma.api.model
 
 import com.caibowen.prma.api.LogLevel.LogLevel
-
+import java.lang.{StringBuilder => JStrBuilder}
 /**
 * @author BowenCai
 * @since  02/12/2014.
@@ -9,7 +9,7 @@ import com.caibowen.prma.api.LogLevel.LogLevel
 
 //SELECT id,time_created,level,logger,thread,caller_id,flag,message,reserved FROM `event`
 @SerialVersionUID(-8179577194579626226L)
-class EventVO(val id: Long,
+case class EventVO(val id: Long,
               val timeCreated: Long,
               val level: LogLevel,
               val loggerName: String,
@@ -18,7 +18,7 @@ class EventVO(val id: Long,
               val flag: Long,
               val message: String,
               val reserved: Option[Long],
-              val properties: Option[Map[String, AnyRef]],
+              val properties: Option[Map[String, Any]],
               val exceptions: Option[List[ExceptionVO]],
               val tags: Option[Set[String]]) extends Serializable {
 
@@ -34,7 +34,7 @@ class EventVO(val id: Long,
            callerStackTrace: StackTraceElement,
            message: String,
            reserved: Long,
-           properties: Map[String, AnyRef],
+           properties: Map[String, Any],
            exceptions: List[ExceptionVO],
            markers: Set[String]) {
 
@@ -109,30 +109,70 @@ class EventVO(val id: Long,
         if (oes.isDefined) return false
       } else {
         if (oes.isEmpty ||
-          !(exceptions.get == oes.get))
+          !(exceptions.get.equals(oes.get)))
           return false
       }
-
       true
     }
     case _ => false
   }
 
+  def appendJson(implicit json: JStrBuilder): JStrBuilder = {
+    json.append("{\"id\":").append(id)
+      .append(",\"timeCreated\":").append(timeCreated)
+      .append(",\"level\":\"").append(level.toString)
+      .append("\",\"loggerName\":\"")
+    Helper.quote(loggerName)
+      .append("\",\"threadName\":\"")
+    Helper.quote(threadName)
+      .append("\",\"flag\":").append(flag)
+      .append(",\"message\":\"")
+    Helper.quote(message)
 
-  def appendJson(implicit json: StringBuilder): StringBuilder = {
-    json.append(
-s"""{
-  "id":$id,
-  "timeCreated":$timeCreated,
-  "level":"${level.toString}",
-  "loggerName":"$loggerName",
-  "threadName":"$threadName",
-  "flag":$flag,
-  "message":"$message",
-""")
+    json.append("\",\"callerStackTrace\":")
+    Helper.stackTraceJson(callerStackTrace)
 
-    json.append("  \"callerStackTrace\":")
-    ExceptionVO.stackTraceJson(callerStackTrace)
+    if (reserved.isDefined)
+      json.append(",\"reserved\":").append(reserved.get)
+
+    if (exceptions.isDefined && exceptions.get.size > 0) {
+      json.append(",\"exceptions\":[")
+      exceptions.get.foreach(_.appendJson.append(','))
+      json.setCharAt(json.length - 1, ']')
+    }
+    if (properties.isDefined && properties.get.size > 0) {
+      json.append(",\"properties\":{")
+      properties.get.foreach{t => json.append('\"')
+        Helper.quote(t._1)
+          .append("\":\"")
+        Helper.quote(t._2.toString)
+          .append("\",")}
+      json.setCharAt(json.length - 1, '}')
+    }
+    if (tags.isDefined && tags.get.size > 0) {
+      json.append(",\"tags\":[")
+      tags.get.foreach{t=>json.append('\"')
+        Helper.quote(t)
+          .append("\",")}
+      json.setCharAt(json.length - 1, ']')
+    }
+    json.append('}')
+  }
+
+  def prettyJson(implicit json: JStrBuilder): JStrBuilder = {
+    json.append("{\r\n  \"id\":").append(id)
+    .append(",\r\n  \"timeCreated\":").append(timeCreated)
+    .append(",\r\n  \"level\":\"").append(level.toString)
+    .append("\",\r\n  \"loggerName\":\"")
+    Helper.quote(loggerName)
+    .append("\",\r\n  \"threadName\":\"")
+    Helper.quote(threadName)
+    .append("\",\r\n  \"flag\":").append(flag)
+    .append(",\r\n  \"message\":\"")
+    Helper.quote(message)
+
+    json.append("\",\r\n  \"callerStackTrace\":")
+    Helper.prettyStackTraceJson(callerStackTrace)
     json.append(",\r\n")
     if (reserved.isDefined)
       json.append( """  "reserved":""")
@@ -141,22 +181,26 @@ s"""{
 
     if (exceptions.isDefined && exceptions.get.size > 0) {
       json.append( """  "exceptions":[""")
-      exceptions.get.foreach(_.appendJson.append(",\r\n"))
+      exceptions.get.foreach(_.prettyJson.append(",\r\n"))
       json.deleteCharAt(json.length - 3)
         .append("],\r\n")
     }
     if (properties.isDefined && properties.get.size > 0) {
       json.append("  \"properties\":{\r\n")
-      properties.get.foreach((t: (Any, Any))
-                    => json.append("\t\"").append(t._1)
-                        .append("\":\"").append(t._2).append("\",\r\n"))
+      properties.get.foreach{t => json.append("\t\"")
+                        Helper.quote(t._1)
+                        .append("\":\"")
+                        Helper.quote(t._2.toString)
+                          .append("\",\r\n")}
+
       json.deleteCharAt(json.length - 3)
-      json.append("\t},\r\n"
-      )
+      json.append("\t},\r\n")
     }
     if (tags.isDefined && tags.get.size > 0) {
       json.append( """  "tags":[""")
-      tags.get.foreach(json.append('\"').append(_).append("\","))
+      tags.get.foreach{t=>json.append('\"')
+        Helper.quote(t)
+          .append("\",")}
       json.deleteCharAt(json.length - 1)
       json.append("],\r\n")
     }
@@ -164,7 +208,7 @@ s"""{
     json.append('}')
   }
 
-  override def toString: String = appendJson(new StringBuilder(512)).toString
+  override def toString: String = prettyJson(new JStrBuilder(512)).toString
 }
 object EventVO {
 

@@ -9,23 +9,24 @@ import scala.collection.mutable.ArrayBuffer
 /**
  * Created by Bowen Cai on 1/5/2015.
  */
-class Summary(interval: Long = (1000 * 60 * 30).toLong) {
+object Statistician {
 
-  def ssss(minTime: Long, maxTime: Long)(implicit session: DBSession):
+  def timelineCounter(minTime: Long, maxTime: Long, interval: Long = (1000 * 60 * 30).toLong)(implicit session: DBSession):
       (ArrayBuffer[(Int, Int, Int, Int, Int, Long)],
         Array[Int],
         Array[(String, Int)]) = {
 
     val raw3 = new SQLOperation("SELECT time_created, level, logger_id FROM `event` " +
       " WHERE ? < time_created AND time_created < ? " +
-      " ORDER BY time_created ASC", null).array(rs=>(rs.getLong(1), rs.getInt(2), rs.getInt(3)))
-    if (raw3 == null || raw3.size < 5)
+      " ORDER BY time_created ASC", Seq(minTime, maxTime)).array(rs=>(rs.getLong(1), rs.getInt(2), rs.getInt(3)))
+    if (raw3 == null || raw3.length == 0)
       return null
 
     //    val levelCounts = raw3.groupBy(_._2).toArray.map(t=>(t._1, t._2.length)
 
     // 1. count event level
-    val _levelCounter = Array(0, 0, 0, 0, 0)
+    // Array(...level count...)
+    val levelCounts = Array(0, 0, 0, 0, 0)
     // 2. count logger
     val _loggerCount = new mutable.HashMap[Int, Int]
 
@@ -35,7 +36,7 @@ class Summary(interval: Long = (1000 * 60 * 30).toLong) {
 
     // 3. count time line
     // ArrayBuffer Array (...level count..., time)
-    val timeLine = raw3.foldLeft(new ArrayBuffer[(Int, Int, Int, Int, Int, Long)](48))((ab, t3) => {
+    val timeLine = raw3.foldLeft(new ArrayBuffer[(Int, Int, Int, Int, Int, Long)](1024))((ab, t3) => {
       val iLevel = t3._2
       if (iLevel < 9) {
         // 1
@@ -49,9 +50,8 @@ class Summary(interval: Long = (1000 * 60 * 30).toLong) {
         val idx = iLevel / 2
         _timeCounter(idx) += 1
         // 2
-        _levelCounter(idx) += 1
+        levelCounts(idx) += 1
       }
-
       // 3
       val lgId = t3._3
       val e = _loggerCount.get(lgId)
@@ -63,12 +63,8 @@ class Summary(interval: Long = (1000 * 60 * 30).toLong) {
       ab
     })
 
-    // Array(...level count...)
-    val levelCounts = _levelCounter.sortWith(_>_)
-
     // Array ("logger", count)
     val loggerCount = _loggerCount.map(t=>(Q.logggerNameByID(t._1, "Undefined"), t._2)).toArray.sortWith(_._2 < _._2)
-
     (timeLine, levelCounts, loggerCount)
   }
 

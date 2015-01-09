@@ -19,7 +19,8 @@ class RdbEventStore private[this] (dataSource: DataSource,
                                     sqls: StrLoader,
                                    eventAux: EventStoreAux,
                                    stackStore: KVStore[Int,StackTraceElement],
-                                    loggerNameStore: KVStore[Int,String]) extends JdbcSupport(dataSource) with EventStore {
+                                    loggerNameStore: KVStore[Int,String],
+                                    threadNameStore: KVStore[Int,String]) extends JdbcSupport(dataSource) with EventStore {
 
 
   override def put(@Nonnull event: EventVO): Long = {
@@ -49,6 +50,8 @@ class RdbEventStore private[this] (dataSource: DataSource,
     stackStore.put(st.hashCode(), st)
     val ln = event.loggerName
     loggerNameStore.put(ln.hashCode, ln)
+    val thread = event.threadName
+    threadNameStore.put(thread.hashCode, thread)
 
     insert(new StatementCreator {
       @throws(classOf[SQLException])
@@ -58,9 +61,9 @@ class RdbEventStore private[this] (dataSource: DataSource,
 
         ps.setLong(1, event.timeCreated)
         ps.setByte(2, event.level.id.toByte)
-        ps.setInt(3, event.loggerName.hashCode)//
-        ps.setString(4, event.threadName)//
-        ps.setInt(5, event.callerStackTrace.hashCode())
+        ps.setInt(3, ln.hashCode)//
+        ps.setInt(4, thread.hashCode)//
+        ps.setInt(5, st.hashCode())
         ps.setLong(6, event.flag)
         ps.setString(7, event.message)
         if (event.reserved.isDefined) ps.setLong(8, event.reserved.get)
@@ -76,7 +79,9 @@ object RdbEventStore{
   def prop(dataSource: DataSource,
            sqls: StrLoader,
            eventAux: EventStoreAux,
-           stackStore: KVStore[Int,StackTraceElement])
+           stackStore: KVStore[Int,StackTraceElement],
+           loggerNameStore: KVStore[Int,String],
+           threadNameStore: KVStore[Int,String])
 
-  = Props(classOf[RdbEventStore], dataSource, sqls, eventAux, stackStore)
+  = Props(classOf[RdbEventStore], dataSource, sqls, eventAux, stackStore, loggerNameStore, threadNameStore)
 }

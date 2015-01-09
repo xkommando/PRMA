@@ -28,9 +28,11 @@ public class ViewLog {
 
     class DetailQuery {
         @ReqParam(required = true)
+        Long id;
+        @ReqParam(required = true)
         Integer loggerName;
         @ReqParam(required = true)
-        Long id;
+        Integer threadName;
         @ReqParam(required = true)
         Long flag;
     }
@@ -40,7 +42,7 @@ public class ViewLog {
         if (q == null || q.flag < 0) {
             return JsonResult.invalidParameter();
         }
-        return new JsonResult(engine.detailedEvent(q.loggerName, q.id, q.flag));
+        return new JsonResult(engine.detailedEvent(q.id,q.loggerName, q.threadName, q.flag));
     }
 
 }

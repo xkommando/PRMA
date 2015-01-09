@@ -43,24 +43,28 @@ class FastJsonViewResolver extends IViewResolver {
       w.append("{\r\n\"code\":").write(jsr.code.toString)
       if (jsr.message.isDefined)
         w.append(",\r\n\"message\":\"").append(jsr.message.get).append('\"')
+      if (jsr.data.isDefined) {
 
-      jsr.data match {
-        case evls: Seq[EventVO] =>
-          w.append(",\r\n\"data\":[")
-          evls.take(evls.size - 1).foreach(ev => w.append(ev.toString).append('\n').append(','))
-          w.append(evls.last.toString).append(']')
 
-        case ev: Option[EventVO] =>
-          w.append(",\r\n\"data\":")
-          .append(ev.get.toString)
+        jsr.data.get match {
+          case evls: Seq[EventVO] =>
+            w.append(",\r\n\"data\":[")
+            //          evls.take(evls.size - 1).foreach(ev => w.append(ev.appendJson(new StringBuilder(2048)).toString).append('\n').append(','))
+            evls.take(evls.size - 1).foreach(ev => w.append(ev.toString).append('\n').append(','))
+            w.append(evls.last.toString).append(']')
 
-        case action: JsonResult.Action => action(w)
+          case ev: Option[EventVO] =>
+            w.append(",\r\n\"data\":")
+              .append(ev.get.toString)
+          //          .append(ev.get.appendJson(new StringBuilder(2048)).toString))
 
-        case None =>
-        case obj =>
-          w.append(obj.toString)
+          case action: JsonResult.Action =>
+            action(w)
+          case None =>
+          case obj =>
+            w.append(obj.toString)
+        }
       }
-
       w.append("\r\n}")
       w.flush()
   }

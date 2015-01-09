@@ -12,9 +12,17 @@ object Q {
 
   val _logggerNameByID = new SQLOperation("SELECT `value` FROM `logger` WHERE id=?", null)
   def logggerNameByID(id: Int)(implicit session: DBSession): Option[String] =
-  _logggerNameByID.single(colStr, before=_.setInt(1, id))(session)
+  _logggerNameByID.first(colStr, before=_.setInt(1, id))(session)
   def logggerNameByID(id: Int, default: String)(implicit session: DBSession): String =
-    _logggerNameByID.single(colStr, default, _.setInt(1, id))(session)
+    _logggerNameByID.first(colStr, default, _.setInt(1, id))(session)
+
+  val _threadNameByID = new SQLOperation("SELECT `value` FROM `thread` WHERE id=?", null)
+  def threadNameByID(id: Int)(implicit session: DBSession): Option[String] =
+    _threadNameByID.first(colStr, before=_.setInt(1, id))(session)
+  def threadNameByID(id: Int, default: String)(implicit session: DBSession): String =
+    _threadNameByID.first(colStr, default, _.setInt(1, id))(session)
+
+
 
   val _tagsByEventID = new SQLOperation("SELECT TG.value FROM `tag` as TG INNER JOIN `j_event_tag` AS JET ON JET.tag_id = TG.id WHERE JET.event_id = ?", null)
   def tagsByEventID(id: Long)(implicit session: DBSession): Set[String] =
@@ -42,7 +50,7 @@ object Q {
   //  String declaringClass, String methodName,
   //  String fileName, int lineNumber) {
   def callerStackTrace(id: Long)(implicit session: DBSession): StackTraceElement =
-    _callerStackTrace.single(colStackTrace, before=_.setLong(1, id))(session).get
+    _callerStackTrace.first(colStackTrace, before=_.setLong(1, id))(session).get
 
 
   val _exceptStackTraces = new SQLOperation("SELECT SCK.file, SCK.class, SCK.function, SCK.line FROM 'stack_trace' as SCK\n\tINNER JOIN `j_exception_stacktrace` AS JES on JES.stacktrace_id = SCK.id\nWHERE JES.except_id = ?", null)

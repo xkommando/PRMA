@@ -1,12 +1,12 @@
 package com.caibowen.prma.api.model
-
+import java.lang.{StringBuilder => JStrBuilder}
 
 /**
  * @author BowenCai
  * @since  02/12/2014.
  */
 @SerialVersionUID(8087093751948611040L)
-class ExceptionVO(val id: Long,
+case class ExceptionVO(val id: Long,
                   val name: String,
                   val message: Option[String],
                   val stackTraces: Option[List[StackTraceElement]]) extends Serializable {
@@ -14,7 +14,7 @@ class ExceptionVO(val id: Long,
   require(name != null, "Exception name cannot be null")
 
   def this(eN: String, eMsg: String, sts: List[StackTraceElement]) {
-    this(ExceptionVO.calculateID(eN, eMsg, sts), eN,
+    this(Helper.hashCombine(eN, eMsg), eN,
       if (eMsg == null) None else Some(eMsg),
       if(sts == null) None else Some(sts)
     )
@@ -33,26 +33,46 @@ class ExceptionVO(val id: Long,
     result
   }
 
-  def appendJson(implicit json: StringBuilder): StringBuilder = {
+  def prettyJson(implicit json: JStrBuilder): JStrBuilder = {
     val extra = 100 + (if (stackTraces.isDefined) stackTraces.get.size * 128 else 0)
     json.ensureCapacity(json.capacity + extra)
 
     json.append("{\r\n  \"id\":").append(id)
       .append(",\r\n  \"name\":\"").append(name).append("\"")
     if (message.isDefined)
-      json.append(",\r\n  \"message\":\"").append(message.get).append('\"')
+      json.append(",\r\n  \"message\":\"")
+      Helper.quote(message.get)
+        .append('\"')
 
     if (stackTraces.isDefined && stackTraces.get.size > 0) {
       json.append(",\r\n  \"stackTraces\":[")
-      stackTraces.get.foreach(ExceptionVO.stackTraceJson(_).append(",\r\n"))
+      stackTraces.get.foreach(Helper.prettyStackTraceJson(_).append(",\r\n"))
       json.deleteCharAt(json.length - 3)
-      json.append("],\r\n")
+      json.append("]\r\n")
     }
-    json.deleteCharAt(json.length - 3)
     json.append('}')
   }
 
-  override def toString: String = appendJson(new StringBuilder(256)).toString
+  def appendJson(implicit json: JStrBuilder): JStrBuilder = {
+    val extra = 100 + (if (stackTraces.isDefined) stackTraces.get.size * 128 else 0)
+    json.ensureCapacity(json.capacity + extra)
+
+    json.append("{\"id\":").append(id)
+      .append(",\"name\":\"").append(name).append("\"")
+    if (message.isDefined) {
+      json.append(",\"message\":\"")
+      Helper.quote(message.get)
+        .append('\"')
+    }
+    if (stackTraces.isDefined && stackTraces.get.size > 0) {
+      json.append(",\"stackTraces\":[")
+      stackTraces.get.foreach(Helper.stackTraceJson(_).append(','))
+      json.setCharAt(json.length - 1, ']')
+    }
+    json.append('}')
+  }
+
+  override def toString: String = prettyJson(new JStrBuilder(256)).toString
 
   override def equals(obj: scala.Any): Boolean = obj match {
     case that: ExceptionVO => {
@@ -67,7 +87,7 @@ class ExceptionVO(val id: Long,
       if (message.isEmpty) {
         if (om.isDefined) return false
       } else {
-        if (om.isEmpty || !(message.get == om.get)) return false
+        if (om.isEmpty || !(message.get equals  om.get)) return false
       }
 
       val oss = that.stackTraces
@@ -81,30 +101,4 @@ class ExceptionVO(val id: Long,
   }
     case _ => false
   }
-}
-object ExceptionVO {
-  @inline
-  def calculateID(exceptionName: String,
-                  exceptionMessage: String,
-                  stackTraces: List[StackTraceElement]): Long = {
-
-    //      MurmurHash
-    var expID: Long = exceptionName.hashCode.toLong
-    if (exceptionMessage != null) {
-//    (v << n) | (v >>> (64 - n))
-      val msgHash = exceptionMessage.hashCode
-      expID = ((expID << msgHash) | (expID >>> (64 - msgHash)))
-    }
-    expID
-  }
-
-  @inline
-  def stackTraceJson(st: StackTraceElement)(implicit json: StringBuilder): StringBuilder =
-    json.append("{\r\n\t\"file\":\"").append(st.getFileName)
-      .append("\",\r\n\t\"className\":\"").append(st.getClassName)
-      .append("\",\r\n\t\"function\":\"").append(st.getMethodName)
-      .append("\",\r\n\t\"line\":").append(st.getLineNumber).append("\r\n}")
-
-//  @inline
-//  def appendJson()
 }

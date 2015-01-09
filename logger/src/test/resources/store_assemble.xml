@@ -4,7 +4,7 @@
     <!--for test only-->
     <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
         <prop name="driverClassName" val="com.mysql.jdbc.Driver"/>
-        <prop name="username" val="bitranger" />
+        <prop name="username" val="xKommando" />
         <prop name="password" val="123456"/>
         <prop name="jdbcUrl" val="jdbc:mysql://localhost:3306/prma_log_event" />
         <prop name="autoCommit" val="false" />
@@ -63,7 +63,23 @@
         <prop name="dataSource" ref="dataSource"/>
         <prop name="eventAux" ref="eventStoreAux"/>
         <prop name="stackStore" ref="stackTraceStore"/>
-    </bean>L
+        <prop name="loggerNameStore">
+            <bean class="com.caibowen.prma.store.rdb.impl.StrStore">
+                <construct name="tableName">
+                    <val>`logger`</val>
+                </construct>
+                <prop name="dataSource" ref="dataSource"/>
+            </bean>
+        </prop>
+        <prop name="threadNameStore">
+            <bean class="com.caibowen.prma.store.rdb.impl.StrStore">
+                <construct name="tableName">
+                    <val>`thread`</val>
+                </construct>
+                <prop name="dataSource" ref="dataSource"/>
+            </bean>
+        </prop>
+    </bean>
 
     <bean id="classNameFilter" class="com.caibowen.prma.core.filter.PartialStrFilter" aftercall="start">
         <construct val="classpath:ignored_classes.txt" />

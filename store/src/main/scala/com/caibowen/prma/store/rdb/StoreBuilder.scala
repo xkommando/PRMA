@@ -26,9 +26,11 @@ class StoreBuilder extends ActorBuilder {
   @BeanProperty var eventAux: EventStoreAux = _
 
   @BeanProperty var stackStore: KVStore[Int,StackTraceElement] = _
+  @BeanProperty var loggerNameStore: KVStore[Int,String] = _
+  @BeanProperty var threadNameStore: KVStore[Int,String] = _
 
   override def buildWith(sys: ActorRefFactory): ActorRef = {
-    val props = RdbEventStore.prop(dataSource, sqls, eventAux, stackStore)
+    val props = RdbEventStore.prop(dataSource, sqls, eventAux, stackStore, loggerNameStore, threadNameStore)
     val _actorName = if (notBlank(actorName)) actorName
                   else StoreBuilder.defaultName
     sys.actorOf(props, _actorName)

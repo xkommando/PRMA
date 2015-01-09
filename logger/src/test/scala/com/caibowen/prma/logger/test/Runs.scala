@@ -31,6 +31,10 @@ class Runs {
     println(op)
     println(None)
 
+    println("\\u%04x".format(55: Int))
+    println("\\u%04x".format(Int.MaxValue))
+    println("\\u%04x".format(Int.MinValue))
+
 //    println(Int.MaxValue)
 //    println(Long.MaxValue)
 //    2147483647
