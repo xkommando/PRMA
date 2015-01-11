@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -127,13 +126,13 @@
                         </div>
                     </li>
                     <li>
-                        <a class="active" href="notifications.html"><i class="fa fa-bell fa-fw"></i> Notifications</a>
+                        <a href="notifications.html"><i class="fa fa-bell fa-fw"></i> Notifications</a>
                     </li>
                     <li>
                         <a href="logs.html"><i class="fa fa-file-text fa-fw"></i> Logs</a>
                     </li>
                     <li>
-                        <a href="charts.html"><i class="fa fa-area-chart fa-fw"></i> Summary </a>
+                        <a  class="active" href="charts.html"><i class="fa fa-area-chart fa-fw"></i> Summary </a>
                     </li>
                 </ul>
             </div>
@@ -151,42 +150,82 @@
         </div>
         <!-- /.row -->
         <div class="row">
+
             <div class="col-lg-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Area Chart Example
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <div id="morris-area-chart"></div>
-                    </div>
-                    <!-- /.panel-body -->
+                <div class="col-lg-5">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="tq-minTime" class="col-sm-3 control-label">Start Time</label>
+                            <div class="input-group input-group-sm">
+                                <input size="16" type="text" class="form_datetime form-control" id="tq-minTime">
+                                            <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-time"></i>
+                                            </span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tq-maxTime" class="col-sm-3 control-label">End Time</label>
+                            <div class="input-group input-group-sm">
+                                <input size="16" type="text" class="form_datetime form-control" id="tq-maxTime">
+                                            <span class="input-group-addon">
+                                            <i class="glyphicon glyphicon-time"></i>
+                                            </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group top-buffer">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="button" class="btn btn-primary" id="btn-load">
+                                    <i class="fa fa-refresh"></i>&nbsp;&nbsp;Load Logs
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                    <hr>
+                    <table class="table" id="table-summay">
+                        <!-- will be filled with JS -->
+                    </table>
+
                 </div>
-                <!-- /.panel -->
+                <div class="col-lg-7">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Level Count
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="log-level-count"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
             </div>
-            <div class="col-lg-6">
+            <!-- /.col-lg-6 -->
+            <hr>
+            <div class="col-lg-12 top-buffer">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Area Chart Example
+                        Log Count in Time Intervals
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
-                        <div id="morris-area-chart"></div>
+                        <div id="log-timeline"></div>
                     </div>
                     <!-- /.panel-body -->
                 </div>
                 <!-- /.panel -->
             </div>
 
-            <!-- /.col-lg-6 -->
-            <div class="col-lg-6">
+            <hr>
+            <div class="col-lg-12 top-buffer">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        Bar Chart Example
+                        Logger Count
                     </div>
                     <!-- /.panel-heading -->
                     <div class="panel-body">
-                        <div id="morris-bar-chart"></div>
+                        <div id="log-logger-count"></div>
                     </div>
                     <!-- /.panel-body -->
                 </div>
@@ -210,6 +249,8 @@
 <script src="asset/js/jquery.min.js"></script>
 <script src="asset/js/bootstrap.min.js"></script>
 <script src="asset/js/metisMenu.min.js"></script>
+
+<script src="asset/js/bootstrap-datetimepicker.min.js"></script>
 
 <script src="asset/js/raphael-min.js"></script>
 <script src="asset/js/morris.min.js"></script>

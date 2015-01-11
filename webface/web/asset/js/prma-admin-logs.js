@@ -61,7 +61,7 @@ $(document).ready(function () {
             var evFlag = row.data().flag;
             var qp = {id: evId, flag: evFlag, loggerName: evLoggerN, threadName: evthreadN}
             //$.get("log/detail.json", qp)
-            $.get("testdata2.txt", qp)
+            $.get("testdata-detail.txt", qp)
                 .done(function (resp) {
                     var data = JSON.parse(resp).data;
                     var htmlStr = PrmaLog.logDetail(data);
@@ -117,7 +117,7 @@ $('#tq-btn').click(function () {
 
 var PrmaLog = {
     dtableOptions: {
-        "ajax": "testdata.txt?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        "ajax": "testdata-list.txt?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
         //"ajax": "log/list.json?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
         "columns": [
             {

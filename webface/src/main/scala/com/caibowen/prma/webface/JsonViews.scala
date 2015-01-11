@@ -59,7 +59,8 @@ class FastJsonViewResolver extends IViewResolver {
           case None =>
           case obj =>
             w.append(",\r\n\"data\":")
-            Serialization.write(obj.asInstanceOf[AnyRef], w)(DefaultFormats)
+            Serialization.writePretty(obj.asInstanceOf[AnyRef], w)(DefaultFormats)
+//            Serialization.write(obj.asInstanceOf[AnyRef], w)(DefaultFormats)
         }
       }
       w.append("\r\n}")

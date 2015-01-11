@@ -11,13 +11,17 @@ import com.caibowen.prma.logger.logback.LogbackEventAdaptor
 import com.caibowen.prma.webface.{FastJsonViewResolver, JsonResult, SearchEngine}
 import com.caibowen.prma.webface.controller.HttpQuery
 import gplume.scala.context.AppContext
+import net.liftweb.json.{DefaultFormats, Serialization}
 import org.junit.Test
 import org.slf4j.{LoggerFactory, Logger, MDC, MarkerFactory}
+
+import scala.collection.mutable.ArrayBuffer
 
 /**
  * Created by Bowen Cai on 12/26/2014.
  */
 class TestWidget {
+
 
   @Test
   def stringify(): Unit = {
@@ -58,9 +62,10 @@ class TestWidget {
 
     w.append("\r\n}").toString
   }
+
+  val resolver = new FastJsonViewResolver
   @Test
   def testResolve: Unit ={
-    val resolver = new FastJsonViewResolver
     val result = new JsonResult(Some(List(
     gen(true, false),
 //    gen(false, true),
@@ -68,6 +73,30 @@ class TestWidget {
     )), 500, Some("server screwed up"))
     println(sss(result))
 
+  }
+
+  @Test
+  def statistic: Unit = {
+//    (ArrayBuffer[(Int, Int, Int, Int, Int, Long)],
+//      Array[Int],
+//      Array[(String, Int)])
+    val t1 = new ArrayBuffer[(Int, Int, Int, Int, Int, Long)](16)
+    val t11 = (12, 45, 78, 99, 0, 111111L)
+    val t12 = (1, 455, 4378, 99, 40, 222222L)
+    val t13 = (1, 55, 78, 99, 45780, 333333L)
+    t1 += t11 += t12 += t13
+
+    val t2 = Array(9945, 457, 123, 45, 5)
+    val t31 = ("logger1", 99)
+    val t32 = ("logger2", 5)
+    val t33 = ("logger333", 4599)
+    val t3 = Array(t31, t32, t33)
+
+
+    val tp = (t1, t2, t3)
+
+    val js = Serialization.writePretty(tp.asInstanceOf[AnyRef])(DefaultFormats)
+    println(js)
   }
 
 
