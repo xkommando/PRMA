@@ -71,7 +71,7 @@ object JSON {
       }).toMap)
 
     val excepts = if (exceptN == JNothing|| exceptN.children.size == 0) None
-    else Some(exceptN.children.map(extractExcept).toList)
+    else Some(exceptN.children.map(extractExcept).toVector)
 
     new EventVO(id, time, level, logger, thread, caller, flag, message, reserved, props, excepts, tags)
   }
@@ -104,7 +104,7 @@ object JSON {
     else Some(
       stsN.children.map(
         (t: JValue)=>extractST(t.asInstanceOf[JObject])
-      ).toList)
+      ).toVector)
 
     new ExceptionVO(id, name, msg, sts)
   }

@@ -14,8 +14,15 @@ import org.junit.Test
 object Runs{
   val cq = new ConcurrentLinkedQueue[(Int, Int, Int)]
 }
+case class  C1(s: String, i: Int)
+class C2(val s: String, val i: Int)
 class Runs {
 
+  @Test
+  def t3: Unit ={
+    val c1 = new C1("c1 str", 1)
+    val c2 = new C2("c2 str", 2)
+  }
 
   @Test
   def r2: Unit = {

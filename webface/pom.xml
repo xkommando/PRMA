@@ -14,6 +14,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala-version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.caibowen.prma</groupId>
             <artifactId>core</artifactId>
             <version>${prma-version}</version>
@@ -35,6 +41,23 @@
             <version>0.1</version>
             <!--<scope>test</scope>-->
         </dependency>
+
+        <dependency>
+            <groupId>net.liftweb</groupId>
+            <artifactId>lift-json_2.10</artifactId>
+            <version>${lift-json-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.scalacheck</groupId>
+                    <artifactId>scalacheck_2.10</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
     </dependencies>
 
 
@@ -42,6 +65,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mvn-compile-plugin}</version>
                 <configuration>
                     <source>${java-version}</source>
                     <target>${java-version}</target>
@@ -51,6 +75,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${mvn-surefire-plugin}</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
@@ -58,6 +83,7 @@
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
+                <version>${mvn-scala-plugin}</version>
                 <executions>
                     <execution>
                         <goals>

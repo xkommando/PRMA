@@ -6,6 +6,6 @@ import java.util.logging.LogRecord
  * @author BowenCai
  * @since  08/12/2014.
  */
-trait Formatter {
+trait MsgFormatter {
   def fmt(record: LogRecord): String
 }

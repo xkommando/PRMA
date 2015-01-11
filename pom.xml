@@ -45,6 +45,9 @@
     <properties>
         <prma-version>0.1</prma-version>
         <java-version>1.7</java-version>
+        <mvn-compile-plugin>2.3.2</mvn-compile-plugin>
+        <mvn-surefire-plugin>2.18.1</mvn-surefire-plugin>
+        <mvn-scala-plugin>2.15.2</mvn-scala-plugin>
         <scala-version>2.10.4</scala-version>
         <gp-scala-version>1.0</gp-scala-version>
         <gp-web-version>2.0</gp-web-version>
@@ -71,6 +74,7 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${mvn-compile-plugin}</version>
                 <configuration>
                     <source>${java-version}</source>
                     <target>${java-version}</target>
@@ -80,6 +84,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <version>${mvn-surefire-plugin}</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
@@ -87,6 +92,7 @@
             <plugin>
                 <groupId>org.scala-tools</groupId>
                 <artifactId>maven-scala-plugin</artifactId>
+                <version>${mvn-scala-plugin}</version>
                 <executions>
                     <execution>
                         <goals>

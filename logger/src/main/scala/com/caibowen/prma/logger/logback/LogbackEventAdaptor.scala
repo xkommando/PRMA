@@ -34,23 +34,29 @@ class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
   override def to(vo: EventVO): ILoggingEvent = ???
 
 
-  def getExcepts(event: ILoggingEvent): List[ExceptionVO] = {
+  def getExcepts(event: ILoggingEvent): Vector[ExceptionVO] = {
     val px = event.getThrowableProxy
     if (px == null)
       return null
 
     val toExceptVO = (px: IThrowableProxy, start: Int) => {
       val stps = px.getStackTraceElementProxyArray
-      val buf = new ArrayBuffer[StackTraceElement](16)
-      stps.take(stps.length - start).foreach(buf += _.getStackTraceElement)
-      new ExceptionVO(px.getClassName, px.getMessage, if (buf.size > 0) buf.toList else null)
+      val len = stps.length - start
+      val stacks = if (len > 0) {
+        val buf = Vector.newBuilder[StackTraceElement]
+        buf.sizeHint(32)
+        stps.take(stps.length - start).foreach(buf += _.getStackTraceElement)
+        buf.result()
+      } else null.asInstanceOf[Vector[StackTraceElement]]
+      new ExceptionVO(px.getClassName, px.getMessage, stacks)
     }
 
     var _cause = px.getCause
     if (_cause == null)
-      return List(toExceptVO(px, 0))
+      return Vector(toExceptVO(px, 0))
 
-    val buf = new ArrayBuffer[ExceptionVO](16)
+    val buf =  Vector.newBuilder[ExceptionVO]
+    buf.sizeHint(16)
     buf += toExceptVO(px, 0)
     val cs = _cause.getCommonFrames
     do {
@@ -58,7 +64,7 @@ class LogbackEventAdaptor extends EventAdaptor[ILoggingEvent]{
       _cause = _cause.getCause
     } while (_cause != null)
 
-    buf.toList
+    buf.result()
   }
 
   def getMarkers(event: ILoggingEvent): Set[String] = {

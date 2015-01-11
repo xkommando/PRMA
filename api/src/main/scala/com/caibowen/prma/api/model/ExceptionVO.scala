@@ -6,20 +6,19 @@ import java.lang.{StringBuilder => JStrBuilder}
  * @since  02/12/2014.
  */
 @SerialVersionUID(8087093751948611040L)
-case class ExceptionVO(val id: Long,
-                  val name: String,
-                  val message: Option[String],
-                  val stackTraces: Option[List[StackTraceElement]]) extends Serializable {
+case class ExceptionVO(id: Long,
+                       name: String,
+                       message: Option[String],
+                       stackTraces: Option[Vector[StackTraceElement]]) extends Serializable {
 
   require(name != null, "Exception name cannot be null")
 
-  def this(eN: String, eMsg: String, sts: List[StackTraceElement]) {
+  def this(eN: String, eMsg: String, sts: Vector[StackTraceElement]) {
     this(Helper.hashCombine(eN, eMsg), eN,
       if (eMsg == null) None else Some(eMsg),
       if(sts == null) None else Some(sts)
     )
   }
-
 
   override def hashCode(): Int = {
     var result =  (id ^ (id >>> 32)).toInt

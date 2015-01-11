@@ -4,7 +4,7 @@ import ch.qos.logback.classic.spi.{ILoggingEvent, IThrowableProxy, StackTraceEle
 import com.caibowen.prma.api.model.ExceptionVO
 import com.caibowen.prma.core.filter.StrFilter
 
-import scala.collection.immutable.List
+import scala.collection.immutable.{Vector, List}
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -19,7 +19,7 @@ class FilteredAdaptor(private[this] val classFilter: StrFilter,
   private def takeClass = (name: String)=>classFilter.accept(name) != 1
   private def takeStackTrace = (sp: StackTraceElementProxy)=>stackTraceFilter.accept(sp.getStackTraceElement.getClassName) != 1
 
-  override def getExcepts(event: ILoggingEvent): List[ExceptionVO] = {
+  override def getExcepts(event: ILoggingEvent): Vector[ExceptionVO] = {
 
     val px = event.getThrowableProxy
     if (px == null || !takeClass(px.getClassName))
@@ -27,26 +27,29 @@ class FilteredAdaptor(private[this] val classFilter: StrFilter,
 
     val toExceptVO = (px: IThrowableProxy, start: Int) => {
       val stps = px.getStackTraceElementProxyArray
-      val sts = stps.take(stps.length - start)
+      val len = stps.length - start
+      val stacks = if (len > 0)
+        stps.take(stps.length - start)
         .filter(takeStackTrace)
         .map(_.getStackTraceElement)
-        .toList
+        .toVector
+      else null.asInstanceOf[Vector[StackTraceElement]]
       new ExceptionVO(px.getClassName, px.getMessage,
-        if (sts.length == 0) null else sts)
+      stacks)
     }
 
     var cause = px.getCause
     if (cause == null || !takeClass(cause.getClassName))
-      return List(toExceptVO(px, 0))
+      return Vector(toExceptVO(px, 0))
 
-    val buf = new ArrayBuffer[ExceptionVO](16)
-    buf += toExceptVO(px, 0)
+    val buf =  Vector.newBuilder[ExceptionVO]
+    buf.sizeHint(16)
     val cs = cause.getCommonFrames
     do {
       buf += toExceptVO(cause, cs)
       cause = cause.getCause
     } while (cause != null && takeClass(cause.getClassName))
 
-    buf.toList
+    buf.result()
   }
 }

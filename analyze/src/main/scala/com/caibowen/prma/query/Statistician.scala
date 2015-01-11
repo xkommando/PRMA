@@ -64,7 +64,7 @@ object Statistician {
     })
 
     // Array ("logger", count)
-    val loggerCount = _loggerCount.map(t=>(Q.logggerNameByID(t._1, "Undefined"), t._2)).toArray.sortWith(_._2 < _._2)
+    val loggerCount = _loggerCount.map(t=>(Q.logggerNameByID(t._1).getOrElse("Undefined"), t._2)).toArray.sortWith(_._2 < _._2)
     (timeLine, levelCounts, loggerCount)
   }
 

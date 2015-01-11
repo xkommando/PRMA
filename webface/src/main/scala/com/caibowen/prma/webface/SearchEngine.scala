@@ -90,8 +90,8 @@ WHERE """)
 
   def detailedEvent(eventID: Long, threadID: Int, loggerID: Int, flag: Long): EventVO =
     db.readOnlySession{implicit session=>
-      val loggerName = Q.logggerNameByID(loggerID, "Undefined")
-      val threadName = Q.threadNameByID(threadID, "Undefined")
+      val loggerName = Q.logggerNameByID(loggerID).getOrElse("Undefined")
+      val threadName = Q.threadNameByID(threadID).getOrElse("Undefined")
 //      val threadName = Q.threadNameByID()
       val tags = if (EventVO.hasTags(flag)) Some(Q.tagsByEventID(eventID)) else None
       val props = if (EventVO.hasProperties(flag)) Some(Q.propsByEventID(eventID)) else None

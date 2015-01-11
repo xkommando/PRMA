@@ -9,7 +9,7 @@ import java.util.logging.{LogRecord, Formatter => JulFormatter}
  * @author BowenCai
  * @since  08/12/2014.
  */
-class SimpleFormatter extends Formatter {
+class SimpleMsgFormatter extends MsgFormatter {
 
   @inline
   private final def needFmt(s: String): Boolean = {

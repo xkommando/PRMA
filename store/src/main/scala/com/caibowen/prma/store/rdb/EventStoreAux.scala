@@ -12,7 +12,7 @@ import com.caibowen.prma.api.model.ExceptionVO
  */
 trait EventStoreAux {
 
-  def putExceptions(eventId: Long, prop: List[ExceptionVO])
+  def putExceptions(eventId: Long, prop: Vector[ExceptionVO])
 
   def putProperties(eventId: Long, prop: Map[String, String])
 

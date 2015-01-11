@@ -30,7 +30,7 @@ class StoreAuxImpl(private[this] val sqls: StrLoader) extends JdbcSupport with E
   final val _putExceptREvent = sqls.get("Exception.putRelationEvent")
   final val _putExceptRStackTrace = sqls.get("Exception.putRelationStackTrace")
 
-  def putExceptions(eventId: Long, exceps: List[ExceptionVO]): Unit = {
+  def putExceptions(eventId: Long, exceps: Vector[ExceptionVO]): Unit = {
     val nexps = exceps.filter(!hasException(_))
 
     val newStack = List.newBuilder[StackTraceElement]

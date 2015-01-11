@@ -9,23 +9,23 @@ import java.lang.{StringBuilder => JStrBuilder}
 
 //SELECT id,time_created,level,logger,thread,caller_id,flag,message,reserved FROM `event`
 @SerialVersionUID(-8179577194579626226L)
-case class EventVO(val id: Long,
-              val timeCreated: Long,
-              val level: LogLevel,
-              val loggerName: String,
-              val threadName: String,
-              val callerStackTrace: StackTraceElement,
-              val flag: Long,
-              val message: String,
-              val reserved: Option[Long],
-              val properties: Option[Map[String, Any]],
-              val exceptions: Option[List[ExceptionVO]],
-              val tags: Option[Set[String]]) extends Serializable {
+case class EventVO(id: Long,
+                   timeCreated: Long,
+                   level: LogLevel,
+                   loggerName: String,
+                   threadName: String,
+                   callerStackTrace: StackTraceElement,
+                   flag: Long,
+                   message: String,
+                   reserved: Option[Long],
+                   properties: Option[Map[String, Any]],
+                   exceptions: Option[Vector[ExceptionVO]],
+                   tags: Option[Set[String]]) extends Serializable {
 
-  require(loggerName != null, "Logger name cannot be null")
-  require(threadName != null, "Logger name cannot be null")
-  require(message != null, "message cannot be null")
-  require(callerStackTrace != null, "caller stackTrace cannot be null")
+//  require(loggerName != null, "Logger name cannot be null")
+//  require(threadName != null, "Logger name cannot be null")
+//  require(message != null, "message cannot be null")
+//  require(callerStackTrace != null, "caller stackTrace cannot be null")
 
   def this(timeCreated: Long,
            level: LogLevel,
@@ -35,7 +35,7 @@ case class EventVO(val id: Long,
            message: String,
            reserved: Long,
            properties: Map[String, Any],
-           exceptions: List[ExceptionVO],
+           exceptions: Vector[ExceptionVO],
            markers: Set[String]) {
 
     this(-1L, timeCreated, level, loggerName,
@@ -217,7 +217,7 @@ object EventVO {
   //   |<-----  32  ----->|<-- 16 -->|<-- 16 -->|
   //          exception       tags        props
   //
-  def buildFlag(prop: Map[_, _], tags: Set[String], exceptions: List[ExceptionVO]): Long = {
+  def buildFlag(prop: Map[_, _], tags: Set[String], exceptions: Vector[ExceptionVO]): Long = {
     val sz1: Int = if (exceptions != null) exceptions.size else 0
 
     val sz11: Short = if (tags != null) tags.size.toShort else 0

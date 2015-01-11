@@ -6,13 +6,16 @@ import com.caibowen.gplume.web.annotation.Handle;
 import com.caibowen.gplume.web.annotation.ReqParam;
 import com.caibowen.prma.webface.JsonResult;
 import com.caibowen.prma.webface.SearchEngine;
+import gplume.scala.jdbc.DB;
+import scala.beans.BeanProperty;
 
 /**
  * @author BowenCai
  * @since 21/12/2014.
  */
-@Controller
+@Controller("/log")
 public class ViewLog {
+
 
 //    @Inject
     public SearchEngine engine;
@@ -21,7 +24,7 @@ public class ViewLog {
 //    public JsonResult query(HttpQuery q) {
 //        return q == null ? JsonResult.invalidParameter(): new JsonResult( new SearchEngine(null)._test());
 //    }
-    @Handle({"/log/list.json"})
+    @Handle({"/list.json"})
     public JsonResult query(HttpQuery q) {
         return q == null ? JsonResult.invalidParameter(): new JsonResult(engine.process(q));
     }
@@ -37,7 +40,7 @@ public class ViewLog {
         Long flag;
     }
 
-    @Handle({"/log/detail.json"})
+    @Handle({"/detail.json"})
     public JsonResult logDetail(DetailQuery q) {
         if (q == null || q.flag < 0) {
             return JsonResult.invalidParameter();

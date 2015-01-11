@@ -5,6 +5,7 @@ import java.util.logging.{LogRecord => JulLogRecord}
 import com.caibowen.prma.api.model.ExceptionVO
 import com.caibowen.prma.core.filter.StrFilter
 
+import scala.collection.immutable.Vector
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -20,7 +21,7 @@ class FilteredAdaptor private[this](val classFilter: StrFilter, val  stackTraceF
   private def takeStackTrace = (sp: StackTraceElement)
       => stackTraceFilter.accept(sp.getClassName) != 1
 
-  override def getExcepts(ev: JulLogRecord): List[ExceptionVO] = {
+  override def getExcepts(ev: JulLogRecord): Vector[ExceptionVO] = {
 
     val _t = ev.getThrown
     if (_t == null || !takeClass(_t))
@@ -28,23 +29,28 @@ class FilteredAdaptor private[this](val classFilter: StrFilter, val  stackTraceF
 
     val toVO = (th: Throwable, start: Int) => {
       val stps = th.getStackTrace
-      val ls = stps.take(stps.length - start).filter(takeStackTrace).toList
+      val len = stps.length - start
+      val stacks = if (len > 0)
+        stps.take(len).filter(takeStackTrace).toVector
+      else null.asInstanceOf[Vector[StackTraceElement]]
+
       new ExceptionVO(th.getClass.getName,
         th.getMessage,
-        if (ls.length == 0) null else ls)
+        stacks)
     }
 
     var cause = _t.getCause
     if (cause == null || !takeClass(cause))
-      return List(toVO(_t, 0))
+      return Vector(toVO(_t, 0))
 
-    val buf = new ArrayBuffer[ExceptionVO](16)
+    val buf =  Vector.newBuilder[ExceptionVO]
+    buf.sizeHint(16)
     buf += toVO(_t, 0)
     val cs = JulRecordAdaptor.commonFrames(_t, cause)
     do {
       buf += toVO(cause, cs)
       cause = cause.getCause
     } while (cause != null && takeClass(cause))
-    buf.toList
+    buf.result()
   }
 }

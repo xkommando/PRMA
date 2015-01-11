@@ -10,6 +10,7 @@ import com.caibowen.prma.api.model.{EventVO, ExceptionVO}
 import com.caibowen.prma.api.{EventAdaptor, LogLevel}
 import com.caibowen.prma.logger.logback.LogbackEventAdaptor
 
+import scala.collection.immutable.Vector
 import scala.collection.mutable.ArrayBuffer
 
 /**
@@ -17,7 +18,7 @@ import scala.collection.mutable.ArrayBuffer
  * @since  04/12/2014.
  */
 
-class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormatter) extends EventAdaptor[JulLogRecord] {
+class JulRecordAdaptor(private[this] val formatter: MsgFormatter = new SimpleMsgFormatter) extends EventAdaptor[JulLogRecord] {
 
   override def from(ev: JulLogRecord): EventVO = {
     val le = JulRecordAdaptor.levelMap(ev.getLevel.intValue())
@@ -25,7 +26,7 @@ class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormat
     val st = JulRecordAdaptor.getCallerST(ev)
     val msg = formatter.fmt(ev)
     val loggerName = if (ev.getLoggerName == null) "" else ev.getLoggerName
-    return new EventVO(ev.getMillis, le,
+    new EventVO(ev.getMillis, le,
       loggerName, ev.getThreadID.toString, st,
       msg,
       JulRecordAdaptor.localIP,
@@ -33,17 +34,18 @@ class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormat
       getExcepts(ev),
       null)
   }
+
   override def to(vo: EventVO): JulLogRecord = ???
 
   @Nullable
-  def getExcepts(ev: JulLogRecord): List[ExceptionVO] = {
+  def getExcepts(ev: JulLogRecord): Vector[ExceptionVO] = {
 
     @inline
     val toVO = (th: Throwable, start: Int) => {
       val stps = th.getStackTrace
       new ExceptionVO(th.getClass.getName,
         th.getMessage,
-        stps.take(stps.length - start).toList)
+        stps.take(stps.length - start).toVector)
     }
 
     val _t = ev.getThrown
@@ -52,16 +54,17 @@ class JulRecordAdaptor(private[this] val formatter: Formatter = new SimpleFormat
 
     var cause = _t.getCause
     if (cause == null)
-      return List(toVO(_t, 0))
+      return Vector(toVO(_t, 0))
 
-    val buf = new ArrayBuffer[ExceptionVO](16)
+    val buf =  Vector.newBuilder[ExceptionVO]
+    buf.sizeHint(16)
     buf += toVO(_t, 0)
     val cs = JulRecordAdaptor.commonFrames(_t, cause)
     do {
       buf += toVO(cause, cs)
       cause = cause.getCause
     } while (cause != null)
-    buf.toList
+    buf.result()
   }
 
 }
@@ -79,7 +82,6 @@ object JulRecordAdaptor {
         sts(2)
       else EventVO.NA_ST
     }
-
   }
 
   @inline
