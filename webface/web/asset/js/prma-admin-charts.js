@@ -11,9 +11,37 @@ $(".form_datetime").datetimepicker({
 $("#btn-load").click(function(){
     var minTime = $('#tq-minTime').val();
     var maxTime = $('#tq-maxTime').val();
-    $.get("testdata-charts.txt", {minTime: minTime, maxTime: maxTime})
-        .done(function (resp) {
-            var data = JSON.parse(resp).data;
+    var lowLevel = $('#tq-lowLevel').val();
+    var highLevel = $('#tq-highLevel').val();
+
+    maxTime = maxTime ? new Date(maxTime).getTime() : new Date().getTime();
+    minTime = minTime ? new Date(minTime).getTime() : maxTime - 86400000; // last day
+    lowLevel = Prma.level2Int[lowLevel];
+    highLevel = Prma.level2Int[highLevel];
+
+    if (maxTime <= minTime) {
+        alert("End time is earlier than start time");
+        $('#tq-minTime').val("");
+        $('#tq-maxTime').val("");
+        return;
+    }
+    var interval = Math.floor((maxTime - minTime) / 36); // time interval for 36 points
+    var q = {
+        "minTime": minTime
+        , "maxTime": maxTime
+        , "lowLevel": lowLevel
+        , "highLevel": highLevel
+        , "interval": interval};
+
+    //$.get("chart/statistics.json", q)
+    $.get("testdata-charts.json", q)
+        .done(function (obj) {
+            //var obj = JSON.parse(resp);
+            if (obj.code != 200) {
+                alert(obj.message);
+                return;
+            }
+            var data = obj.data;
 
             PrmaCharts.showTable(data._2);
 

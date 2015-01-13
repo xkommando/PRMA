@@ -80,18 +80,26 @@ var Prma = {
             return loggerName;
     }
 
-    , int2Level: function(num) {
-        switch (num){
-            case 0: return "ALL";
-            case 1: return "TRACE";
-            case 2: return "DEBUG";
-            case 4: return "INFO";
-            case 6: return "WARN";
-            case 8: return "ERROR";
-            case 16: return "FATAL";
-            case 32: return "OFF";
-            default : throw new RangeError("Could not find level " + num);
-        }
+    , int2Level: {
+        0: "ALL",
+        1: "TRACE",
+        2: "DEBUG",
+        4: "INFO",
+        6: "WARN",
+        8: "ERROR",
+        16: "FATAL",
+        32: "OFF"
+    }
+
+    , level2Int: {
+        "ALL" : 0,
+        "TRACE": 1,
+        "DEBUG": 2,
+        "INFO": 4,
+        "WARN": 6,
+        "ERROR": 8,
+        "FATAL": 16,
+        "OFF": 32
     }
 
 }

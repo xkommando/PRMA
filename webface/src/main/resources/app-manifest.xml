@@ -7,7 +7,7 @@
         </prop>
         <prop name="viewResolvers">
             <list>
-                <bean class="com.caibowen.prma.webface.FastJsonViewResolver"/>
+                <bean class="com.caibowen.prma.webface.JsonViewResolver"/>
             </list>
         </prop>
     </bean>

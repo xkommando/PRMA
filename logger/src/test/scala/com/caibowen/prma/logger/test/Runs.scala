@@ -22,6 +22,8 @@ class Runs {
   def t3: Unit ={
     val c1 = new C1("c1 str", 1)
     val c2 = new C2("c2 str", 2)
+    for (i <- 1 to 5)
+      println(i)
   }
 
   @Test

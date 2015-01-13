@@ -63,7 +63,12 @@ $(document).ready(function () {
             //$.get("log/detail.json", qp)
             $.get("testdata-detail.txt", qp)
                 .done(function (resp) {
-                    var data = JSON.parse(resp).data;
+                    var obj = JSON.parse(resp);
+                    if (obj.code != 200) {
+                        alert(obj.message);
+                        return;
+                    }
+                    var data = obj.data;
                     var htmlStr = PrmaLog.logDetail(data);
                     row.child(htmlStr).show();
                     tr.addClass('shown');
@@ -88,7 +93,12 @@ $('#tq-btn').click(function () {
 
     maxTime = maxTime ? new Date(maxTime).getTime() : new Date().getTime();
     minTime = minTime ? new Date(minTime).getTime() : maxTime - 3600000; // last hour
-
+    if (maxTime <= minTime) {
+        alert("End time is earlier than start time");
+        $('#tq-minTime').val("");
+        $('#tq-maxTime').val("");
+        return;
+    }
     var q = {
         "minTime": minTime,
         "maxTime": maxTime,

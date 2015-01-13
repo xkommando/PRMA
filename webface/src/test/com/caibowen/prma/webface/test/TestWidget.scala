@@ -8,7 +8,7 @@ import com.caibowen.prma.api.LogLevel
 import com.caibowen.prma.api.model.EventVO
 import com.caibowen.prma.core.filter.StrFilter
 import com.caibowen.prma.logger.logback.LogbackEventAdaptor
-import com.caibowen.prma.webface.{FastJsonViewResolver, JsonResult, SearchEngine}
+import com.caibowen.prma.webface.{JsonViewResolver, JsonResult, SearchEngine}
 import com.caibowen.prma.webface.controller.HttpQuery
 import gplume.scala.context.AppContext
 import net.liftweb.json.{DefaultFormats, Serialization}
@@ -63,7 +63,7 @@ class TestWidget {
     w.append("\r\n}").toString
   }
 
-  val resolver = new FastJsonViewResolver
+  val resolver = new JsonViewResolver
   @Test
   def testResolve: Unit ={
     val result = new JsonResult(Some(List(

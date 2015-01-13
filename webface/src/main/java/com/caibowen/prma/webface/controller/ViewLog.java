@@ -42,10 +42,10 @@ public class ViewLog {
 
     @Handle({"/detail.json"})
     public JsonResult logDetail(DetailQuery q) {
-        if (q == null || q.flag < 0) {
+        if (q == null || q.flag < 0)
             return JsonResult.invalidParameter();
-        }
-        return new JsonResult(engine.detailedEvent(q.id,q.loggerName, q.threadName, q.flag));
+        else
+            return new JsonResult(engine.detailedEvent(q.id, q.loggerName, q.threadName, q.flag));
     }
 
 }

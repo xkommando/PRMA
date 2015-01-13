@@ -2,6 +2,7 @@ package com.caibowen.prma.analyse.test
 
 import java.util.Date
 
+import com.caibowen.prma.api.LogLevel
 import com.caibowen.prma.query.{Statistician, Q}
 import com.zaxxer.hikari.HikariDataSource
 import gplume.scala.jdbc.DB
@@ -25,7 +26,7 @@ object TestQuery extends App {
 
   val db = new DB(ds)
   db.readOnlySession{implicit session=>
-    val r3 = Statistician.timelineCounter(1L, 1520727416662L)
+    val r3 = Statistician.timelineCounter(1L, 1520727416662L, LogLevel.TRACE.id, LogLevel.FATAL.id)
     if (r3 != null) {
       println(r3._1)
       println(r3._2)

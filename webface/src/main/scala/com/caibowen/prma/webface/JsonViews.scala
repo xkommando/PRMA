@@ -16,6 +16,7 @@ object JsonResult {
   val ok = new JsonResult(200, "OK")
   val invalidParameter = new JsonResult(400, "Invalid Parameter")
   val notFound = new JsonResult(404, "Not Found")
+  object NOP extends JsonResult
 }
 case class JsonResult[T](data: Option[T], code: Int, message: Option[String]) extends Serializable {
 
@@ -30,11 +31,12 @@ case class JsonResult[T](data: Option[T], code: Int, message: Option[String]) ex
   def ok = code == 200
 
 }
-class FastJsonViewResolver extends IViewResolver {
+class JsonViewResolver extends IViewResolver {
 
   override def fitness (klass: Class[_]) = if (klass eq classOf[JsonResult[_]]) 1 else -1
 
   override def resolve(ctx: RequestContext, view: Any): Unit = view match {
+    case JsonResult.NOP =>
     case jsr: JsonResult[_] =>
       ctx.response.setContentType("application/json")
       val w = ctx.response.getWriter

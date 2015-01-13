@@ -11,14 +11,16 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Statistician {
 
-  def timelineCounter(minTime: Long, maxTime: Long, interval: Long = (1000 * 60 * 30).toLong)(implicit session: DBSession):
+  def timelineCounter(minTime: Long, maxTime: Long, lowLevel: Int, highLevel: Int,  interval: Long = (1000 * 60 * 30).toLong)(implicit session: DBSession):
       (ArrayBuffer[(Int, Int, Int, Int, Int, Long)],
         Array[Int],
         Array[(String, Int)]) = {
 
     val raw3 = new SQLOperation("SELECT time_created, level, logger_id FROM `event` " +
-      " WHERE ? < time_created AND time_created < ? " +
-      " ORDER BY time_created ASC", Seq(minTime, maxTime)).array(rs=>(rs.getLong(1), rs.getInt(2), rs.getInt(3)))
+      " WHERE ? < time_created AND time_created < ? AND ? <= level AND level <= ?" +
+      " ORDER BY time_created ASC", Seq(minTime, maxTime, lowLevel, highLevel))
+      .array(rs=>(rs.getLong(1), rs.getInt(2), rs.getInt(3)))
+
     if (raw3 == null || raw3.length == 0)
       return null
 

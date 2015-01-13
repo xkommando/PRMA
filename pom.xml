@@ -43,16 +43,20 @@
     </modules>
     
     <properties>
-        <prma-version>0.1</prma-version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <java-version>1.7</java-version>
         <mvn-compile-plugin>2.3.2</mvn-compile-plugin>
         <mvn-surefire-plugin>2.18.1</mvn-surefire-plugin>
         <mvn-scala-plugin>2.15.2</mvn-scala-plugin>
         <scala-version>2.10.4</scala-version>
+
+        <prma-version>0.1</prma-version>
+
         <gp-scala-version>1.0</gp-scala-version>
         <gp-web-version>2.0</gp-web-version>
         <junit-version>4.9</junit-version>
-        <akka-version>2.3.7</akka-version>
+        <akka-version>2.3.8</akka-version>
         <slick-version>2.1.0</slick-version>
         <lift-json-version>2.5.1</lift-json-version>
         <slf4j-version>1.7.7</slf4j-version>
@@ -104,6 +108,11 @@
                 </executions>
                 <configuration>
                     <sourceDir>src/main/scala</sourceDir>
+                    <checkMultipleScalaVersions>false</checkMultipleScalaVersions>
+                    <addArgs>
+                        <arg>-deprecation</arg>
+                        <arg>-feature</arg>
+                    </addArgs>
                 </configuration>
             </plugin>
         </plugins>
