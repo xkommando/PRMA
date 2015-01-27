@@ -16,7 +16,6 @@ import scala.beans.BeanProperty;
 @Controller("/log")
 public class ViewLog {
 
-
 //    @Inject
     public SearchEngine engine;
 
@@ -25,8 +24,9 @@ public class ViewLog {
 //        return q == null ? JsonResult.invalidParameter(): new JsonResult( new SearchEngine(null)._test());
 //    }
     @Handle({"/list.json"})
-    public JsonResult query(HttpQuery q) {
-        return q == null ? JsonResult.invalidParameter(): new JsonResult(engine.process(q));
+    public JsonResult query(HttpQuery q, RequestContext ctx) {
+        scala.collection.Seq ls = q == null ? engine.listSimple(ctx.getStrParam("p-sql")) : engine.process(q);
+        return ls == null ? JsonResult.invalidParameter() : new JsonResult(ls);
     }
 
     class DetailQuery {

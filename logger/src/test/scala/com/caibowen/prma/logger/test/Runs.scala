@@ -16,14 +16,38 @@ object Runs{
 }
 case class  C1(s: String, i: Int)
 class C2(val s: String, val i: Int)
+class CC3(private var _s: Int){
+  def s: Int = _s
+  def s_=(i: Int): Unit = {
+    println("setter")
+    _s = i
+  }
+}
+class Person(private var _name: String) {
+  def name = _name                             // accessor
+  def name_=(aName: String) {
+    println("setter")
+    _name = aName
+  }  // mutator
+}
 class Runs {
 
   @Test
-  def t3: Unit ={
-    val c1 = new C1("c1 str", 1)
-    val c2 = new C2("c2 str", 2)
-    for (i <- 1 to 5)
-      println(i)
+  def t3: Unit = {
+
+    val ss = new CC3(6)
+    ss.s = 5
+    val p = new Person("Jonathan")
+    p.name = "Jony"    // setter
+    println(p.name)    // getter
+//    import StrictMath._
+//    println(log(8) + log(2))
+//    println(log(16))
+//
+//    val c1 = new C1("c1 str", 1)
+//    val c2 = new C2("c2 str", 2)
+//    for (i <- 1 to 5)
+//      println(i)
   }
 
   @Test

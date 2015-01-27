@@ -20,7 +20,7 @@ class JsonLayout[E](adaptor: EventAdaptor[E]) extends LayoutBase[E] {
   super.setFileHeader("{\"prmaLogEntries\":[\r\n")
   super.setPresentationHeader(null)
 
-  override def doLayout(event: E): String = adaptor.from(event).appendJson(new StringBuilder(512)).toString
+  override def doLayout(event: E): String = adaptor.from(event).prettyJson(new StringBuilder(512)).toString
 
   super.setPresentationFooter("\r\n")
   super.setFileFooter("] }")

@@ -2,6 +2,7 @@ package com.caibowen.prma.query
 
 import com.caibowen.prma.api.LogLevel
 import gplume.scala.jdbc.{DBSession, SQLOperation}
+import gplume.scala.jdbc.SQLAux._
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
@@ -11,15 +12,19 @@ import scala.collection.mutable.ArrayBuffer
  */
 object Statistician {
 
-  def timelineCounter(minTime: Long, maxTime: Long, lowLevel: Int, highLevel: Int,  interval: Long = (1000 * 60 * 30).toLong)(implicit session: DBSession):
+
+  def timelineCounter(minTime: Long, maxTime: Long,
+                      lowLevel: Int, highLevel: Int,
+                      interval: Long = (1000 * 60 * 30).toLong)
+                     (implicit session: DBSession):
       (ArrayBuffer[(Int, Int, Int, Int, Int, Long)],
         Array[Int],
         Array[(String, Int)]) = {
 
     val raw3 = new SQLOperation("SELECT time_created, level, logger_id FROM `event` " +
-      " WHERE ? < time_created AND time_created < ? AND ? <= level AND level <= ?" +
-      " ORDER BY time_created ASC", Seq(minTime, maxTime, lowLevel, highLevel))
-      .array(rs=>(rs.getLong(1), rs.getInt(2), rs.getInt(3)))
+      " WHERE ? < time_created AND time_created < ? AND ? <= level AND level <= ? " +
+      " ORDER BY time_created ASC").bind(minTime, maxTime, lowLevel, highLevel)
+      .array(rs => (rs.getLong(1), rs.getInt(2), rs.getInt(3)))
 
     if (raw3 == null || raw3.length == 0)
       return null
@@ -56,17 +61,16 @@ object Statistician {
       }
       // 3
       val lgId = t3._3
-      val e = _loggerCount.get(lgId)
-      if (e.isEmpty)
-        _loggerCount.put(lgId, 1)
-      else
-        _loggerCount.put(lgId, e.get + 1)
+      _loggerCount.put(lgId, _loggerCount.getOrElse(lgId, 0) + 1)
 
       ab
     })
 
     // Array ("logger", count)
-    val loggerCount = _loggerCount.map(t=>(Q.logggerNameByID(t._1).getOrElse("Undefined"), t._2)).toArray.sortWith(_._2 < _._2)
+    val loggerCount = _loggerCount.map(t=>(Q.logggerNameByID(t._1).getOrElse("Undefined"), t._2))
+                      .toArray.sortWith(_._2 < _._2)
+                      .take(36)
+
     (timeLine, levelCounts, loggerCount)
   }
 

@@ -16,12 +16,12 @@ $("#tq-only-except").bootstrapSwitch();
 
 
 // cached data
-var logTable = $('#prma-log-table');
-
+var logTableElem = $('#prma-log-table');
+var dtable = {};
 $(document).ready(function () {
 
     //var dtable = logTable.dataTable();
-    var dtable = logTable.DataTable(PrmaLog.dtableOptions);
+    dtable = logTableElem.DataTable(PrmaLog.dtableOptions);
     dtable.on( 'draw', function () {
         $('.dt-level').each(function (i, e) {
             switch (e.innerHTML){
@@ -55,15 +55,16 @@ $(document).ready(function () {
         }
         else {
             // Open this row
-            var evId = row.data().id;
-            var evLoggerN = row.data().loggerName;
-            var evthreadN = row.data().threadName;
-            var evFlag = row.data().flag;
+            var data = row.data();
+            var evId = data.id;
+            var evLoggerN = data.loggerName;
+            var evthreadN = data.threadName;
+            var evFlag = data.flag;
             var qp = {id: evId, flag: evFlag, loggerName: evLoggerN, threadName: evthreadN}
             //$.get("log/detail.json", qp)
             $.get("testdata-detail.txt", qp)
                 .done(function (resp) {
-                    var obj = JSON.parse(resp);
+                    var obj = JSON.parse(resp); // -------------
                     if (obj.code != 200) {
                         alert(obj.message);
                         return;
@@ -81,43 +82,49 @@ $(document).ready(function () {
 });
 
 $('#tq-btn').click(function () {
-    var minTime = $('#tq-minTime').val();
-    var maxTime = $('#tq-maxTime').val();
-    var llevel = $('#tq-llevel').val();
-    var hlevel = $('#tq-hlevel').val();
-    var lgName = $('#tq-logger').val();
-    var threadName = $('#tq-thread').val();
-    var msg = $('#tq-msg').val();
-    var exceptOnly = $("#tq-only-except").prop("checked");
-    var msgFuzzyQ = $("#tq-msg-fuzzy").prop("checked");
+    var psql = $("#log-p-sql").val();
+    var query = "";
+    if (psql && psql.length > 0) {
+        query = "p-sql=" + encodeURIComponent(psql);
+    } else {
+        var minTime = $('#tq-minTime').val();
+        var maxTime = $('#tq-maxTime').val();
+        var llevel = $('#tq-llevel').val();
+        var hlevel = $('#tq-hlevel').val();
+        var lgName = $('#tq-logger').val();
+        var threadName = $('#tq-thread').val();
+        var msg = $('#tq-msg').val();
+        var exceptOnly = $("#tq-only-except").prop("checked");
+        var msgFuzzyQ = $("#tq-msg-fuzzy").prop("checked");
 
-    maxTime = maxTime ? new Date(maxTime).getTime() : new Date().getTime();
-    minTime = minTime ? new Date(minTime).getTime() : maxTime - 3600000; // last hour
-    if (maxTime <= minTime) {
-        alert("End time is earlier than start time");
-        $('#tq-minTime').val("");
-        $('#tq-maxTime').val("");
-        return;
+        maxTime = maxTime ? new Date(maxTime).getTime() : new Date().getTime();
+        minTime = minTime ? new Date(minTime).getTime() : maxTime - 3600000; // last hour
+        if (maxTime <= minTime) {
+            alert("End time is earlier than start time");
+            $('#tq-minTime').val("");
+            $('#tq-maxTime').val("");
+            return;
+        }
+        query = {
+            "minTime": minTime,
+            "maxTime": maxTime,
+            "lowLevel": llevel,
+            "highLevel": hlevel,
+            "exceptionOnly": exceptOnly
+        };
+        if (lgName)
+            query["loggerName"] = lgName;
+        if (threadName)
+            query["threadName"] = threadName;
+        if (msg) {
+            query["message"] = msg;
+            query["fuzzyQuery"] = msgFuzzyQ;
+        }
+        query = Prma.encodeQueryData(query);
+        console.log(query);
     }
-    var q = {
-        "minTime": minTime,
-        "maxTime": maxTime,
-        "lowLevel": llevel,
-        "highLevel": hlevel,
-        "exceptionOnly": exceptOnly
-    };
 
-    if (lgName)
-        q["loggerName"] = lgName;
-    if (threadName)
-        q["threadName"] = threadName;
-    if (msg) {
-        q["message"] = msg;
-        q["fuzzyQuery"] = msgFuzzyQ;
-    }
-    q = Prma.encodeQueryData(q);
-    console.log(q);
-    logTable.api().ajax.url("log/list.json?" + q).load();
+    dtable.ajax.url("log/list.json?" + query).load();
     //$.get( "http://localhost:63342/PRMA/webface/src/main/webapp", q)
     //    .done(function( data ) {
     //        alert( "Data Loaded: " + data );
@@ -221,6 +228,8 @@ var PrmaLog = {
         return '<table class="table">'
             +'    <tbody>'
             +'        <tr>'
+            +'            <td> <label> ID: </label> ' + data.id
+            +'            </td>'
             +'            <td> <label> Caller: </label> ' + callerStr
             +'            </td>'
             +'            <td> Reserved: <span class="badge">' + data.reserved + '</span>'

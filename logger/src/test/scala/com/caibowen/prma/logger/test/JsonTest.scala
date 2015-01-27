@@ -51,7 +51,7 @@ class JsonTest {
 //    println(ex1 == ex2)
 
     //
-    val jss = vo.appendJson(new StringBuilder(1024)).toString
+    val jss = vo.appendJson(new StringBuilder(1024), false).toString
     println(jss)
     val voo = JSON.readEventVO(jss)
     println(voo.equals(vo))
@@ -102,9 +102,9 @@ class JsonTest {
     val js2 = pretty(render(decompose(new XJ())))
     println(js2)
 
-    val ss = Helper.quote(new XJ().map("key"))(new java.lang.StringBuilder).toString
-    println(ss)
-    println(Helper.unquote(ss))
+//    val ss = Helper.appendQuote(new XJ().map("key"))(new java.lang.StringBuilder).toString
+//    println(ss)
+//    println(Helper.unquote(ss))
 
   }
 

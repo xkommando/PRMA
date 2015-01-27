@@ -5,14 +5,20 @@ import java.lang.{StringBuilder => JStrBuilder}
 /**
  * Created by Bowen Cai on 1/9/2015.
  */
-object Helper {
+private[model] object Helper {
 
-  def hashCombine(obj1: AnyRef, obj2: AnyRef): Long = {
+  @inline def hashCombine(obj1: AnyRef, obj2: AnyRef): Long = {
     val h1 = obj1.hashCode.toLong
     val h2 = obj1.hashCode.toLong
     (h1 << 32) | (h2 & 0xFFFFFFFFL)
   }
 
+  @inline def add(a: Short, b: Short) = (a.toInt << 16) | (b.toInt & 0xFFFF)
+  @inline def add(a: Int, b: Int) = (a.toLong << 32) | (b.toLong & 0xFFFFFFFFL)
+  @inline def part1(c: Long) = (c >> 32).toInt
+  @inline def part2(c: Long) = c.toInt
+  @inline def part1(c: Int) = (c >> 16).toShort
+  @inline def part2(c: Int) = c.toShort
 
   @inline
   def prettyStackTraceJson(st: StackTraceElement)(implicit json: JStrBuilder): JStrBuilder =
@@ -28,7 +34,7 @@ object Helper {
       .append("\",\"line\":").append(st.getLineNumber).append("}")
 
 
-  def quote(s: String)(implicit b: JStrBuilder): JStrBuilder = {
+  def appendQuote(s: String)(implicit b: JStrBuilder): JStrBuilder = {
     for (i <- 0 until s.length) {
       s.charAt(i) match {
         case '"' =>  b append '\\' append '\"'

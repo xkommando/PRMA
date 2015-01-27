@@ -9,6 +9,9 @@ import com.caibowen.prma.query.Q
 import com.caibowen.prma.webface.controller.HttpQuery
 import gplume.scala.jdbc.{DB, SQLOperation}
 import gplume.scala.jdbc.SQLAux.quoteTo
+
+import scala.util.Try
+
 /**
  * @author BowenCai
  * @since  21/12/2014.
@@ -19,7 +22,7 @@ class SearchEngine(db: DB) {
   def process(q: HttpQuery): Seq[EventVO] = {
 
     implicit val b = new StringBuilder(512)
-      .append(" time_created > ").append(q.minTime)
+      .append("WHERE time_created > ").append(q.minTime)
       .append(" AND time_created < ").append(q.maxTime)
       .append(" AND level > ").append(LogLevel.from(q.lowLevel))
       .append(" AND level < ").append(LogLevel.from(q.highLevel))
@@ -73,26 +76,29 @@ class SearchEngine(db: DB) {
    * @param filterStr
    * @return a simple list of eventVO, i.e., no exceptions, tags or properties
    */
-  private def listSimple(filterStr: String): Seq[EventVO] = {
+  def listSimple(filterStr: String): Seq[EventVO] = {
 
     implicit val b = new StringBuilder(512,
       """ SELECT EV.id,EV.time_created,EV.level,EV.logger_id,EV.thread_id,EV.flag,EV.message,EV.reserved,
     SK.file,SK.class,SK.function,SK.line
    FROM `event` AS EV
    INNER JOIN `stack_trace` AS SK ON SK.id = EV.caller_id
-WHERE """)
+      """)
     .append(filterStr)
 
-    db readOnlySession{implicit session =>
-      new SQLOperation(b.toString, null).array(eventVOCol)
+    val r = Try {
+      db readOnlySession { implicit session =>
+        new SQLOperation(b.toString, null).array(eventVOCol)
+      }
     }
+    if (r.isFailure) null else r.get
   }
 
   def detailedEvent(eventID: Long, threadID: Int, loggerID: Int, flag: Long): EventVO =
     db.readOnlySession{implicit session=>
       val loggerName = Q.logggerNameByID(loggerID).getOrElse("Undefined")
       val threadName = Q.threadNameByID(threadID).getOrElse("Undefined")
-//      val threadName = Q.threadNameByID()
+//      val caller = Q.stackTraceByID()
       val tags = if (EventVO.hasTags(flag)) Some(Q.tagsByEventID(eventID)) else None
       val props = if (EventVO.hasProperties(flag)) Some(Q.propsByEventID(eventID)) else None
       val excepts = if (EventVO.hasExceptions(flag)) Some(Q.exceptByEventID(eventID)) else None

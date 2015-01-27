@@ -1,6 +1,7 @@
 package com.caibowen.prma.logger.test
 
-import java.io.IOException
+import java.io.{WriteAbortedException, FileNotFoundException, IOException}
+import java.util.concurrent.atomic.{AtomicLong, AtomicInteger}
 import java.util.regex.Pattern
 import javax.sql.DataSource
 
@@ -14,6 +15,8 @@ import com.caibowen.prma.logger.logback.{FilteredAdaptor, LogbackEventAdaptor}
 import org.junit.Test
 import org.slf4j._
 
+import scala.util.Random
+
 /**
  * @author BowenCai
  * @since  06/12/2014.
@@ -21,27 +24,59 @@ import org.slf4j._
 object LogBackTest {
 
   val LOG: Logger = LoggerFactory.getLogger(classOf[LogBackTest])
+  val counter = new AtomicLong(0)
+  val rand = new Random()
+  val fadapt = new LogbackEventAdaptor
+
   def gen = {
 
-    val exp = new RuntimeException("msg level 3", new IOException("msg level 2"))//, new FileNotFoundException("msg level 1")))
+    val exp0 = new FileNotFoundException("msg level 0")
+    val exp1 = new WriteAbortedException("msg level 1", exp0)
+    val exp2 = new IOException("msg level 2", exp1)
+    val exp3 = new RuntimeException("msg level 3", exp2)
+    val exps = Array(
+      exp0,
+      exp1,
+      exp1,
+      exp1,
+      null,
+      null,
+      null,
+      null,
+      exp1,
+      null,
+      null,
+      null,
+      exp2,
+      null,
+      exp3,
+      null
+    )
 
-    val mk1 = MarkerFactory.getMarker("marker 1")
-    val mk2 = MarkerFactory.getMarker("marker 2")
-    mk1.add(mk2)
     val mdc1: String = "test mdc 1"
     MDC.put(mdc1, "hahaha")
     MDC.put("test mdc 2", "hahaha222")
     MDC.put("test mdc 3", "wowowo")
-    //    MDC.clear()
-    val lbEvent = new LoggingEvent("fmt scala logging store test",
+    if (rand.nextBoolean())
+        MDC.clear()
+
+    val eex = exps(rand.nextInt(5))
+    val id = counter.getAndIncrement
+    val lbEvent = new LoggingEvent("fmt scala logging store test " + id,
       LOG.asInstanceOf[ch.qos.logback.classic.Logger],
       Level.DEBUG,
-      "scala logging store test", exp, null)
-    lbEvent.setMarker(mk1)
-    val _filter = AppContext.beanAssembler.getBean("classNameFilter").asInstanceOf[StrFilter]
+      id +  "scala logging store test", null, null)
 
-    val fadapt = new LogbackEventAdaptor
-    fadapt.from(lbEvent)
+
+    val mk1 = MarkerFactory.getMarker("marker 1")
+    val mk2 = MarkerFactory.getMarker("marker 2")
+    mk1.add(mk2)
+    if (rand.nextBoolean())
+      lbEvent.setMarker(mk1)
+//    val _filter = AppContext.beanAssembler.getBean("classNameFilter").asInstanceOf[StrFilter]
+
+    val vo = fadapt.from(lbEvent)
+    vo.copy(id = id)
   }
 }
 class LogBackTest extends BuildContext {

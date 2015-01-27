@@ -8,7 +8,7 @@ $(".form_datetime").datetimepicker({
     minuteStep: 1,
     autoclose: true
 });
-$("#btn-load").click(function(){
+$("#btn-load").click(function() {
     var minTime = $('#tq-minTime').val();
     var maxTime = $('#tq-maxTime').val();
     var lowLevel = $('#tq-lowLevel').val();
@@ -25,7 +25,7 @@ $("#btn-load").click(function(){
         $('#tq-maxTime').val("");
         return;
     }
-    var interval = Math.floor((maxTime - minTime) / 36); // time interval for 36 points
+    var interval = Math.floor((maxTime - minTime) / 48); // time interval for 48 points
     var q = {
         "minTime": minTime
         , "maxTime": maxTime
@@ -74,7 +74,11 @@ var PrmaCharts = {
             ,xkey: "x"
             ,ykeys: names
             ,labels:names
-            ,parseTime: false // ------------------ fnd a better way to parse time
+            ,parseTime: false // ------------------ find a better way to parse time
+            //,xLabelFormat: function(milli) {
+            //    console.log(milli);
+            //    return new Date(milli).toString()
+            //}
         }
     }
 
@@ -97,7 +101,7 @@ var PrmaCharts = {
             var raw = arr[i];
             var one = {
                 name: raw._1,
-                count: raw._2
+                count: parseInt(raw._2)
             };
             loggerArr.push(one);
         }

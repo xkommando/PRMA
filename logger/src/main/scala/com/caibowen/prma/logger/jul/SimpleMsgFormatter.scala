@@ -21,7 +21,7 @@ class SimpleMsgFormatter extends MsgFormatter {
 
   @inline
   override def fmt (record: LogRecord): String ={
-    val params = record getParameters
+    val params = record.getParameters()
     val msg = record.getMessage // stupid compiler
     if (needFmt(msg)) {
       MessageFormat.format(msg, params:_*)

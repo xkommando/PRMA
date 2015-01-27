@@ -13,7 +13,7 @@ class JsonFormatter(adaptor: EventAdaptor[LogRecord]) extends Formatter {
   override def getHead(h: Handler) = "{\"prmaLogEntries\":[\r\n"
 
   override def format (record: LogRecord): String
-  = adaptor.from(record).appendJson(new StringBuilder(512)).append("\r\n").toString
+  = adaptor.from(record).appendJson(new StringBuilder(512), false).append("\r\n").toString
 
   override def getTail (h: Handler) = "] }"
 }

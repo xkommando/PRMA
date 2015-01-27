@@ -10,10 +10,10 @@ import com.caibowen.gplume.web.annotation.ReqParam;
  */
 public class HttpQuery {
 
-    @ReqParam(required=true, defaultVal = "0")
+    @ReqParam(required=true)
     public long minTime;
 
-    @ReqParam(required=true, defaultVal = "9223372036854775807")
+    @ReqParam(required=true)
     public long maxTime;
 
     @ReqParam(required=true, defaultVal = "DEBUG") // DEBUG
@@ -31,7 +31,7 @@ public class HttpQuery {
     @ReqParam
     public String message;
 
-    @ReqParam(required = true, defaultVal = "false")
+    @ReqParam(required = true)
     public boolean fuzzyQuery;
 
     @ReqParam(required = true, defaultVal = "false")

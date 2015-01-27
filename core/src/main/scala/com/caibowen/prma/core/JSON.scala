@@ -81,9 +81,9 @@ object JSON {
     extractExcept(ast)
   }
 
-  private[this] def extractInt(idx: Int)(implicit ls: List[JValue]): Int = (ls(idx).asInstanceOf[JField].value.asInstanceOf[JInt]).num.toInt
-  private[this] def extractLong(idx: Int)(implicit ls: List[JValue]): Long = (ls(idx).asInstanceOf[JField].value.asInstanceOf[JInt]).num.toLong
-  private[this] def extractStr(idx: Int)(implicit ls: List[JValue]): String = (ls(idx).asInstanceOf[JField].value.asInstanceOf[JString]).values
+  private[this] def extractInt(idx: Int)(implicit ls: List[JValue]): Int = ls(idx).asInstanceOf[JField].value.asInstanceOf[JInt].num.toInt
+  private[this] def extractLong(idx: Int)(implicit ls: List[JValue]): Long = ls(idx).asInstanceOf[JField].value.asInstanceOf[JInt].num.toLong
+  private[this] def extractStr(idx: Int)(implicit ls: List[JValue]): String = ls(idx).asInstanceOf[JField].value.asInstanceOf[JString].values
 
   private[this] def extractST(jo: JObject): StackTraceElement = {
     implicit val ls = jo.obj

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
 
 <head>
 
@@ -9,12 +9,6 @@
     <meta name="description" content="">
     <meta name="author" content="Cai Bowen">
 
-    <meta http-equiv="cache-control" content="max-age=0" />
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="expires" content="0" />
-    <meta http-equiv="expires" content="Tue, 01 Jan 1980 1:00:00 GMT" />
-    <meta http-equiv="pragma" content="no-cache" />
-
     <title>PRMA Admin</title>
 
     <link href="asset/css/bootstrap.min.css" rel="stylesheet">
@@ -22,10 +16,15 @@
     <link href="asset/css/dataTables.bootstrap.css" rel="stylesheet">
     <link href="asset/font-awesome-4.2.0/css/font-awesome.min.css" rel="stylesheet">
 
-    <link href="asset/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-    <link href="asset/css/bootstrap-switch.min.css" rel="stylesheet">
-
     <link href="asset/css/prma-webface.css" rel="stylesheet">
+
+    <style type="text/css">
+        #log-timeline{
+            display: block;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
 
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -55,7 +54,7 @@
             <!-- /.dropdown -->
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-bell fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-bell fa-fw"></i>  <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-alerts">
                     <li>
@@ -81,7 +80,7 @@
             </li>
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-envelope fa-fw"></i>  <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-messages">
                     <li>
@@ -102,13 +101,12 @@
                             <i class="fa fa-angle-right"></i>
                         </a>
                     </li>
-                </ul>
-                <!-- /.dropdown-messages -->
+                </ul><!-- /.dropdown-messages -->
             </li>
             <!-- /.dropdown -->
             <li class="dropdown">
                 <a class="dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+                    <i class="fa fa-user fa-fw"></i>  <i class="fa fa-caret-down"></i>
                 </a>
                 <ul class="dropdown-menu dropdown-user">
                     <li><a href="login.html"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
@@ -136,13 +134,13 @@
                         <a href="notifications.html"><i class="fa fa-bell fa-fw"></i> Notifications</a>
                     </li>
                     <li>
-                        <a  class="active" href="logs.html"><i class="fa fa-file-text fa-fw"></i> Logs</a>
+                        <a href="logs.html"><i class="fa fa-file-text fa-fw"></i> Logs</a>
                     </li>
                     <li>
                         <a href="charts.html"><i class="fa fa-area-chart fa-fw"></i> Charts </a>
                     </li>
                     <li>
-                        <a href="inspect.html"><i class="fa fa-bug fa-fw"></i> Inspect </a>
+                        <a class="active" href="inspect.html"><i class="fa fa-bug fa-fw"></i> Inspect </a>
                     </li>
                 </ul>
             </div>
@@ -152,45 +150,39 @@
     </nav>
 
     <div id="page-wrapper">
-
         <div class="row">
-            <div class="col-lg-12  top-buffer">
-                <div><i class="fa fa-database"></i> Query DB</div>
-                <table class="table borderless t-query top-buffer">
-                    <tbody>
-                    <tr>
-                        <td><label class="pull-right">
-                            Start Time:
-                        </label>
-                        </td>
-                        <td class="col-lg-2">
+            <div class="col-lg-12">
+                <h1 class="page-header"> Inspect </h1>
+            </div>
+            <!-- /.col-lg-12 -->
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="col-lg-5">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label for="tq-minTime" class="col-sm-3 control-label">Start Time</label>
                             <div class="input-group input-group-sm">
                                 <input size="16" type="text" class="form_datetime form-control" id="tq-minTime">
                                             <span class="input-group-addon">
                                             <i class="glyphicon glyphicon-time"></i>
                                             </span>
                             </div>
-                        </td>
-                        <td><label class="pull-right">
-                            End Time:
-                        </label>
-                        </td>
-                        <td class="col-lg-2">
+                        </div>
+                        <div class="form-group">
+                            <label for="tq-maxTime" class="col-sm-3 control-label">End Time</label>
                             <div class="input-group input-group-sm">
                                 <input size="16" type="text" class="form_datetime form-control" id="tq-maxTime">
                                             <span class="input-group-addon">
                                             <i class="glyphicon glyphicon-time"></i>
                                             </span>
                             </div>
-                        </td>
-                        <td>
-                            <label class="pull-right">
-                                Lower Level:
-                            </label>
-                        </td>
-                        <td class="col-lg-1">
-                            <div class="input-group-sm">
-                                <select class="form-control" id="tq-llevel">
+                        </div>
+                        <div class="form-group">
+                            <label for="tq-lowLevel" class="col-sm-3 control-label">Lower Level</label>
+                            <div class="input-group input-group-sm">
+                                <select class="form-control" id="tq-lowLevel">
                                     <option>TRACE</option>
                                     <option>DEBUG</option>
                                     <option>INFO</option>
@@ -199,15 +191,11 @@
                                     <option>FATAL</option>
                                 </select>
                             </div>
-                        </td>
-                        <td>
-                            <label class="pull-right">
-                                Higher Level:
-                            </label>
-                        </td>
-                        <td class="col-lg-1">
-                            <div class="input-group-sm">
-                                <select class="form-control" id="tq-hlevel">
+                        </div>
+                        <div class="form-group">
+                            <label for="tq-highLevel" class="col-sm-3 control-label">Higher Level</label>
+                            <div class="input-group input-group-sm">
+                                <select class="form-control" id="tq-highLevel">
                                     <option>FATAL</option>
                                     <option>ERROR</option>
                                     <option>WARN</option>
@@ -216,120 +204,42 @@
                                     <option>TRACE</option>
                                 </select>
                             </div>
-                        </td>
-                        <td>
-                            <label class="pull-right">Exception Only</label>
-                        </td>
-                        <td class="col-lg-1">
-                                <span class="col-lg-3">
-                                    <input type="checkbox" id="tq-only-except" data-size="mini">
-                                </span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                <table class="table borderless t-query top-buffer">
-                    <tbody>
-                    <tr>
-                        <td>
-                            <label class="pull-right">
-                                Logger:
-                            </label>
-                        </td>
-                        <td class="col-lg-2">
-                            <input type="text" class="form-control column_filter" id="tq-logger">
-                        </td>
-                        <td>
-                            <label class="pull-right">
-                                Thread:
-                            </label>
-                        </td>
-                        <td class="col-lg-1">
-                            <input type="text" class="form-control column_filter" id="tq-thread">
-                        </td>
-                        <td>
-                            <label class="pull-right">
-                                Message:
-                            </label>
-                        </td>
-                        <td class="col-lg-4">
-                            <input type="text" class="form-control column_filter" id="tq-msg">
-                        </td>
-                        <td class="col-lg-2">
-                            <label class="pull-right">Fuzzy Search</label>
-                        </td>
-                        <td class="col-lg-1">
-                                <span class="col-lg-3">
-                                    <input type="checkbox" checked="true" id="tq-msg-fuzzy" data-size="mini">
-                                </span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
-
-                    <div class="form-group clearfix">
-                        <div class="col-lg-12">
-                            <label>Custom query:</label>
-
-                            <p><label> SELECT </label> EV.id, EV.time_created, EV.level, EV.logger_id, EV.thread_id, EV.flag, EV.message, EV.reserved,</p>
-                               <p>&nbsp;&nbsp;&nbsp;&nbsp; SK.file, SK.class, SK.function, SK.line</p>
-                                <p><label>FROM</label> `event` <label>AS</label> EV</p>
-                                <p><label>INNER JOIN</label> `stack_trace` <label>AS</label> SK <label>ON</label> SK.id = EV.caller_id</p>
                         </div>
-                        <div class="col-lg-10 col-lg-push-1">
-                            <textarea class="top-buffer form-control" id="log-p-sql" placeholder="WHERE"></textarea>
-                            <!--<input type="text" class="top-buffer form-control" id="log-p-sql" placeholder="WHERE">-->
+                        <div class="form-group top-buffer">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="button" class="btn btn-primary" id="btn-load">
+                                    <i class="fa fa-refresh"></i>&nbsp;&nbsp;Load Logs
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    </form>
+                    <hr>
+                    <table class="table" id="table-entropy5">
+                        <!-- will be filled with JS -->
+                    </table>
 
-                <div class="text-center top-buffer clearfix">
-                    <button type="button" class="btn btn-primary" id="tq-btn">
-                        <i class="fa fa-refresh"></i>&nbsp;&nbsp; Load Logs
-                    </button>
-                    <div class="top-buffer"></div>
                 </div>
-
-                <hr/>
+                <div class="col-lg-7">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Entropys
+                        </div>
+                        <!-- /.panel-heading -->
+                        <div class="panel-body">
+                            <div id="log-entropy5"></div>
+                        </div>
+                        <!-- /.panel-body -->
+                    </div>
+                    <!-- /.panel -->
+                </div>
             </div>
-            <div class="col-lg-11 top-buffer">
-
-                <div><i class="fa fa-file-text"></i> Query Page</div>
-                <div class="top-buffer"></div>
-                <table class="table table-striped table-bordered" id="prma-log-table">
-                    <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Level</th>
-                        <th>Location</th>
-                        <th>Message</th>
-                        <th>Thread</th>
-                        <th>Detail</th>
-                    </tr>
-                    </thead>
-                </table>
-                <!-- /.panel -->
-            </div>
-            <!-- /.col-lg-12 -->
+            <!-- /.col-lg-6 -->
+            <hr>
         </div>
         <!-- /.row -->
+    </div> <!--page wrapper -->
 
-        <hr/>
-    </div>
-    <!-- /#page-wrapper -->
-    <footer>
-        <div class="text-center center-block">
-            <p><i class="fa fa-copyright"></i> <label> 2014-2015 Cai Bowen </label>&nbsp;
-                <a href="https://github.com/xKommando/PRMA" target="_blank">
-                    <i class="fa fa-github"></i>
-                </a>
-            </p>
-        </div>
-    </footer>
 </div>
-
-
-
 <!-- /#wrapper -->
 <a id="back-to-top" href="#"
    class="btn btn-default btn-lg back-to-top text-3d" role="button"
@@ -340,14 +250,15 @@
 
 <script src="asset/js/jquery.min.js"></script>
 <script src="asset/js/bootstrap.min.js"></script>
-<script src="asset/js/metisMenu.min.js"></script>
-<script src="asset/js/jquery.dataTables.js"></script>
-<script src="asset/js/dataTables.bootstrap.js"></script>
+
 <script src="asset/js/bootstrap-datetimepicker.min.js"></script>
-<script src="asset/js/bootstrap-switch.min.js"></script>
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-more.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
 
 <script src="asset/js/prma-admin.js"></script>
-<script src="asset/js/prma-admin-logs.js"></script>
+<script src="asset/js/prma-admin-inspect.js"></script>
 
 </body>
 

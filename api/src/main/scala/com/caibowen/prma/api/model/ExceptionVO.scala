@@ -15,20 +15,20 @@ case class ExceptionVO(id: Long,
 
   def this(eN: String, eMsg: String, sts: Vector[StackTraceElement]) {
     this(Helper.hashCombine(eN, eMsg), eN,
-      if (eMsg == null) None else Some(eMsg),
-      if(sts == null) None else Some(sts)
+      Option(eMsg),
+      Option(sts)
     )
   }
 
   override def hashCode(): Int = {
     var result =  (id ^ (id >>> 32)).toInt
-    result = 31 * result + name.hashCode
+    result = 31 * result + name.hashCode()
     result = if (message.isEmpty)
               31 * result
-            else 31 * result + message.hashCode
+            else 31 * result + message.hashCode()
     result = if (stackTraces.isEmpty)
               31 * result
-            else 31 * result + stackTraces.hashCode
+            else 31 * result + stackTraces.hashCode()
     result
   }
 
@@ -36,11 +36,13 @@ case class ExceptionVO(id: Long,
     val extra = 100 + (if (stackTraces.isDefined) stackTraces.get.size * 128 else 0)
     json.ensureCapacity(json.capacity + extra)
 
+    import Helper.appendQuote
+
     json.append("{\r\n  \"id\":").append(id)
       .append(",\r\n  \"name\":\"").append(name).append("\"")
     if (message.isDefined)
       json.append(",\r\n  \"message\":\"")
-      Helper.quote(message.get)
+      appendQuote(message.get)
         .append('\"')
 
     if (stackTraces.isDefined && stackTraces.get.size > 0) {
@@ -52,15 +54,20 @@ case class ExceptionVO(id: Long,
     json.append('}')
   }
 
-  def appendJson(implicit json: JStrBuilder): JStrBuilder = {
+  def appendJson(implicit json: JStrBuilder, prettyPrint: Boolean): JStrBuilder = {
+    if (prettyPrint)
+      return prettyJson(json)
+
     val extra = 100 + (if (stackTraces.isDefined) stackTraces.get.size * 128 else 0)
-    json.ensureCapacity(json.capacity + extra)
+    json.ensureCapacity(json.length() + extra)
+
+    import Helper.appendQuote
 
     json.append("{\"id\":").append(id)
       .append(",\"name\":\"").append(name).append("\"")
     if (message.isDefined) {
       json.append(",\"message\":\"")
-      Helper.quote(message.get)
+      appendQuote(message.get)
         .append('\"')
     }
     if (stackTraces.isDefined && stackTraces.get.size > 0) {
@@ -74,14 +81,12 @@ case class ExceptionVO(id: Long,
   override def toString: String = prettyJson(new JStrBuilder(256)).toString
 
   override def equals(obj: scala.Any): Boolean = obj match {
-    case that: ExceptionVO => {
+    case that: ExceptionVO =>
       if (this eq that)
         return true
 
       if (id != that.id) return false
-
       if (!(name == that.name)) return false
-
       val om = that.message
       if (message.isEmpty) {
         if (om.isDefined) return false
@@ -95,9 +100,7 @@ case class ExceptionVO(id: Long,
       } else {
         if (oss.isEmpty || !(stackTraces.get == oss.get)) return false
       }
-
       true
-  }
     case _ => false
   }
 }
