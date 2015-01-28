@@ -154,7 +154,7 @@
     <div id="page-wrapper">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header"> Charts </h1>
+                <h1 class="page-header"> Statistics </h1>
             </div>
             <!-- /.col-lg-12 -->
         </div>
@@ -166,6 +166,7 @@
                     <form class="form-horizontal">
                         <div class="form-group">
                             <label for="tq-minTime" class="col-sm-3 control-label">Start Time</label>
+
                             <div class="input-group input-group-sm">
                                 <input size="16" type="text" class="form_datetime form-control" id="tq-minTime">
                                             <span class="input-group-addon">
@@ -175,6 +176,7 @@
                         </div>
                         <div class="form-group">
                             <label for="tq-maxTime" class="col-sm-3 control-label">End Time</label>
+
                             <div class="input-group input-group-sm">
                                 <input size="16" type="text" class="form_datetime form-control" id="tq-maxTime">
                                             <span class="input-group-addon">
@@ -182,37 +184,43 @@
                                             </span>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="tq-lowLevel" class="col-sm-3 control-label">Lower Level</label>
-                            <div class="input-group input-group-sm">
-                                <select class="form-control" id="tq-lowLevel">
-                                    <option>TRACE</option>
-                                    <option>DEBUG</option>
-                                    <option>INFO</option>
-                                    <option>WARN</option>
-                                    <option>ERROR</option>
-                                    <option>FATAL</option>
-                                </select>
+                        <div class="col-lg-8">
+                            <div class="form-group">
+                                <label for="tq-lowLevel" class="col-lg-5 control-label">Lower Level</label>
+
+                                <div class="input-group input-group-sm">
+                                    <select class="form-control" id="tq-lowLevel">
+                                        <option>TRACE</option>
+                                        <option>DEBUG</option>
+                                        <option>INFO</option>
+                                        <option>WARN</option>
+                                        <option>ERROR</option>
+                                        <option>FATAL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="tq-highLevel" class="col-lg-5 control-label">Higher Level</label>
+
+                                <div class="input-group input-group-sm">
+                                    <select class="form-control" id="tq-highLevel">
+                                        <option>FATAL</option>
+                                        <option>ERROR</option>
+                                        <option>WARN</option>
+                                        <option>INFO</option>
+                                        <option>DEBUG</option>
+                                        <option>TRACE</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="tq-highLevel" class="col-sm-3 control-label">Higher Level</label>
-                            <div class="input-group input-group-sm">
-                                <select class="form-control" id="tq-highLevel">
-                                    <option>FATAL</option>
-                                    <option>ERROR</option>
-                                    <option>WARN</option>
-                                    <option>INFO</option>
-                                    <option>DEBUG</option>
-                                    <option>TRACE</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group top-buffer">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <button type="button" class="btn btn-primary" id="btn-load">
-                                    <i class="fa fa-refresh"></i>&nbsp;&nbsp;Load Logs
-                                </button>
+                        <div class="col-lg-4">
+                            <div class="form-group top-buffer">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-primary" id="btn-load">
+                                        <i class="fa fa-refresh"></i>&nbsp;&nbsp;Load Logs
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -253,18 +261,16 @@
             </div>
 
             <hr>
-            <div class="col-lg-12 top-buffer">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        Logger Count
-                    </div>
-                    <!-- /.panel-heading -->
-                    <div class="panel-body">
-                        <div id="log-logger-count"></div>
-                    </div>
-                    <!-- /.panel-body -->
-                </div>
-                <!-- /.panel -->
+            <div class="col-lg-11 top-buffer">
+                <div id="log-logger-count"></div>
+            </div>
+            <hr>
+            <div class="col-lg-11 top-buffer">
+                <div id="log-logger-heat"></div>
+            </div>
+            <hr>
+            <div class="col-lg-11 top-buffer">
+                <div id="log-exception-count"></div>
             </div>
             <!-- /.col-lg-6 -->
 
@@ -289,6 +295,10 @@
 
 <script src="asset/js/raphael-min.js"></script>
 <script src="asset/js/morris.min.js"></script>
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/modules/heatmap.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
 
 <script src="asset/js/prma-admin.js"></script>
 <script src="asset/js/prma-admin-charts.js"></script>

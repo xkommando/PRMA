@@ -272,14 +272,11 @@
                         <div class="col-lg-12">
                             <label>Custom query:</label>
 
-                            <p><label> SELECT </label> EV.id, EV.time_created, EV.level, EV.logger_id, EV.thread_id, EV.flag, EV.message, EV.reserved,</p>
-                               <p>&nbsp;&nbsp;&nbsp;&nbsp; SK.file, SK.class, SK.function, SK.line</p>
-                                <p><label>FROM</label> `event` <label>AS</label> EV</p>
-                                <p><label>INNER JOIN</label> `stack_trace` <label>AS</label> SK <label>ON</label> SK.id = EV.caller_id</p>
+                            <p><label> SELECT </label> EVT.id, EVT.time_created, EVT.level, EVT.logger_id, EVT.thread_id, EVT.flag, EVT.message, EVT.reserved, CALLER.file, CALLER.class, CALLER.function, CALLER.line </p>
+                                <p><label>FROM</label> `event` <label>AS</label> EVT <label>INNER JOIN</label> `stack_trace` <label>AS</label> CALLER <label>ON</label> CALLER.id = EVT.caller_id</p>
                         </div>
-                        <div class="col-lg-10 col-lg-push-1">
-                            <textarea class="top-buffer form-control" id="log-p-sql" placeholder="WHERE"></textarea>
-                            <!--<input type="text" class="top-buffer form-control" id="log-p-sql" placeholder="WHERE">-->
+                        <div class="col-lg-8">
+                            <textarea class="top-buffer form-control" id="log-p-sql" rows="2" placeholder="WHERE"></textarea>
                         </div>
                     </div>
 
@@ -311,6 +308,10 @@
                 <!-- /.panel -->
             </div>
             <!-- /.col-lg-12 -->
+
+            <div class="col-lg-11"  >
+                <div id="log-3d-axis"></div>
+            </div>
         </div>
         <!-- /.row -->
 
@@ -345,6 +346,11 @@
 <script src="asset/js/dataTables.bootstrap.js"></script>
 <script src="asset/js/bootstrap-datetimepicker.min.js"></script>
 <script src="asset/js/bootstrap-switch.min.js"></script>
+
+
+<script src="http://code.highcharts.com/highcharts.js"></script>
+<script src="http://code.highcharts.com/highcharts-3d.js"></script>
+<script src="http://code.highcharts.com/modules/exporting.js"></script>
 
 <script src="asset/js/prma-admin.js"></script>
 <script src="asset/js/prma-admin-logs.js"></script>

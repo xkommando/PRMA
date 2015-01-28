@@ -43,11 +43,17 @@ $("#btn-load").click(function() {
             }
             var data = obj.data;
 
+            Morris.Line(PrmaCharts.timeline(data._1));
             PrmaCharts.showTable(data._2);
 
-            Morris.Line(PrmaCharts.timeline(data._1));
             Morris.Donut(PrmaCharts.levelCount(data._2));
-            Morris.Bar(PrmaCharts.loggerCount(data._3));
+
+            $('#log-logger-count').highcharts(PrmaCharts.loggerCount(data._3));
+            $('#log-logger-heat').highcharts(PrmaCharts.loggerLevelHeatMap(data._3));
+
+            $('#log-exception-count').highcharts(PrmaCharts.exceptCount(data._4));
+
+            //Morris.Bar(PrmaCharts.loggerCount(data._3));
         });
 });
 
@@ -96,23 +102,236 @@ var PrmaCharts = {
     }
 
     , loggerCount: function(arr) {
-        var loggerArr = [];
-        for (var i = 0; i < arr.length; i++) {
+        //{
+        //    "_1": "logger1",
+        //    "_2": [10, 20, 30, 40, 199, 299]
+        //},
+
+        var loggerNameArr = [];
+
+        var traceCounts = [];
+        var infoCounts = [];
+        var debugCounts = [];
+        var warnCounts = [];
+        var errorCounts = [];
+
+        for(var i = 0; i < arr.length; i++) {
             var raw = arr[i];
-            var one = {
-                name: raw._1,
-                count: parseInt(raw._2)
-            };
-            loggerArr.push(one);
+
+            var counts = raw._2;
+            var loggerName = raw._1 + ' (' + counts[5] + ')';
+            //var logCounts = counts.slice(0, 5);
+
+            loggerNameArr.push(loggerName);
+
+            traceCounts.push(counts[0]);
+            infoCounts.push(counts[1]);
+            debugCounts.push(counts[2]);
+            warnCounts.push(counts[3]);
+            errorCounts.push(counts[4]);
         }
         return {
-            element: "log-logger-count"
-            ,data: loggerArr
-            ,xkey: "name"
-            ,ykeys:["count"]
-            ,labels:["Logger Name"]
-        };
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Log counts by different loggers'
+            },
+            xAxis: {
+                categories: loggerNameArr,
+                    title: {
+                    text: "Highest " + arr.length + " Loggers (descending order)"
+                }
+            },
+            yAxis: {
+                min: 0,
+                    title: {
+                    text: 'count',
+                        align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'top',
+                    x: -40,
+                    y: 100,
+                    floating: true,
+                    borderWidth: 1,
+                    //backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                    shadow: true
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'error',
+                data: errorCounts
+            }, {
+                name: 'warn',
+                data: warnCounts
+            }, {
+                name: 'info',
+                data: infoCounts
+            }, {
+                name: 'debug',
+                data: debugCounts
+            },{
+                name: 'trace',
+                data: traceCounts
+            }]
+        }
     }
+
+    , exceptCount: function(arr) {
+        //{
+        //    "_1": "java.lang.RuntimeException",
+        //    "_2": 999
+        //},
+        var exceptNameArr = [];
+        var exceptCountArr = [];
+
+        for(var i = 0; i < arr.length; i++) {
+            var raw = arr[i];
+            exceptNameArr.push(raw._1);
+            exceptCountArr.push(raw._2);
+        }
+
+        return {
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Exception count'
+            },
+            xAxis: {
+                categories: exceptNameArr,
+                title: {
+                    text: "Hottest " + arr.length + " Exceptions (descending order)"
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'count',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            legend: {
+                layout: 'vertical',
+                align: 'right',
+                verticalAlign: 'top',
+                x: -40,
+                y: 100,
+                floating: true,
+                borderWidth: 1,
+                //backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+                shadow: true
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'count',
+                data: exceptCountArr
+            }]
+        }
+    }
+
+    , loggerLevelHeatMap: function (arr) {
+        var coordData = [];
+        var loggerNames = [];
+        for (var i = 0; i < arr.length; i++) {
+            var raw = arr[i];
+            loggerNames.push(raw._1);
+            var counts = raw._2;
+            coordData.push([0, i, counts[0]]);
+            coordData.push([1, i, counts[1]]);
+            coordData.push([2, i, counts[2]]);
+            coordData.push([3, i, counts[3]]);
+            coordData.push([4, i, counts[4]]);
+            coordData.push([5, i, counts[5]]);
+        }
+        return {
+            chart: {
+                type: 'heatmap',
+                marginTop: 40,
+                marginBottom: 40
+            },
+            title: {
+                text: 'Logs per logger per level'
+            },
+            xAxis: {
+                categories: ['trace', 'debug', 'info', 'warn', 'error', 'total']
+            },
+            yAxis: {
+                categories:  loggerNames,
+                reversed: true,
+                title: null
+            },
+            colorAxis: {
+                min: 0,
+                minColor: '#FFFFFF',
+                maxColor: Highcharts.getOptions().colors[0]
+            },
+
+            legend: {
+                align: 'right',
+                layout: 'vertical',
+                margin: 0,
+                verticalAlign: 'top',
+                y: 25,
+                symbolHeight: 320
+            },
+
+            tooltip: {
+                formatter: function () {
+                    return '<b>' + this.series.xAxis.categories[this.point.x] + '</b> logged <br><b>' +
+                        this.point.value + '</b> event on <br><b>' + this.series.yAxis.categories[this.point.y] + '</b>';
+                }
+            },
+
+            series: [{
+                name: 'logs per logger',
+                borderWidth: 1,
+                data: coordData,
+                dataLabels: {
+                    enabled: true,
+                    color: 'black',
+                    style: {
+                        textShadow: 'none',
+                        HcTextStroke: null
+                    }
+                }
+            }]
+
+        };
+
+    }
+    //, loggerCount: function(arr) {
+    //    var loggerArr = [];
+    //    for (var i = 0; i < arr.length; i++) {
+    //        var raw = arr[i];
+    //        var one = {
+    //            name: raw._1,
+    //            count: parseInt(raw._2)
+    //        };
+    //        loggerArr.push(one);
+    //    }
+    //    return {
+    //        element: "log-logger-count"
+    //        ,data: loggerArr
+    //        ,xkey: "name"
+    //        ,ykeys:["count"]
+    //        ,labels:["Logger Name"]
+    //    };
+    //}
 
     , showTable: function(arr) {
         var sum = arr.reduce(function(pv, cv) { return pv + cv; }, 0);

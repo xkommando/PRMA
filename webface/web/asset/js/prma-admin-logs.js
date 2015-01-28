@@ -125,6 +125,7 @@ $('#tq-btn').click(function () {
     }
 
     dtable.ajax.url("log/list.json?" + query).load();
+
     //$.get( "http://localhost:63342/PRMA/webface/src/main/webapp", q)
     //    .done(function( data ) {
     //        alert( "Data Loaded: " + data );
@@ -175,7 +176,6 @@ var PrmaLog = {
         //responsive: true,
         //"jQueryUI": true
     }
-
 
     , logDetail: function(data) {
         var callerStr = Prma.fmtStackTrace(data.callerStackTrace);
@@ -253,4 +253,27 @@ var PrmaLog = {
             +'    </tbody>'
             +'</table>';
     }
-}
+
+
+    , update3D: function() {
+        var oTable = document.getElementById('prma-log-table');
+
+//gets rows of table
+        var rowLength = oTable.rows.length;
+
+//loops through rows, skip first one(<thread>)
+        for (var i = 1; i < rowLength; i++){
+
+            //gets cells of current row
+            var oCells = oTable.rows.item(i).cells;
+
+            //gets amount of cells of current row
+            var cellLength = oCells.length;
+            for(var j = 0; j < cellLength; j++) {
+                var cellVal = oCells.item(j).innerHTML;
+                console.log(i + '  ' + j + '  ' + cellVal);
+            }
+        }
+    }
+};
+PrmaLog.update3D();

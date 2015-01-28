@@ -46,10 +46,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <java-version>1.7</java-version>
+        <scala-version>2.10.4</scala-version>
         <mvn-compile-plugin>2.3.2</mvn-compile-plugin>
         <mvn-surefire-plugin>2.18.1</mvn-surefire-plugin>
         <mvn-scala-plugin>2.15.2</mvn-scala-plugin>
-        <scala-version>2.10.4</scala-version>
 
         <prma-version>0.1</prma-version>
 

@@ -31,12 +31,14 @@ class ViewCharts {
       interval == null || interval > (maxTime - minTime))
       JsonResult.invalidParameter
     else {
+//      new JsonResult(
+//        database.readOnlySession{implicit session=>
+//          Statistician.timelineCounter(minTime, maxTime, lowLevel, highLevel, interval))
+
       ctx.renderAsStatic()
       JsonResult.NOP
     }
-//      new JsonResult(
-//      database.readOnlySession{implicit session=>
-//      Statistician.timelineCounter(minTime, maxTime, lowLevel, highLevel, interval)
+
 //    })
   }
 }

@@ -53,24 +53,97 @@
     "_3": [
       {
         "_1": "logger1",
-        "_2": 99
+        "_2": [
+          10,
+          200,
+          30,
+          40,
+          19,
+          299
+        ]
       },
       {
         "_1": "logger scala",
+        "_2": [
+          40,
+          30,
+          20,
+          10,
+          99,
+          199
+        ]
+      },
+      {
+        "_1": "logger 2 ",
+        "_2": [
+          1,
+          2,
+          3,
+          4,
+          65,
+          75
+        ]
+      },
+      {
+        "_1": "logger333 ",
+        "_2": [
+          4,
+          3,
+          2,
+          1,
+          49,
+          59
+        ]
+      },
+      {
+        "_1": "logger android RedMi",
+        "_2": [
+          5,
+          5,
+          5,
+          5,
+          25,
+          45
+        ]
+      }
+    ],
+    "_4": [
+      {
+        "_1": "java.lang.RuntimeException",
+        "_2": 999
+      },
+      {
+        "_1": "java.io.IOException",
         "_2": 199
       },
       {
-        "_1": "logger2",
-        "_2": 15
+        "_1": "java.nio.file.AccessDeniedException",
+        "_2": 150
       },
       {
-        "_1": "logger333",
-        "_2": 599
+        "_1": "java.nio.file.FileSystemException",
+        "_2": 149
       },
-       {
-        "_1": "logger android RedMi",
+      {
+        "_1": "com.sun.javaws.exceptions.BadMimeTypeResponseException",
+        "_2": 145
+      },
+      {
+        "_1": "com.sun.javaws.exceptions.DownloadException",
+        "_2": 105
+      },
+      {
+        "_1": "com.sun.javaws.exceptions.",
+        "_2": 89
+      },
+      {
+        "_1": "com.sun.javaws.exceptions.JNLPException",
         "_2": 45
-       }
+      },
+      {
+        "_1": "java.net.JNLPException.SocketException",
+        "_2": 5
+      }
     ]
   }
 }
