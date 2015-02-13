@@ -10,18 +10,25 @@ import scala.collection.mutable.ArrayBuffer
 /**
  * Created by Bowen Cai on 1/14/2015.
  */
-object Entropy {
-  //                id   time reserved(IP), thread, logger, caller, msg
-  type LogEntry = (Long, Long, Long, Int, Int, Int, String)
+object Inspect {
+  //                id   time reserved(IP), thread, logger, caller, flag, msg
+  type LogEntry = (Long, Long, Long, Int, Int, Int, Long, String)
   type LogArray = Array[LogEntry]
 
 //  ipE, threadE, loggerE, callerE, timeE
   type Entropy5 = (Double, Double, Double, Double, Double)
 
   val SELECT =
-    """SELECT EV.id, EV.time_created, EV.reserved, EV.thread_id, EV.logger_id, EV.caller_id, EV.msg,
+    """SELECT EV.id, EV.time_created, EV.reserved, EV.thread_id, EV.logger_id, EV.caller_id, EV.flag, EV.message
       FROM `event` as EV """
-  val col = (rs:ResultSet) => (rs.getLong(1), rs.getLong(2), rs.getLong(3), rs.getInt(4), rs.getInt(5), rs.getInt(6),  rs.getString(7))
+  val col = (rs:ResultSet) => (rs.getLong(1),
+                              rs.getLong(2),
+                              rs.getLong(3),
+                              rs.getInt(4),
+                              rs.getInt(5),
+                              rs.getInt(6),
+                              rs.getLong(7),
+                              rs.getString(8))
 
   def t(minTime: Long, maxTime: Long)
        (implicit session: DBSession): Entropy5 = {
@@ -57,7 +64,7 @@ object Entropy {
 
     //                id   time reserved(IP), thread, logger, caller, msg
 //    type LogEntry = (Long, Long, Long, Int, Int, Int, String)
-    arr.foreach(va=>{
+    arr.foreach(va=> {
       val ip = va._3
       ipGrp.put(ip, ipGrp.getOrElse(ip, 0) + 1)
 
@@ -80,6 +87,7 @@ object Entropy {
     val callerE = entropy(count, callerGrp.valuesIterator)
     val threadE = entropy(count, threadGrp.valuesIterator)
     val loggerE = entropy(count, loggerGrp.valuesIterator)
+
     val timeE = entropy(timeGrp.size, timeGrp.valuesIterator)
 
     (ipE, threadE, loggerE, callerE, timeE)

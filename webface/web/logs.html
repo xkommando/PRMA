@@ -268,17 +268,35 @@
                     </tbody>
                 </table>
 
-                    <div class="form-group clearfix">
-                        <div class="col-lg-12">
-                            <label>Custom query:</label>
+                <div class="panel-group" id="accordion1" role="tablist" aria-multiselectable="true">
+                    <div class="panel-heading" role="tab">
+                        <a data-toggle="collapse" data-parent="#accordion1" href="#collapse11" aria-expanded="true"
+                           aria-controls="collapse11">
+                            <button type="button" class="btn btn-info btn-sm">
+                                <i class="fa fa-code"></i> Custom query <i class="fa fa-code"></i>
+                            </button>
+                        </a>
+                    </div>
+                    <div id="collapse11" class="panel-collapse collapse out" role="tabpanel"
+                         aria-labelledby="headingOne">
+                        <div class="panel-body form-group">
+                            <div class="col-lg-12">
+                                <p><label> SELECT </label> EVT.id, EVT.time_created, EVT.level, EVT.logger_id,
+                                    EVT.thread_id, EVT.flag, EVT.message, EVT.reserved, CALLER.file, CALLER.class,
+                                    CALLER.function, CALLER.line </p>
 
-                            <p><label> SELECT </label> EVT.id, EVT.time_created, EVT.level, EVT.logger_id, EVT.thread_id, EVT.flag, EVT.message, EVT.reserved, CALLER.file, CALLER.class, CALLER.function, CALLER.line </p>
-                                <p><label>FROM</label> `event` <label>AS</label> EVT <label>INNER JOIN</label> `stack_trace` <label>AS</label> CALLER <label>ON</label> CALLER.id = EVT.caller_id</p>
-                        </div>
-                        <div class="col-lg-8">
-                            <textarea class="top-buffer form-control" id="log-p-sql" rows="2" placeholder="WHERE"></textarea>
+                                <p><label>FROM</label> `event` <label>AS</label> EVT <label>INNER JOIN</label>
+                                    `stack_trace` <label>AS</label> CALLER <label>ON</label> CALLER.id = EVT.caller_id
+                                </p>
+                            </div>
+                            <div class="col-lg-8">
+                                <textarea class="top-buffer form-control" id="log-p-sql" rows="2"
+                                          placeholder="WHERE"></textarea>
+                            </div>
                         </div>
                     </div>
+                </div>
+
 
                 <div class="text-center top-buffer clearfix">
                     <button type="button" class="btn btn-primary" id="tq-btn">

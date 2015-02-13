@@ -160,59 +160,113 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="col-lg-5">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label for="tq-minTime" class="col-sm-3 control-label">Start Time</label>
-                            <div class="input-group input-group-sm">
-                                <input size="16" type="text" class="form_datetime form-control" id="tq-minTime">
+
+                    <div class="panel-group" id="accordion1" role="tablist" aria-multiselectable="true">
+                        <div class="panel-heading" role="tab">
+                            <a data-toggle="collapse" data-parent="#accordion1" href="#collapse11" aria-expanded="true"
+                               aria-controls="collapse11">Time Period
+                            </a>
+                        </div>
+                        <div id="collapse11" class="panel-collapse collapse in" role="tabpanel"
+                             aria-labelledby="headingOne">
+                            <div class="panel-body form-group">
+
+                                <form class="form-horizontal">
+                                    <div class="form-group">
+                                        <label for="ins1-minTime" class="col-sm-3 control-label">Start Time</label>
+                                        <div class="input-group input-group-sm">
+                                            <input size="16" type="text" class="form_datetime form-control" id="ins1-minTime">
                                             <span class="input-group-addon">
                                             <i class="glyphicon glyphicon-time"></i>
                                             </span>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="tq-maxTime" class="col-sm-3 control-label">End Time</label>
-                            <div class="input-group input-group-sm">
-                                <input size="16" type="text" class="form_datetime form-control" id="tq-maxTime">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ins1-maxTime" class="col-sm-3 control-label">End Time</label>
+                                        <div class="input-group input-group-sm">
+                                            <input size="16" type="text" class="form_datetime form-control" id="ins1-maxTime">
                                             <span class="input-group-addon">
                                             <i class="glyphicon glyphicon-time"></i>
                                             </span>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ins1-lowLevel" class="col-sm-3 control-label">Lower Level</label>
+                                        <div class="input-group input-group-sm">
+                                            <select class="form-control" id="ins1-lowLevel">
+                                                <option>TRACE</option>
+                                                <option>DEBUG</option>
+                                                <option>INFO</option>
+                                                <option>WARN</option>
+                                                <option>ERROR</option>
+                                                <option>FATAL</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ins1-highLevel" class="col-sm-3 control-label">Higher Level</label>
+                                        <div class="input-group input-group-sm">
+                                            <select class="form-control" id="ins1-highLevel">
+                                                <option>FATAL</option>
+                                                <option>ERROR</option>
+                                                <option>WARN</option>
+                                                <option>INFO</option>
+                                                <option>DEBUG</option>
+                                                <option>TRACE</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="tq-lowLevel" class="col-sm-3 control-label">Lower Level</label>
-                            <div class="input-group input-group-sm">
-                                <select class="form-control" id="tq-lowLevel">
-                                    <option>TRACE</option>
-                                    <option>DEBUG</option>
-                                    <option>INFO</option>
-                                    <option>WARN</option>
-                                    <option>ERROR</option>
-                                    <option>FATAL</option>
-                                </select>
+
+                        <div class="panel-heading" role="tab">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion1" href="#collapse12"
+                               aria-expanded="false" aria-controls="collapse12">
+                                Exception
+                            </a>
+                        </div>
+                        <div id="collapse12" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingThree">
+                            <div class="panel-body">
+                                <input class="form-control" id="ins2-except" placeholder="exception name">
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="tq-highLevel" class="col-sm-3 control-label">Higher Level</label>
-                            <div class="input-group input-group-sm">
-                                <select class="form-control" id="tq-highLevel">
-                                    <option>FATAL</option>
-                                    <option>ERROR</option>
-                                    <option>WARN</option>
-                                    <option>INFO</option>
-                                    <option>DEBUG</option>
-                                    <option>TRACE</option>
-                                </select>
+
+                        <div class="panel-heading" role="tab">
+                            <a class="collapsed" data-toggle="collapse" data-parent="#accordion1" href="#collapse13"
+                               aria-expanded="false" aria-controls="collapse13">
+                                Custom query
+                            </a>
+                        </div>
+                        <div id="collapse13" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="headingThree">
+                            <div class="panel-body form-group">
+                                <div class="col-lg-12">
+                                    <p><label> SELECT </label> EVT.id, EVT.time_created, EVT.level, EVT.logger_id,
+                                        EVT.thread_id, EVT.flag, EVT.message, EVT.reserved, CALLER.file, CALLER.class,
+                                        CALLER.function, CALLER.line </p>
+
+                                    <p><label>FROM</label> `event` <label>AS</label> EVT <label>INNER JOIN</label>
+                                        `stack_trace` <label>AS</label> CALLER <label>ON</label> CALLER.id = EVT.caller_id
+                                    </p>
+                                </div>
+                                <div class="col-lg-12">
+                                <textarea class="top-buffer form-control" id="ins3-sql" rows="3"
+                                          placeholder="WHERE"></textarea>
+                                </div>
                             </div>
                         </div>
-                        <div class="form-group top-buffer">
-                            <div class="col-sm-offset-2 col-sm-10">
-                                <button type="button" class="btn btn-primary" id="btn-load">
-                                    <i class="fa fa-refresh"></i>&nbsp;&nbsp;Load Logs
-                                </button>
-                            </div>
+                    </div>
+
+
+                    <div class="form-group top-buffer">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="button" class="btn btn-primary" id="btn-load">
+                                <i class="fa fa-refresh"></i>&nbsp;&nbsp;Load Logs
+                            </button>
                         </div>
-                    </form>
+                    </div>
                     <hr>
                     <table class="table" id="table-entropy5">
                         <!-- will be filled with JS -->

@@ -88,7 +88,7 @@ class SearchEngine(db: DB) {
 
     val r = Try {
       db readOnlySession { implicit session =>
-        new SQLOperation(b.toString, null).array(eventVOCol)
+        new SQLOperation(b.toString).array(eventVOCol)
       }
     }
     if (r.isFailure) null else r.get

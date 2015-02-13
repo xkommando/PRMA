@@ -5,7 +5,7 @@
 
 
 $(function () {
-    $('#side-menu').metisMenu();
+    //$('#side-menu').metisMenu();
     $(window).bind("load resize", function () {
         var topOffset = 50;
         var width = (this.window.innerWidth > 0) ? this.window.innerWidth : this.screen.width;
@@ -64,10 +64,11 @@ var Prma = {
         return ret.join("&");
     }
 // MyClass => mash(MyClass.java:9)
+//    (file.java:9) MyClass->mash
     , fmtStackTrace: function (stackTrace) {
         var line = stackTrace["line"];
         if (line && line != -1)
-            return stackTrace.className + " => " + stackTrace["function"] + "(" + stackTrace.file + ":" + stackTrace["line"] + ")";
+            return "(" + stackTrace.file + ":" + stackTrace["line"] + ")" + stackTrace.className + " -> " + stackTrace["function"];
         else
             return "Undefined";
     }
@@ -75,7 +76,7 @@ var Prma = {
     , fmtLocation: function(stackTrace, loggerName) {
         var line = stackTrace["line"];
         if (line && line != -1)
-            return stackTrace.className + " => " + stackTrace["function"] + "(" + stackTrace.file + ":" + stackTrace["line"] + ")";
+            return "(" + stackTrace.file + ":" + stackTrace["line"] + ")" + stackTrace.className + " -> " + stackTrace["function"];
         else
             return loggerName;
     }

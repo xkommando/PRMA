@@ -22,6 +22,9 @@ $(document).ready(function () {
 
     //var dtable = logTable.dataTable();
     dtable = logTableElem.DataTable(PrmaLog.dtableOptions);
+
+    setTimeout(PrmaLog.update3D, 1000);
+
     dtable.on( 'draw', function () {
         $('.dt-level').each(function (i, e) {
             switch (e.innerHTML){
@@ -42,7 +45,6 @@ $(document).ready(function () {
         });
     } );
 
-    console.log("fk10");
     // Add event listener for opening and closing details
     $('#prma-log-table tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
@@ -74,6 +76,7 @@ $(document).ready(function () {
                     row.child(htmlStr).show();
                     tr.addClass('shown');
                 });
+            setTimeout(PrmaLog.update3D, 1000);
         }
     } );
 
@@ -198,12 +201,14 @@ var PrmaLog = {
 
         var exceptStr = "<tr>";
         if (data.exceptions) {
+
             var exceptions = data.exceptions;
             var _lsExcept = [];
 
             for (var i = 0; i < exceptions.length; i++) {
                 var except = exceptions[i];
-                var head = '<td><label class="label label-danger">' + except.name + '</label><hr/><label class="label label-info">' + except.message + '</label></td>';
+
+                var head = '<td> <a href="/inspect/except?ins2Except=' + encodeURI(except.name)  + '" target="_blank">' + except.name + '</a><hr/><label class="label label-info">' + except.message + '</label></td>';
 
                 var stacks = "<td style='text-decoration: underline;'>";
                 if (except.stackTraces) {
@@ -255,25 +260,145 @@ var PrmaLog = {
     }
 
 
-    , update3D: function() {
-        var oTable = document.getElementById('prma-log-table');
+    , update3D: function () {
 
-//gets rows of table
+        var dotCoords = [];
+        var _locSet = {};
+        var _locCount = 0;
+
+        var oTable = document.getElementById('prma-log-table');
+        //gets rows of table
         var rowLength = oTable.rows.length;
 
+        var timeOff = new Date(oTable.rows.item(1).cells.item(0).innerHTML).getTime() / 1000 - 0.05;
+        var _timeLimit = new Date(oTable.rows.item(rowLength - 1).cells.item(0).innerHTML).getTime() / 1000;
+        var interval = (_timeLimit - timeOff) / 10;
 //loops through rows, skip first one(<thread>)
-        for (var i = 1; i < rowLength; i++){
+        for (var i = 1; i < rowLength; i++) {
 
             //gets cells of current row
             var oCells = oTable.rows.item(i).cells;
 
-            //gets amount of cells of current row
-            var cellLength = oCells.length;
-            for(var j = 0; j < cellLength; j++) {
-                var cellVal = oCells.item(j).innerHTML;
-                console.log(i + '  ' + j + '  ' + cellVal);
+            var time = (new Date(oCells.item(0).innerHTML).getTime() / 1000 - timeOff) / interval;
+            var level = Prma.level2Int[oCells.item(1).innerHTML];
+            var _loc = oCells.item(2).innerHTML;
+            var loc = _locSet[_loc];
+
+
+            if (!loc) {
+                loc = _locCount;
+                _locSet[_loc] = loc;
+                _locCount = _locCount + 1;
             }
+            dotCoords.push([time, level, loc]);
+            console.log(oCells.item(0).innerHTML + "   " + oCells.item(1).innerHTML + "    " + oCells.item(2).innerHTML);
+            console.log(time + "   " + level + "   " + loc)
         }
+
+        // Give the points a 3D feel by adding a radial gradient
+        Highcharts.getOptions().colors = $.map(Highcharts.getOptions().colors, function (color) {
+            return {
+                radialGradient: {
+                    cx: 0.4,
+                    cy: 0.3,
+                    r: 0.5
+                },
+                stops: [
+                    [0, color],
+                    [1, Highcharts.Color(color).brighten(-0.2).get('rgb')]
+                ]
+            };
+        });
+
+// Set up the chart
+        var chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'log-3d-axis',
+                margin: 80,
+                type: 'scatter',
+                options3d: {
+                    enabled: true,
+                    alpha: 10,
+                    beta: 30,
+                    depth: 250,
+                    viewDistance: 5,
+
+                    frame: {
+                        bottom: {size: 1, color: 'rgba(0,0,0,0.02)'},
+                        back: {size: 1, color: 'rgba(0,0,0,0.04)'},
+                        side: {size: 1, color: 'rgba(0,0,0,0.06)'}
+                    }
+                }
+            },
+            title: {
+                text: ''
+            },
+            plotOptions: {
+                scatter: {
+                    width: 10,
+                    height: 10,
+                    depth: 10
+                }
+            },
+            yAxis: {
+                min: 0,
+                max: 10,
+                title: "level"
+            },
+            xAxis: {
+                min: 0,
+                max: 10,
+                gridLineWidth: 1,
+                title: "time"
+            },
+            zAxis: {
+                min: 0,
+                max: 10,
+                title: "logger"
+            },
+            legend: {
+                enabled: false
+            },
+            series: [{
+                name: 'Reading',
+                colorByPoint: true,
+                data: dotCoords
+            }]
+        });
+
+// Add mouse events for rotation
+        $(chart.container).bind('mousedown.hc touchstart.hc', function (e) {
+            e = chart.pointer.normalize(e);
+
+            var posX = e.pageX,
+                posY = e.pageY,
+                alpha = chart.options.chart.options3d.alpha,
+                beta = chart.options.chart.options3d.beta,
+                newAlpha,
+                newBeta,
+                sensitivity = 3; // lower is more sensitive
+
+            $(document).bind({
+                'mousemove.hc touchdrag.hc': function (e) {
+                    // Run beta
+                    newBeta = beta + (posX - e.pageX) / sensitivity;
+                    newBeta = Math.min(100, Math.max(-100, newBeta));
+                    chart.options.chart.options3d.beta = newBeta;
+
+                    // Run alpha
+                    newAlpha = alpha + (e.pageY - posY) / sensitivity;
+                    newAlpha = Math.min(100, Math.max(-100, newAlpha));
+                    chart.options.chart.options3d.alpha = newAlpha;
+
+                    chart.redraw(false);
+                },
+                'mouseup touchend': function () {
+                    $(document).unbind('.hc');
+                }
+            });
+        });
+
+
+
     }
 };
-PrmaLog.update3D();

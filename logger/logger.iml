@@ -15,22 +15,19 @@
     <orderEntry type="module" module-name="api" />
     <orderEntry type="module" module-name="core" />
     <orderEntry type="library" name="Maven: net.liftweb:lift-json_2.10:2.5.1" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scalap:2.10.0" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-compiler:2.10.0" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-reflect:2.10.0" level="project" />
     <orderEntry type="library" name="Maven: com.thoughtworks.paranamer:paranamer:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.caibowen.gplumeframework:gplume-scala:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.caibowen.gplumeframework:gplume:2.5" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.7" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-core:1.1.2" level="project" />
     <orderEntry type="library" name="Maven: ch.qos.logback:logback-classic:1.1.2" level="project" />
-    <orderEntry type="library" name="Maven: org.msgpack:msgpack-scala_2.10:0.6.11" level="project" />
-    <orderEntry type="library" name="Maven: org.msgpack:msgpack:0.6.11" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.json-simple:json-simple:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scalap:2.10.4" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scala-compiler:2.10.4" level="project" />
-    <orderEntry type="library" name="Maven: org.scala-lang:scala-reflect:2.10.4" level="project" />
     <orderEntry type="module" module-name="monitor" scope="TEST" />
     <orderEntry type="library" scope="TEST" name="Maven: mysql:mysql-connector-java:5.1.33" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.zaxxer:HikariCP-java6:2.1.0" level="project" />
-    <orderEntry type="library" name="Maven: org.javassist:javassist:3.18.1-GA" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.18.1-GA" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-actor_2.10:2.3.8" level="project" />

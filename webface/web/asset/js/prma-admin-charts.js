@@ -34,9 +34,9 @@ $("#btn-load").click(function() {
         , "interval": interval};
 
     //$.get("chart/statistics.json", q)
-    $.get("testdata-charts.json", q)
-        .done(function (obj) {
-            //var obj = JSON.parse(resp);
+    $.get("testdata-charts.txt", q)
+        .done(function (resp) {
+            var obj = JSON.parse(resp);
             if (obj.code != 200) {
                 alert(obj.message);
                 return;
