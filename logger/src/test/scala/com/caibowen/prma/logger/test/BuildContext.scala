@@ -1,6 +1,7 @@
 package com.caibowen.prma.logger.test
 
 import java.util.concurrent.TimeUnit
+import javax.sql.DataSource
 
 import akka.actor.ActorSystem
 import com.caibowen.gplume.resource.ClassLoaderInputStreamProvider
@@ -35,7 +36,7 @@ class BuildContext {
   _prepare()
 
   val actSys = AppContext.beanAssembler.getBean(ActorBuilder.RootActorSystemBeanID).asInstanceOf[ActorSystem]
-
+  val dataSource = AppContext.beanAssembler.getBean("dataSource").asInstanceOf[DataSource]
 
   @After
   def finish(): Unit = {

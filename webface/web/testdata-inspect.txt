@@ -1,0 +1,423 @@
+{
+  "code": 200,
+  "data": {
+    "_2": [0.12,0.23,0.34,0.45,0.56],
+
+    "_1": [
+              {
+                "id": -1,
+                "timeCreated": 1419180995482,
+                "level": "INFO",
+                "loggerName": "com.caibowen.prma.logger.test.LogBackTest",
+                "threadName": "main",
+                "flag": 8590065668,
+                "message": "scala logging store test",
+                "callerStackTrace": {
+                  "file": "FreqCounter.scala",
+                  "className": "com.caibowen.prma.core.FreqCounter",
+                  "function": "count",
+                  "line": 30
+                },
+                "reserved": 2438906630,
+                "exceptions": [
+                  {
+                    "id": -6052837899193958288,
+                    "name": "java.lang.RuntimeException",
+                    "message": "msg level 3",
+                    "stackTraces": [
+                      {
+                        "file": "JsonTest.scala",
+                        "className": "com.caibowen.prma.logger.test.JsonTest",
+                        "function": "t1",
+                        "line": 23
+                      },
+                      {
+                        "file": "NativeMethodAccessorImpl.java",
+                        "className": "sun.reflect.NativeMethodAccessorImpl",
+                        "function": "invoke0",
+                        "line": -2
+                      },
+                      {
+                        "file": "NativeMethodAccessorImpl.java",
+                        "className": "sun.reflect.NativeMethodAccessorImpl",
+                        "function": "invoke",
+                        "line": 57
+                      },
+                      {
+                        "file": "DelegatingMethodAccessorImpl.java",
+                        "className": "sun.reflect.DelegatingMethodAccessorImpl",
+                        "function": "invoke",
+                        "line": 43
+                      },
+                      {
+                        "file": "Method.java",
+                        "className": "java.lang.reflect.Method",
+                        "function": "invoke",
+                        "line": 606
+                      },
+                      {
+                        "file": "FrameworkMethod.java",
+                        "className": "org.junit.runners.model.FrameworkMethod$1",
+                        "function": "runReflectiveCall",
+                        "line": 44
+                      },
+                      {
+                        "file": "ReflectiveCallable.java",
+                        "className": "org.junit.internal.runners.model.ReflectiveCallable",
+                        "function": "run",
+                        "line": 15
+                      },
+                      {
+                        "file": "FrameworkMethod.java",
+                        "className": "org.junit.runners.model.FrameworkMethod",
+                        "function": "invokeExplosively",
+                        "line": 41
+                      },
+                      {
+                        "file": "InvokeMethod.java",
+                        "className": "org.junit.internal.runners.statements.InvokeMethod",
+                        "function": "evaluate",
+                        "line": 20
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner",
+                        "function": "runLeaf",
+                        "line": 263
+                      },
+                      {
+                        "file": "BlockJUnit4ClassRunner.java",
+                        "className": "org.junit.runners.BlockJUnit4ClassRunner",
+                        "function": "runChild",
+                        "line": 69
+                      },
+                      {
+                        "file": "BlockJUnit4ClassRunner.java",
+                        "className": "org.junit.runners.BlockJUnit4ClassRunner",
+                        "function": "runChild",
+                        "line": 48
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner$3",
+                        "function": "run",
+                        "line": 231
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner$1",
+                        "function": "schedule",
+                        "line": 60
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner",
+                        "function": "runChildren",
+                        "line": 229
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner",
+                        "function": "access$000",
+                        "line": 50
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner$2",
+                        "function": "evaluate",
+                        "line": 222
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner",
+                        "function": "run",
+                        "line": 292
+                      },
+                      {
+                        "file": "JUnitCore.java",
+                        "className": "org.junit.runner.JUnitCore",
+                        "function": "run",
+                        "line": 157
+                      },
+                      {
+                        "file": "JUnit4IdeaTestRunner.java",
+                        "className": "com.intellij.junit4.JUnit4IdeaTestRunner",
+                        "function": "startRunnerWithArgs",
+                        "line": 74
+                      },
+                      {
+                        "file": "JUnitStarter.java",
+                        "className": "com.intellij.rt.execution.junit.JUnitStarter",
+                        "function": "prepareStreamsAndStart",
+                        "line": 211
+                      },
+                      {
+                        "file": "JUnitStarter.java",
+                        "className": "com.intellij.rt.execution.junit.JUnitStarter",
+                        "function": "main",
+                        "line": 67
+                      },
+                      {
+                        "file": "NativeMethodAccessorImpl.java",
+                        "className": "sun.reflect.NativeMethodAccessorImpl",
+                        "function": "invoke0",
+                        "line": -2
+                      },
+                      {
+                        "file": "NativeMethodAccessorImpl.java",
+                        "className": "sun.reflect.NativeMethodAccessorImpl",
+                        "function": "invoke",
+                        "line": 57
+                      },
+                      {
+                        "file": "DelegatingMethodAccessorImpl.java",
+                        "className": "sun.reflect.DelegatingMethodAccessorImpl",
+                        "function": "invoke",
+                        "line": 43
+                      },
+                      {
+                        "file": "Method.java",
+                        "className": "java.lang.reflect.Method",
+                        "function": "invoke",
+                        "line": 606
+                      },
+                      {
+                        "file": "AppMain.java",
+                        "className": "com.intellij.rt.execution.application.AppMain",
+                        "function": "main",
+                        "line": 134
+                      }
+                    ]
+                  },
+                  {
+                    "id": 2810246167475262425,
+                    "name": "java.io.IOException",
+                    "message": "msg level 2"
+                  }
+                ],
+                "properties": {
+                  "test mdc 3": "wowowo",
+                  "test mdc 2": "hahaha222",
+                  "HOSTNAME": "bowen_ultimate",
+                  "test mdc 1": "hahaha"
+                },
+                "tags": [
+                  "marker 1",
+                  "marker 2"
+                ]
+              },
+              {
+                "id": -1,
+                "timeCreated": 1419181127272,
+                "level": "ERROR",
+                "loggerName": "com.caibowen.prma.logger.test.LogBackTest",
+                "threadName": "main",
+                "flag": 8590000129,
+                "message": "scala logging store test",
+                "callerStackTrace": {
+                  "file": "?",
+                  "className": "?",
+                  "function": "?",
+                  "line": -1
+                },
+                "reserved": 2438906630,
+                "exceptions": [
+                  {
+                    "id": -6052837899193958288,
+                    "name": "java.lang.RuntimeException",
+                    "message": "msg level 3",
+                    "stackTraces": [
+                      {
+                        "file": "JsonTest.scala",
+                        "className": "com.caibowen.prma.logger.test.JsonTest",
+                        "function": "t1",
+                        "line": 23
+                      },
+                      {
+                        "file": "NativeMethodAccessorImpl.java",
+                        "className": "sun.reflect.NativeMethodAccessorImpl",
+                        "function": "invoke0",
+                        "line": -2
+                      },
+                      {
+                        "file": "NativeMethodAccessorImpl.java",
+                        "className": "sun.reflect.NativeMethodAccessorImpl",
+                        "function": "invoke",
+                        "line": 57
+                      },
+                      {
+                        "file": "DelegatingMethodAccessorImpl.java",
+                        "className": "sun.reflect.DelegatingMethodAccessorImpl",
+                        "function": "invoke",
+                        "line": 43
+                      },
+                      {
+                        "file": "Method.java",
+                        "className": "java.lang.reflect.Method",
+                        "function": "invoke",
+                        "line": 606
+                      },
+                      {
+                        "file": "FrameworkMethod.java",
+                        "className": "org.junit.runners.model.FrameworkMethod$1",
+                        "function": "runReflectiveCall",
+                        "line": 44
+                      },
+                      {
+                        "file": "ReflectiveCallable.java",
+                        "className": "org.junit.internal.runners.model.ReflectiveCallable",
+                        "function": "run",
+                        "line": 15
+                      },
+                      {
+                        "file": "FrameworkMethod.java",
+                        "className": "org.junit.runners.model.FrameworkMethod",
+                        "function": "invokeExplosively",
+                        "line": 41
+                      },
+                      {
+                        "file": "InvokeMethod.java",
+                        "className": "org.junit.internal.runners.statements.InvokeMethod",
+                        "function": "evaluate",
+                        "line": 20
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner",
+                        "function": "runLeaf",
+                        "line": 263
+                      },
+                      {
+                        "file": "BlockJUnit4ClassRunner.java",
+                        "className": "org.junit.runners.BlockJUnit4ClassRunner",
+                        "function": "runChild",
+                        "line": 69
+                      },
+                      {
+                        "file": "BlockJUnit4ClassRunner.java",
+                        "className": "org.junit.runners.BlockJUnit4ClassRunner",
+                        "function": "runChild",
+                        "line": 48
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner$3",
+                        "function": "run",
+                        "line": 231
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner$1",
+                        "function": "schedule",
+                        "line": 60
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner",
+                        "function": "runChildren",
+                        "line": 229
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner",
+                        "function": "access$000",
+                        "line": 50
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner$2",
+                        "function": "evaluate",
+                        "line": 222
+                      },
+                      {
+                        "file": "ParentRunner.java",
+                        "className": "org.junit.runners.ParentRunner",
+                        "function": "run",
+                        "line": 292
+                      },
+                      {
+                        "file": "JUnitCore.java",
+                        "className": "org.junit.runner.JUnitCore",
+                        "function": "run",
+                        "line": 157
+                      },
+                      {
+                        "file": "JUnit4IdeaTestRunner.java",
+                        "className": "com.intellij.junit4.JUnit4IdeaTestRunner",
+                        "function": "startRunnerWithArgs",
+                        "line": 74
+                      },
+                      {
+                        "file": "JUnitStarter.java",
+                        "className": "com.intellij.rt.execution.junit.JUnitStarter",
+                        "function": "prepareStreamsAndStart",
+                        "line": 211
+                      },
+                      {
+                        "file": "JUnitStarter.java",
+                        "className": "com.intellij.rt.execution.junit.JUnitStarter",
+                        "function": "main",
+                        "line": 67
+                      },
+                      {
+                        "file": "NativeMethodAccessorImpl.java",
+                        "className": "sun.reflect.NativeMethodAccessorImpl",
+                        "function": "invoke0",
+                        "line": -2
+                      },
+                      {
+                        "file": "NativeMethodAccessorImpl.java",
+                        "className": "sun.reflect.NativeMethodAccessorImpl",
+                        "function": "invoke",
+                        "line": 57
+                      },
+                      {
+                        "file": "DelegatingMethodAccessorImpl.java",
+                        "className": "sun.reflect.DelegatingMethodAccessorImpl",
+                        "function": "invoke",
+                        "line": 43
+                      },
+                      {
+                        "file": "Method.java",
+                        "className": "java.lang.reflect.Method",
+                        "function": "invoke",
+                        "line": 606
+                      },
+                      {
+                        "file": "AppMain.java",
+                        "className": "com.intellij.rt.execution.application.AppMain",
+                        "function": "main",
+                        "line": 134
+                      }
+                    ]
+                  },
+                  {
+                    "id": 2810246167475262425,
+                    "name": "java.io.IOException",
+                    "message": "msg level 2"
+                  }
+                ],
+                "properties": {
+                  "HOSTNAME": "bowen_ultimate"
+                },
+                "tags": ["marker 2"]
+              },
+              {
+                "id": -1,
+                "timeCreated": 1419181127754,
+                "level": "DEBUG",
+                "loggerName": "com.caibowen.prma.logger.test.LogBackTest",
+                "threadName": "main",
+                "flag": 2,
+                "message": "scala logging store test",
+                "callerStackTrace": {
+                  "file": "?",
+                  "className": "?",
+                  "function": "?",
+                  "line": -1
+                },
+                "reserved": 2438906630
+              }
+            ]
+  }
+}

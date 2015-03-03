@@ -3,7 +3,8 @@ package com.caibowen.prma.webface
 import java.io.PrintWriter
 
 import com.caibowen.gplume.web.{IViewResolver, RequestContext}
-import com.caibowen.prma.api.model.EventVO
+import com.caibowen.prma.api.model.{Helper, EventVO}
+import com.caibowen.prma.core.{JSON, ExceptVOSerializer, EventVOSerializer}
 import net.liftweb.json.{DefaultFormats, Serialization}
 
 /**
@@ -11,7 +12,7 @@ import net.liftweb.json.{DefaultFormats, Serialization}
  * @since  18/12/2014.
  */
 object JsonResult {
-  type Action = PrintWriter=>Unit
+  type Action = (PrintWriter)=>Unit
 
   val ok = new JsonResult(200, "OK")
   val invalidParameter = new JsonResult(400, "Invalid Parameter")
@@ -35,6 +36,7 @@ class JsonViewResolver extends IViewResolver {
 
   override def fitness (klass: Class[_]) = if (klass eq classOf[JsonResult[_]]) 1 else -1
 
+
   override def resolve(ctx: RequestContext, view: Any): Unit = view match {
     case JsonResult.NOP =>
     case jsr: JsonResult[_] =>
@@ -42,30 +44,24 @@ class JsonViewResolver extends IViewResolver {
       val w = ctx.response.getWriter
       w.append("{\r\n\"code\":").write(jsr.code.toString)
       if (jsr.message.isDefined)
-        w.append(",\r\n\"message\":\"").append(jsr.message.get).append('\"')
+        w.append(",\r\n\"message\":\"")
+          .append(Helper.appendQuote(jsr.message.get)(new java.lang.StringBuilder(64)).toString)
+          .append('\"')
+
+      w.append(",\r\n\"data\":")
       if (jsr.data.isDefined) {
-        jsr.data.get match {
-          case evls: Seq[EventVO] =>
-            w.append(",\r\n\"data\":[")
-            //          evls.take(evls.size - 1).foreach(ev => w.append(ev.appendJson(new StringBuilder(2048)).toString).append('\n').append(','))
-            evls.take(evls.size - 1).foreach(ev => w.append(ev.toString).append('\n').append(','))
-            w.append(evls.last.toString).append(']')
-
-          case ev: EventVO =>
-            w.append(",\r\n\"data\":")
-              .append(ev.toString)
-          //          .append(ev.get.appendJson(new StringBuilder(2048)).toString))
-
-          case action: JsonResult.Action =>
-            action(w)
-          case None =>
-          case obj =>
-            w.append(",\r\n\"data\":")
-            Serialization.writePretty(obj.asInstanceOf[AnyRef], w)(DefaultFormats)
-//            Serialization.write(obj.asInstanceOf[AnyRef], w)(DefaultFormats)
-        }
+//        jsr.data.get match {
+//          case action: JsonResult.Action =>
+//            action(w)
+//          case obj =>
+//            Serialization.writePretty(obj.asInstanceOf[AnyRef], w)(fmt)
+//        }
+        Serialization.writePretty(jsr.data.get.asInstanceOf[AnyRef], w)(JSON.fmt)
+      } else {
+        w.append("{}")
       }
-      w.append("\r\n}")
+
+      w.append("}")
       w.flush()
   }
 

@@ -31,7 +31,7 @@ public class HttpQuery {
     @ReqParam
     public String message;
 
-    @ReqParam(required = true)
+    @ReqParam(required = true, defaultVal = "false")
     public boolean fuzzyQuery;
 
     @ReqParam(required = true, defaultVal = "false")

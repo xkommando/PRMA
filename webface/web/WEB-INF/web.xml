@@ -23,7 +23,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
     </servlet>
     <servlet-mapping>
         <servlet-name>Gplume</servlet-name>
-        <url-pattern>*.json</url-pattern>
+        <url-pattern>/ajax/*</url-pattern>
     </servlet-mapping>
 
     <!--<filter>-->

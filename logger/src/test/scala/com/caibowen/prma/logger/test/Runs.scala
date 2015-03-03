@@ -4,8 +4,13 @@ import java.util
 import java.util.concurrent.{TimeUnit, ConcurrentLinkedQueue, Executors}
 
 import com.caibowen.prma.api.model.EventVO
+import com.caibowen.prma.core.{EventVOSerializer, ExceptVOSerializer}
 import com.zaxxer.hikari.HikariDataSource
+import net.liftweb.json.{DefaultFormats, Serialization}
 import org.junit.Test
+import org.slf4j.LoggerFactory
+
+import scala.collection.immutable.VectorBuilder
 
 /**
  * @author BowenCai
@@ -32,6 +37,32 @@ class Person(private var _name: String) {
 }
 class Runs {
 
+
+  private val fmt = (DefaultFormats + EventVOSerializer) + ExceptVOSerializer
+
+  private val log = LoggerFactory.getLogger(Runs.getClass)
+
+  @Test
+  def t5: Unit = {
+    for (i <- 0 to 9999) {
+      log.warn("prma logger warn " + i)
+    }
+    Thread.sleep(3000)
+  }
+
+  @Test
+  def t4: Unit = {
+    val r = 1 to 9
+    val ls = r.foldLeft(new VectorBuilder[Int])((b, e)=>{
+      b += e
+    }).result()
+    println(ls)
+
+    val t5 = Array(1.2, 2.3, 3.4, 4.5, 5.6)
+    println(Serialization.write(t5)(fmt))
+//    Serialization.writePretty(obj.asInstanceOf[AnyRef], w)(fmt)
+  }
+
   @Test
   def t3: Unit = {
 
@@ -40,6 +71,18 @@ class Runs {
     val p = new Person("Jonathan")
     p.name = "Jony"    // setter
     println(p.name)    // getter
+    val ch = '蔡'
+    println(ch)
+    Thread.sleep(3000L)
+    var sss = new Array[Byte](1<<25)
+
+    Thread.sleep(3000L)
+    sss = null
+    System.gc()
+    System.gc()
+    Thread.sleep(3000L)
+
+    println(ch.asInstanceOf[Int])
 //    import StrictMath._
 //    println(log(8) + log(2))
 //    println(log(16))

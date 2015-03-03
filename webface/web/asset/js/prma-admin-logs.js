@@ -127,7 +127,7 @@ $('#tq-btn').click(function () {
         console.log(query);
     }
 
-    dtable.ajax.url("log/list.json?" + query).load();
+    dtable.ajax.url("ajax/log/list.json?" + query).load();
 
     //$.get( "http://localhost:63342/PRMA/webface/src/main/webapp", q)
     //    .done(function( data ) {
@@ -138,8 +138,8 @@ $('#tq-btn').click(function () {
 
 var PrmaLog = {
     dtableOptions: {
-        "ajax": "testdata-list.txt?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
-        //"ajax": "log/list.json?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        //"ajax": "testdata-list.txt?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        "ajax": "ajax/log/list.json?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
         "columns": [
             {
                 "data": "timeCreated",

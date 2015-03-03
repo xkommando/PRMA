@@ -18,14 +18,13 @@ import scala.util.Try
  */
 class SearchEngine(db: DB) {
 
-
   def process(q: HttpQuery): Seq[EventVO] = {
 
     implicit val b = new StringBuilder(512)
       .append("WHERE time_created > ").append(q.minTime)
       .append(" AND time_created < ").append(q.maxTime)
-      .append(" AND level > ").append(LogLevel.from(q.lowLevel))
-      .append(" AND level < ").append(LogLevel.from(q.highLevel))
+      .append(" AND level > ").append(LogLevel.from(q.lowLevel).id)
+      .append(" AND level < ").append(LogLevel.from(q.highLevel).id)
 
     if (notBlank(q.loggerName)) {
       b append " AND logger = "
@@ -71,7 +70,6 @@ class SearchEngine(db: DB) {
       rs.getLong(6), // flag
       rs.getString(7), reserved, None, None, None)
   }
-
   /**
    * @param filterStr
    * @return a simple list of eventVO, i.e., no exceptions, tags or properties

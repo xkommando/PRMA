@@ -243,13 +243,13 @@
                              aria-labelledby="headingThree">
                             <div class="panel-body form-group">
                                 <div class="col-lg-12">
-                                    <p><label> SELECT </label> EVT.id, EVT.time_created, EVT.level, EVT.logger_id,
-                                        EVT.thread_id, EVT.flag, EVT.message, EVT.reserved, CALLER.file, CALLER.class,
-                                        CALLER.function, CALLER.line </p>
-
-                                    <p><label>FROM</label> `event` <label>AS</label> EVT <label>INNER JOIN</label>
-                                        `stack_trace` <label>AS</label> CALLER <label>ON</label> CALLER.id = EVT.caller_id
-                                    </p>
+                                    <p> <label> SELECT</label> EV.id, EV.time_created, EV.level, EV.logger_id, EV.thread_id, EV.flag, EV.message, EV.reserved, EV.caller_id,</p>
+                                    <p>SK.file,SK.class,SK.function, SK.line,</p>
+                                    <p>LG.value, THD.value,</p>
+                                    <p><label>FROM</label> `event` <label>AS</label> EV</p>
+                                    <p><label>INNER JOIN</label> `stack_trace` <label>AS</label> SK <label>ON</label> SK.id = EV.caller_id</p>
+                                    <p><label>INNER JOIN</label> `thread` <label>AS</label> THD <label>ON</label> THD.id = EV.thread_id</p>
+                                    <p><label>INNER JOIN</label> `logger` <label>AS</label> LG <label>ON</label> LG.id = EV.logger_id</p>
                                 </div>
                                 <div class="col-lg-12">
                                 <textarea class="top-buffer form-control" id="ins3-sql" rows="3"
@@ -268,10 +268,6 @@
                         </div>
                     </div>
                     <hr>
-                    <table class="table" id="table-entropy5">
-                        <!-- will be filled with JS -->
-                    </table>
-
                 </div>
                 <div class="col-lg-7">
                     <div class="panel panel-default">
@@ -286,9 +282,30 @@
                     </div>
                     <!-- /.panel -->
                 </div>
+
+                <hr>
             </div>
-            <!-- /.col-lg-6 -->
+            <!-- /.col-lg-12 -->
+
             <hr>
+            <div class="col-lg-11 top-buffer">
+                <div><i class="fa fa-file-text"></i> Logs </div>
+                <div class="top-buffer"></div>
+                <table class="table table-striped table-bordered" id="prma-ins-log-table">
+                    <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Level</th>
+                        <th>Location</th>
+                        <th>Message</th>
+                        <th>Thread</th>
+                        <th>Detail</th>
+                    </tr>
+                    </thead>
+                </table>
+                <!-- /.panel -->
+            </div>
+
         </div>
         <!-- /.row -->
     </div> <!--page wrapper -->
@@ -304,6 +321,9 @@
 
 <script src="asset/js/jquery.min.js"></script>
 <script src="asset/js/bootstrap.min.js"></script>
+
+<script src="asset/js/jquery.dataTables.js"></script>
+<script src="asset/js/dataTables.bootstrap.js"></script>
 
 <script src="asset/js/bootstrap-datetimepicker.min.js"></script>
 

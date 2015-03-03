@@ -29,6 +29,12 @@
         </dependency>
 
         <dependency>
+            <groupId>gplume.scala</groupId>
+            <artifactId>jdbc</artifactId>
+            <version>1.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.typesafe.slick</groupId>
             <artifactId>slick_2.10</artifactId>
             <version>${slick-version}</version>

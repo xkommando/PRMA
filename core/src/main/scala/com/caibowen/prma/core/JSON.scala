@@ -36,6 +36,8 @@ case object StackTraceSerializer extends CustomSerializer[StackTraceElement](for
 
 object JSON {
 
+  val fmt = (DefaultFormats + EventVOSerializer) + ExceptVOSerializer
+
   def write(vo: EventVO): String = vo.toString
   def write(vo: ExceptionVO): String = vo.toString
 
@@ -109,3 +111,22 @@ object JSON {
     new ExceptionVO(id, name, msg, sts)
   }
 }
+
+case object EventVOSerializer extends CustomSerializer[EventVO](format => (
+  {
+    case JString(s) => JSON.readEventVO(s)
+    case JNull => null
+  },
+  {
+    case d: EventVO => JString(d.toString)
+  }
+  ))
+case object ExceptVOSerializer extends CustomSerializer[ExceptionVO](format => (
+  {
+    case JString(s) => JSON.readExceptionVO(s)
+    case JNull => null
+  },
+  {
+    case d: ExceptionVO => JString(d.toString)
+  }
+  ))

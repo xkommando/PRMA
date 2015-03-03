@@ -14,6 +14,7 @@
     <orderEntry type="module" module-name="store" />
     <orderEntry type="module" module-name="api" />
     <orderEntry type="module" module-name="core" />
+    <orderEntry type="library" name="Maven: gplume.scala:http:1.0" level="project" />
     <orderEntry type="library" name="Maven: net.liftweb:lift-json_2.10:2.5.1" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scalap:2.10.0" level="project" />
     <orderEntry type="library" name="Maven: org.scala-lang:scala-compiler:2.10.0" level="project" />
@@ -28,6 +29,8 @@
     <orderEntry type="library" scope="TEST" name="Maven: mysql:mysql-connector-java:5.1.33" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.zaxxer:HikariCP-java6:2.1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.javassist:javassist:3.18.1-GA" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: gplume.scala:jdbc:1.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: gplume.scala:misc:1.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.9" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
     <orderEntry type="library" name="Maven: com.typesafe.akka:akka-actor_2.10:2.3.8" level="project" />

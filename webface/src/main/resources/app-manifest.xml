@@ -11,4 +11,23 @@
             </list>
         </prop>
     </bean>
+
+    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource">
+        <prop name="driverClassName" val="com.mysql.jdbc.Driver"/>
+        <prop name="username" val="xKommando" />
+        <prop name="password" val="123456"/>
+        <prop name="jdbcUrl" val="jdbc:mysql://localhost:3306/prma_log_event" />
+        <prop name="autoCommit" val="false" />
+
+        <prop name="minimumIdle" val="2"/>
+        <prop name="maximumPoolSize" val="16"/>
+    </bean>
+
+    <bean id="db" class="gplume.scala.jdbc.DB">
+        <construct ref="dataSource"/>
+    </bean>
+
+    <bean id="searchEngine" class="com.caibowen.prma.webface.SearchEngine">
+        <construct ref="db"/>
+    </bean>
 </beans>

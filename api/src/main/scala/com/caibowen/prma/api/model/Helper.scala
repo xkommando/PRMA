@@ -5,7 +5,7 @@ import java.lang.{StringBuilder => JStrBuilder}
 /**
  * Created by Bowen Cai on 1/9/2015.
  */
-private[model] object Helper {
+private[prma] object Helper {
 
   @inline def hashCombine(obj1: AnyRef, obj2: AnyRef): Long = {
     val h1 = obj1.hashCode.toLong

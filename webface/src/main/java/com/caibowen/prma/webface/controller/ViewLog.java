@@ -9,20 +9,23 @@ import com.caibowen.prma.webface.SearchEngine;
 import gplume.scala.jdbc.DB;
 import scala.beans.BeanProperty;
 
+import javax.inject.Inject;
+
 /**
  * @author BowenCai
  * @since 21/12/2014.
  */
-@Controller("/log")
+@Controller("/ajax/log")
 public class ViewLog {
 
-//    @Inject
+    @Inject
     public SearchEngine engine;
 
 //    @Handle({"/log.json"})
 //    public JsonResult query(HttpQuery q) {
 //        return q == null ? JsonResult.invalidParameter(): new JsonResult( new SearchEngine(null)._test());
 //    }
+
     @Handle({"/list.json"})
     public JsonResult query(HttpQuery q, RequestContext ctx) {
         scala.collection.Seq ls = q == null ? engine.listSimple(ctx.getStrParam("p-sql")) : engine.process(q);

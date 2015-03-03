@@ -1,11 +1,13 @@
 package com.caibowen.prma.webface.controller
 
+import javax.inject.Inject
+
 import com.caibowen.gplume.web.RequestContext
 import com.caibowen.gplume.web.annotation.{Handle, Controller}
 import com.caibowen.prma.query.Statistician
 import com.caibowen.prma.webface.JsonResult
 import com.caibowen.prma.webface.JsonResult.Action
-import gplume.scala.jdbc.DB
+import gplume.scala.jdbc.{DB, DBSession, Transaction, SQLAux, SQLOperation}
 
 import scala.beans.BeanProperty
 
@@ -13,13 +15,17 @@ import scala.beans.BeanProperty
 /**
  * Created by Bowen Cai on 1/11/2015.
  */
-//@Controller("/chart")
+@Controller("/ajax/chart")
 class ViewCharts {
 
-  @BeanProperty  var database: DB = _
+  Class.forName("gplume.scala.jdbc.DBSession")
 
-//  @Handle(Array("/statistics.json"))
-  @Handle(Array("/testdata-charts.json"))
+  @BeanProperty
+  @Inject
+  var database: DB = _
+
+  @Handle(Array("/statistics.json"))
+//  @Handle(Array("/testdata-charts.json"))
   def chartData(ctx: RequestContext): JsonResult[_] = {
     val minTime = ctx.getLongParam("minTime")
     val maxTime = ctx.getLongParam("maxTime")
@@ -31,14 +37,11 @@ class ViewCharts {
       interval == null || interval > (maxTime - minTime))
       JsonResult.invalidParameter
     else {
-//      new JsonResult(
-//        database.readOnlySession{implicit session=>
-//          Statistician.timelineCounter(minTime, maxTime, lowLevel, highLevel, interval))
-
-      ctx.renderAsStatic()
-      JsonResult.NOP
+      new JsonResult(
+        database.readOnlySession { implicit session =>
+          Statistician.timelineCounter(minTime, maxTime, lowLevel, highLevel, interval)
+        }
+      )
     }
-
-//    })
   }
 }

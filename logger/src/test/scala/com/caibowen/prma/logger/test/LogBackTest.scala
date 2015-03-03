@@ -12,6 +12,7 @@ import com.caibowen.gplume.jdbc.JdbcSupport
 import gplume.scala.context.AppContext
 import com.caibowen.prma.core.filter.StrFilter
 import com.caibowen.prma.logger.logback.{FilteredAdaptor, LogbackEventAdaptor}
+import gplume.scala.jdbc.DB
 import org.junit.Test
 import org.slf4j._
 
@@ -67,7 +68,6 @@ object LogBackTest {
       Level.DEBUG,
       id +  "scala logging store test", null, null)
 
-
     val mk1 = MarkerFactory.getMarker("marker 1")
     val mk2 = MarkerFactory.getMarker("marker 2")
     mk1.add(mk2)
@@ -81,7 +81,6 @@ object LogBackTest {
 }
 class LogBackTest extends BuildContext {
 
-  val dataSource = AppContext.beanAssembler.getBean("dataSource").asInstanceOf[DataSource]
   val jdbcSupport = new JdbcSupport(dataSource)
   jdbcSupport setTraceSQL false
 
@@ -94,6 +93,21 @@ class LogBackTest extends BuildContext {
     val actorNamePattern: Pattern = ActorPath.ElementRegex.pattern
     println(actorNamePattern.matcher("PRMA.Monitor.Actor_No.1").matches())
     println(actorNamePattern.matcher("PRMA.Store.Actor").matches())
+  }
+
+  @Test
+  def qdb: Unit = {
+    import gplume.scala.jdbc.SQLAux._
+    val db = new DB(dataSource)
+    val ret = db.readOnlySession { implicit session =>
+      val limit = 262144
+      sql"""SELECT EXP.name as Except_Name, COUNT(EXP.id) AS Except_Count
+                   FROM `j_event_exception` AS JEE
+                   INNER JOIN `exception` AS EXP ON EXP.id = JEE.except_id
+                   WHERE JEE.event_id IN(1,2,3) GROUP BY EXP.id ORDER BY Except_Count DESC  limit $limit  """.autoGroup()
+
+    }
+    println(ret)
   }
 
   @Test
@@ -112,7 +126,7 @@ class LogBackTest extends BuildContext {
     val lbEvent = new LoggingEvent("fmt scala logging store test",
   LogBackTest.LOG.asInstanceOf[ch.qos.logback.classic.Logger],
       Level.DEBUG,
-      "scala logging store test", exp, null)
+      "logging store logback test", exp, null)
     lbEvent.setMarker(mk1)
     val _filter = AppContext.beanAssembler.getBean("classNameFilter").asInstanceOf[StrFilter]
 

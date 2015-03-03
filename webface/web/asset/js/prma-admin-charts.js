@@ -25,6 +25,13 @@ $("#btn-load").click(function() {
         $('#tq-maxTime').val("");
         return;
     }
+    if (highLevel <= lowLevel) {
+        alert("lower log level is greater than higher level");
+        $('#tq-lowLevel').val("TRACE");
+        $('#tq-highLevel').val("ERROR");
+        return;
+    }
+
     var interval = Math.floor((maxTime - minTime) / 48); // time interval for 48 points
     var q = {
         "minTime": minTime
@@ -33,7 +40,7 @@ $("#btn-load").click(function() {
         , "highLevel": highLevel
         , "interval": interval};
 
-    //$.get("chart/statistics.json", q)
+    //$.get("ajax/chart/statistics.json", q)
     $.get("testdata-charts.txt", q)
         .done(function (resp) {
             var obj = JSON.parse(resp);

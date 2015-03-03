@@ -17,7 +17,6 @@ import org.junit.Test
  */
 class JulTest extends BuildContext {
 
-  val dataSource = AppContext.beanAssembler.getBean("dataSource").asInstanceOf[DataSource]
   val jdbcSupport = new JdbcSupport(dataSource)
   jdbcSupport setTraceSQL false
 

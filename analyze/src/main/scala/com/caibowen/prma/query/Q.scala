@@ -12,11 +12,11 @@ object Q {
 
   private val _logggerNameByID = new SQLOperation("SELECT `value` FROM `logger` WHERE id=?")
   def logggerNameByID(id: Int)(implicit session: DBSession): Option[String] =
-  _logggerNameByID.first(colStr, before=_.setInt(1, id))(session)
+  _logggerNameByID.first(colStr, _.setInt(1, id))(session)
 
   private val _threadNameByID = new SQLOperation("SELECT `value` FROM `thread` WHERE id=?")
   def threadNameByID(id: Int)(implicit session: DBSession): Option[String] =
-    _threadNameByID.first(colStr, before=_.setInt(1, id))(session)
+    _threadNameByID.first(colStr, _.setInt(1, id))(session)
 
   private val _tagsByEventID = new SQLOperation("SELECT TG.value FROM `tag` as TG INNER JOIN `j_event_tag` AS JET ON JET.tag_id = TG.id WHERE JET.event_id = ?")
   def tagsByEventID(id: Long)(implicit session: DBSession): Set[String] =

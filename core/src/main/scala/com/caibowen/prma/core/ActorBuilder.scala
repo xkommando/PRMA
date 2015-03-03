@@ -20,7 +20,7 @@ import scala.beans.BeanProperty
  * @since  10/12/2014.
  */
 object ActorBuilder {
-  var RootActorSystemBeanID = "PRMA.Root_ActorSystem"
+  var RootActorSystemBeanID = "PRMA_RootActorSystem"
 // """(?:[-\w:@&=+,.!~*'_;]|%\p{XDigit}{2})(?:[-\w:@&=+,.!~*'$_;]|%\p{XDigit}{2})*""")
   val actorNamePattern: Pattern = ActorPath.ElementRegex.pattern
 

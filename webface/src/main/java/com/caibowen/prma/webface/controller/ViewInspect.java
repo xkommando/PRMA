@@ -3,7 +3,6 @@ package com.caibowen.prma.webface.controller;
 import com.caibowen.gplume.web.RequestContext;
 import com.caibowen.gplume.web.annotation.Controller;
 import com.caibowen.gplume.web.annotation.Handle;
-import com.caibowen.gplume.web.annotation.ReqParam;
 import com.caibowen.prma.webface.JsonResult;
 
 /**

@@ -85,10 +85,14 @@ object Statistician {
   }
 
   def exceptionCount(raw4: Array[(Long, Long, Int, Int)])(implicit session: DBSession)
-  : Array[(String, Int)] = new SQLOperation("""
-    SELECT EXP.name as Except_Name, COUNT(EXP.id) AS Except_Count FROM `j_event_exception` AS JEE
-    INNER JOIN `exception` AS EXP ON EXP.id = JEE.except_id
-    WHERE JEE.event_id IN(?) GROUP BY EXP.id ORDER BY Except_Count DESC  limit 128 """)
-    .array(rs=>(rs.getString(1), rs.getInt(2)))
+  : Array[(String, Int)] = {
 
+    val params = raw4.map(_._1).addString(new StringBuilder(raw4.length * 25), "(", ",", ")").toString()
+
+    new SQLOperation(" SELECT EXP.name as Except_Name, COUNT(EXP.id) AS Except_Count FROM `j_event_exception` AS JEE "
+    + " INNER JOIN `exception` AS EXP ON EXP.id = JEE.except_id "
+    + " WHERE JEE.event_id IN " + params + " GROUP BY EXP.id ORDER BY Except_Count DESC  limit 128 ")
+
+      .array(rs => (rs.getString(1), rs.getInt(2)))
+  }
 }
