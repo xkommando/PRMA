@@ -18,7 +18,7 @@ import scala.concurrent.duration.Duration
 class BuildContext {
 
   def manifestPath  = "classpath:store_assemble.xml"
-  def actorBeanPrefix = "prma::internal::store::"
+  def actorBeanPrefix = "prma::internal::actor::"
 
   def _prepare() : Unit = {
 
@@ -26,11 +26,10 @@ class BuildContext {
     _bootstrap.setClassLoader(this.getClass.getClassLoader)
     _bootstrap.setStreamProvider(new ClassLoaderInputStreamProvider(this.getClass.getClassLoader))
     _bootstrap.setManifestPath(manifestPath)
+    _bootstrap.boot
 
     val actorSystem = ActorSystem("test-prma-actor")
     AppContext.beanAssembler.addBean(actorBeanPrefix + ActorBuilder.RootActorSystemBeanID, actorSystem)
-
-    _bootstrap.boot
   }
 
   _prepare()

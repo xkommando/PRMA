@@ -21,9 +21,8 @@ class JulTest extends BuildContext {
   jdbcSupport setTraceSQL false
 
   val eventStore = AppContext.beanAssembler.getBean("eventStore").asInstanceOf[ActorRef]
-
-
-
+//
+//
   val LOG = JulLogger.getLogger(classOf[JulTest].getName)
   val adaptor = new JulRecordAdaptor
 
@@ -39,13 +38,15 @@ class JulTest extends BuildContext {
     _h.setLevel(JulLevel.ALL)
     LOG.addHandler(_h)
     LOG.setLevel(JulLevel.ALL)
-//    LOG.log(JulLevel.FINE, "{0}msg{1} haha {2}", params)
+    LOG.log(JulLevel.FINE, "{0}msg{1} haha {2}", params)
 
     val exp = new RuntimeException("msg level 3", new IOException("msg level 2", new FileNotFoundException("msg level 1")))
 
     val record = new JulLogRecord(JulLevel.FINE, "{0}msg{1} haha {2}")
     record.setParameters(params)
     record.setThrown(exp)
+
+
 
     val vo = adaptor.from(record)
     println(vo)
@@ -57,3 +58,13 @@ class JulTest extends BuildContext {
 //    println(java.text.MessageFormat.format("{0}msg{1} haha {2}", 1.asInstanceOf[AnyRef], 2.asInstanceOf[AnyRef], new Date()))
   }
 }
+
+//    LOG.log(JulLevel.FINE,
+//      """
+//        |update dese user read_index failed, user={
+//        |	id="12435",
+//        |	name="cbtaobaohzzy",
+//        |	last_ip="61.150.43.49"
+//        |}
+//        |
+//      """.stripMargin)

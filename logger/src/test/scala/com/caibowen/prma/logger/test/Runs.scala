@@ -11,6 +11,7 @@ import org.junit.Test
 import org.slf4j.LoggerFactory
 
 import scala.collection.immutable.VectorBuilder
+import scala.tools.nsc.doc.model.Public
 
 /**
  * @author BowenCai
@@ -35,20 +36,19 @@ class Person(private var _name: String) {
     _name = aName
   }  // mutator
 }
+
+//class XXX(public val a: Long, val b: Int) extends AnyVal
+
 class Runs {
 
 
-  private val fmt = (DefaultFormats + EventVOSerializer) + ExceptVOSerializer
-
-  private val log = LoggerFactory.getLogger(Runs.getClass)
-
-  @Test
-  def t5: Unit = {
-    for (i <- 0 to 9999) {
-      log.warn("prma logger warn " + i)
-    }
-    Thread.sleep(3000)
-  }
+//  @Test
+//  def t5: Unit = {
+//    for (i <- 0 to 9999) {
+//      log.warn("prma logger warn " + i)
+//    }
+//    Thread.sleep(3000)
+//  }
 
   @Test
   def t4: Unit = {
@@ -59,7 +59,7 @@ class Runs {
     println(ls)
 
     val t5 = Array(1.2, 2.3, 3.4, 4.5, 5.6)
-    println(Serialization.write(t5)(fmt))
+//    println(Serialization.write(t5)(fmt))
 //    Serialization.writePretty(obj.asInstanceOf[AnyRef], w)(fmt)
   }
 
