@@ -64,6 +64,14 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlet</artifactId>
+            <version>9.2.10.v20150310</version>
+            <scope>test</scope>
+        </dependency>
+
+
     </dependencies>
 
 

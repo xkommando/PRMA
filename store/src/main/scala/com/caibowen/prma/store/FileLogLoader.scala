@@ -4,7 +4,7 @@ import java.io._
 import java.util.zip.{DataFormatException, Inflater, InflaterInputStream}
 
 import akka.actor.{ActorLogging, Actor, ActorRef}
-import com.caibowen.prma.core.JSON
+import com.caibowen.prma.serilaize.json.JSON
 
 /**
  * Created by Bowen Cai on 1/19/2015.

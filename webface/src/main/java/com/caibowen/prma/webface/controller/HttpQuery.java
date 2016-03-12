@@ -1,6 +1,9 @@
 package com.caibowen.prma.webface.controller;
 
 import com.caibowen.gplume.web.annotation.ReqParam;
+import scala.collection.mutable.*;
+
+import java.lang.reflect.*;
 
 /**
  *
@@ -9,6 +12,15 @@ import com.caibowen.gplume.web.annotation.ReqParam;
  * @since 21/12/2014.
  */
 public class HttpQuery {
+
+//
+//    public static void main(String[] args) throws Throwable {
+//
+//        Class s = Class.forName("scala.collection.mutable.ArrayBuffer");
+//        for (Method m : s.getDeclaredMethods()) {
+//            System.out.println(m.getName());
+//        }
+//    }
 
     @ReqParam(required=true)
     public long minTime;

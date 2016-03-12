@@ -1,11 +1,10 @@
 package com.caibowen.prma.logger.test
 
 import java.util
-import java.util.concurrent.{TimeUnit, ConcurrentLinkedQueue, Executors}
+import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.regex.Pattern
 
-import com.caibowen.prma.api.model.EventVO
-import com.caibowen.prma.core.{EventVOSerializer, ExceptVOSerializer}
-import com.zaxxer.hikari.HikariDataSource
+import com.caibowen.prma.serilaize.json.{EventVOSerializer, ExceptVOSerializer}
 import net.liftweb.json.{DefaultFormats, Serialization}
 import org.junit.Test
 import org.slf4j.LoggerFactory
@@ -37,6 +36,20 @@ class Person(private var _name: String) {
 }
 class Runs {
 
+  class Fuck {
+    println("fuck")
+  }
+  class Screw {
+    val p = new Fuck
+    println("screw")
+  }
+  @Test
+  def fff(): Unit = {
+    new Screw
+//    val p = Pattern.compile("[a-zA-Z]+:[ ]+[0-9]+")
+//    println(p.matcher("asdfsf:     4").matches())
+//    println(Short.MaxValue)
+  }
 
   private val fmt = (DefaultFormats + EventVOSerializer) + ExceptVOSerializer
 

@@ -40,12 +40,11 @@ class Monitor(val evaluator: Evaluator, val notifierMap: Map[String, Notifier]) 
     case vo: EventVO => {
       Try(evaluator.eval(vo)) match {
         case Success(response) => response match {
-          case n: NotifyOne => {
+          case n: NotifyOne =>
             val notifier = notifierMap get n.name
             if (notifier.isDefined)
               notifier.get.take(n)
             else log.warning(s"Could not find notifier named [${n.name}] on event [$vo]")
-          }
           case n: Response => allNotifiers.foreach(_ take n)
         }
 

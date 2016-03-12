@@ -3,9 +3,9 @@ package com.caibowen.prma.webface
 import java.io.PrintWriter
 
 import com.caibowen.gplume.web.{IViewResolver, RequestContext}
-import com.caibowen.prma.api.model.{Helper, EventVO}
-import com.caibowen.prma.core.{JSON, ExceptVOSerializer, EventVOSerializer}
-import net.liftweb.json.{DefaultFormats, Serialization}
+import com.caibowen.prma.api.model.Helper
+import com.caibowen.prma.serilaize.json.JSON
+import net.liftweb.json.Serialization
 
 /**
  * @author BowenCai

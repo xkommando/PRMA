@@ -1,7 +1,7 @@
-package com.caibowen.prma.core
+package com.caibowen.prma.serilaize.json
 
 import com.caibowen.prma.api.LogLevel
-import com.caibowen.prma.api.model.{Helper, EventVO, ExceptionVO}
+import com.caibowen.prma.api.model.{EventVO, ExceptionVO}
 import net.liftweb.json.JsonAST.JString
 import net.liftweb.json.{parse, _}
 

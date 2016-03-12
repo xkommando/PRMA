@@ -80,7 +80,7 @@ $(document).ready(function () {
         }
     } );
 
-    console.log("fk11");
+    //console.log("fk11");
 
 });
 
@@ -138,8 +138,8 @@ $('#tq-btn').click(function () {
 
 var PrmaLog = {
     dtableOptions: {
-        //"ajax": "testdata-list.txt?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
-        "ajax": "ajax/log/list.json?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        "ajax": "testdata-list.txt?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
+        //"ajax": "ajax/log/list.json?minTime=1&maxTime=9223372036854775807&lowLevel=TRACE&highLevel=FATAL&exceptionOnly=false",
         "columns": [
             {
                 "data": "timeCreated",
@@ -280,6 +280,7 @@ var PrmaLog = {
             var oCells = oTable.rows.item(i).cells;
 
             var time = (new Date(oCells.item(0).innerHTML).getTime() / 1000 - timeOff) / interval;
+
             var level = Prma.level2Int[oCells.item(1).innerHTML];
             var _loc = oCells.item(2).innerHTML;
             var loc = _locSet[_loc];

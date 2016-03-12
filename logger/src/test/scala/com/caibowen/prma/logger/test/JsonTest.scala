@@ -6,8 +6,8 @@ import java.lang.StringBuilder
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.spi.LoggingEvent
 import com.caibowen.prma.api.model.Helper
-import com.caibowen.prma.core.JSON
 import com.caibowen.prma.logger.logback.LogbackEventAdaptor
+import com.caibowen.prma.serilaize.json.JSON
 import org.junit.Test
 import org.slf4j.{MDC, LoggerFactory, MarkerFactory}
 import net.liftweb.json.JsonAST.JString

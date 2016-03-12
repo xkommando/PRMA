@@ -2,9 +2,8 @@ package com.caibowen.prma.logger.test
 
 import java.io._
 import java.util.zip.{GZIPInputStream, DataFormatException, Inflater, InflaterInputStream}
-
-import com.caibowen.prma.core.JSON
 import com.caibowen.prma.logger.logback.DeflateEncoder
+import com.caibowen.prma.serilaize.json.JSON
 import org.junit.{Before, Test}
 
 import scala.io.Source
